@@ -1,16 +1,63 @@
+
+// Filter Panel
+// 
+.filter-panel {
+  font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+  position: absolute;
+  width: 25%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1em;
+  background-color: #fff;
+  box-shadow:0 1px 2px rgba(0, 0, 0, 0.20);
+  border-radius: 3px;
+  box-sizing: border-box;
+
+  h2 {
+    line-height: 24px;
+    display: block;
+    margin: 10px 0;
+  }
+
+  .filter-panel-header {
+    height: 3em;
+    text-align: center;
+    div {
+      display: inline-block;
+      font-weight: bold;
+    }
+  }
+
+  .filter-panel-body {
+    height: calc(100% - 3em);
+    overflow-y: auto;
+  }
+
+}
+
 // Filter Controls Styles
 // 
+.filter {
+  
+  padding: 0.5em 0;
+
+  // Range slider
+  &--range-slider {
+    width: auto;
+  }
+
+}
 
 
 // Range Slider
 // 
 
 .range-slider {
-  width: 300px;
   margin: auto;
   text-align: center;
   position: relative;
-  height: 3em;
+  height: 3.5em;
   padding: 1em;
   box-sizing: border-box;
 
@@ -18,6 +65,11 @@
 	  box-shadow: 0;
 	  outline: 0;
 	}
+
+  // hide svg for now
+  svg {
+    display: none;
+  }
 
   svg,
   input[type=range] {
@@ -39,6 +91,7 @@
     position: absolute;
     border: 0;
     bottom: 0;
+    padding: 0;
 
     //font-size: 1.6em;
     //-moz-appearance: textfield;
@@ -139,3 +192,5 @@
     cursor: pointer;
   }
 }
+
+// ./ Filter Styles

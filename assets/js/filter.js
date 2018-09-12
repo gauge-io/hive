@@ -39,32 +39,51 @@ Filter.prototype.createHTML = function() {
   // 
   function _rangeslider() {
 
-    var html = '<input data-min type="text" value="0"/>\
+    var html = '\
+      <label></label>\
+      <div>\
+        <input data-min type="text" value="0"/>\
         <input data-max type="text" value="0"/>\
         <input data-min value="" min="" max="" step="" type="range"/>\
         <input data-max value="" min="" max="" step="" type="range"/>\
         <svg width="100%" height="24">\
           <line x1="4" y1="0" x2="300" y2="0" stroke="#444" stroke-width="12" stroke-dasharray="1 28"></line>\
-        </svg>';
+        </svg>\
+      </div>';
 
     var rs = d3.select(document.createElement('div'));
 
-    rs.classed('range-slider', true)
+    rs.classed('filter filter--'+config.type, true)
       .html(html);
+
+    rs.select('div')
+      .classed('range-slider', true)
 
     // Set Min and Max values
     // 
     var step = config.range.step || (config.range.max/config.range.min);
 
-    rs.select('[data-min]')
+    rs.select('[type="range"][data-min]')
       .attr("min", config.range.min)
-      .attr("max", config.range.max)
+      .attr("max", config.range.max);
+
+    rs.select('[type="range"][data-max]')
+      .attr("min", config.range.min)
+      .attr("max", config.range.max);
+
+    rs.selectAll('[data-min]')
+      .attr("value", config.range.minValue || config.range.min);
+
+    rs.selectAll('[data-max]')
+      .attr("value", config.range.maxValue || config.range.max);
+
+    rs.selectAll('[type="range"]')
       .attr("step", step);
 
-    rs.select('[data-max]')
-      .attr("min", config.range.min)
-      .attr("max", config.range.max)
-      .attr("step", step);
+    // Add Label
+    // 
+    rs.select('label')
+      .html(config.label);
 
 
     // Bind Event
@@ -75,8 +94,8 @@ Filter.prototype.createHTML = function() {
 
     rangeS.forEach(function(el) {
       el.oninput = function() {
-        var slide1 = rangeS[0].value,
-            slide2 = rangeS[1].value;
+        var slide1 = +rangeS[0].value,
+            slide2 = +rangeS[1].value;
 
         if (slide1 > slide2) {
           [slide1, slide2] = [slide2, slide1];
