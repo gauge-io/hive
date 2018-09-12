@@ -6,10 +6,17 @@
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.48.0/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.48.0/mapbox-gl.css' rel='stylesheet' />
+
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
     <script src="https://unpkg.com/topojson@3"></script>
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
+
+    <!-- Custom Scripts -->
+    <script src="assets/js/map.js"></script>
+    
     <style>
         body { margin:0; padding:0; }
         #map { position:absolute; top:0; bottom:0; width:100%; }
@@ -17,6 +24,17 @@
 </head>
 <body>
 
+
+<div id="control_panel">
+
+    <div class="filters">
+
+        <!-- Age -->
+        <div id="filter_age" class="filter filter--age"></div>
+        
+    </div>
+    
+</div>
 
 <div id='map'>
 </div>
@@ -43,7 +61,7 @@ var county_geoid = {};
 
 var oProfiles = {};
 
-
+/*
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiaWFzaGlzaHNpbmdoIiwiYSI6ImNqbHQ2d2JpcTA1cnEzcG9idGl2aTN5MTMifQ.yGUYoyQ4IyAfzl3E2D0ecA';
 
@@ -66,44 +84,12 @@ map.on('load', function() {
 
         setupProfileCluster(aProfilesGeoJSON);
         
-        /*
-        
-        // Add layer from the vector tile source with data-driven style
-        map.addLayer({
-            "id": "counties-join",
-            "type": "fill",
-            //"source": "counties",
-            "source": "counties-localdata",
-            //"source-layer": "states",
-            //"source-layer": "us-census-vis",
-            //"source-layer": "gz_2010_us_20m-aqxozo",
-            
-            //"source-layer": "gz_2010_us_050_00_20m-a22ia7",
-
-            "paint": {
-                //"fill-color": aExpression
-                'fill-color': [
-                    'interpolate',
-                    ['linear'],
-                    ['get', 'unemp_rate'],
-                    0, '#F2F12D',
-                    2, '#EED322',
-                    5, '#E6B71E',
-                    6, '#DA9C20',
-                    8, '#CA8323',
-                    15, '#B86B25'
-                ],
-                'fill-opacity': 0.75
-            }
-        }, 'waterway-label');
-
-        */
-        
-        
     });
 
 
 });
+
+*/
 
 function setupProfileCluster(aGeoJSON) {
     
@@ -264,15 +250,16 @@ function loadData(callback) {
         // data/scripts/json/us_counties-final-quantized-topo.json
         // data/TopoJSON/us_counties_final.json
         // data/TopoJSON/mapshaper/us_counties_final-topo-webmercator.json
+        // data/TopoJSON/mapshaper/us_counties_final-topo.json
         // 
         /*
-        d3.json("data/TopoJSON/mapshaper/us_counties_final-topo.json").then(function(oTopo){
+        d3.json("data/TopoJSON/geojson-io/us_counties_final-topo.topojson").then(function(oTopo){
 
             //console.log('oTopo', oTopo);
 
             // 1. Filter topologies where our profiles are situated.
             // 'us_counties_final'
-            var aTopologies = getTopoFromZip(oTopo.objects['us_counties_final'].geometries, aZipUnique);
+            var aTopologies = getTopoFromZip(oTopo.objects['collection'].geometries, aZipUnique);
 
             console.log("Found topologies", aTopologies, 'aMissingZCTA' , aZipUnique);
 
@@ -516,6 +503,11 @@ function loadData(callback) {
 
 
 </script>
+
+<script src="assets/js/filter.js"></script>
+<script src="assets/js/popup.js"></script>
+<script src="assets/js/aux.js"></script>
+
 
 </body>
 </html>
