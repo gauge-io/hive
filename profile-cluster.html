@@ -233,7 +233,7 @@ function loadData(callback) {
     // 
     d3.csv("data/viz/0-Raw-Data-Sample-ORIGINAL.csv", function(d){
 
-        oProfiles
+        d._zip = getSanitizedZip(d.Zip);
 
         return d;
 
@@ -242,7 +242,7 @@ function loadData(callback) {
         console.log("aProfiles", aProfiles);
 
         var aZip = aProfiles.map(function(d){
-            return getSanitizedZip(d.Zip);
+            return d._zip;
         }),
         aZipUnique = _.uniq(aZip);
 
@@ -255,22 +255,24 @@ function loadData(callback) {
         // 1. Filter topologies where our profiles are situated.
         // 2. Get GeoJSON features of these topologies
         // 3. Get centroid of GeoJSON features
-        // 4. Build a GeoJSON data source
-        // 5. Add the data source to map with clustering
-        // 6. Add a layer which uses 5.
+        // 4. Build a Map of properties.zcta to feature
+        // 5. Add a Point feature for every profile
+        // 6. Build a GeoJSON data source
+        
         // 
         
         // data/scripts/json/us_counties-final-quantized-topo.json
         // data/TopoJSON/us_counties_final.json
+        // data/TopoJSON/mapshaper/us_counties_final-topo-webmercator.json
         // 
         /*
-        d3.json("data/scripts/json/us_counties-final-quantized-topo.json").then(function(oTopo){
+        d3.json("data/TopoJSON/mapshaper/us_counties_final-topo.json").then(function(oTopo){
 
             //console.log('oTopo', oTopo);
 
             // 1. Filter topologies where our profiles are situated.
             // 'us_counties_final'
-            var aTopologies = getTopoFromZip(oTopo.objects['counties'].geometries, aZipUnique);
+            var aTopologies = getTopoFromZip(oTopo.objects['us_counties_final'].geometries, aZipUnique);
 
             console.log("Found topologies", aTopologies, 'aMissingZCTA' , aZipUnique);
 
@@ -300,12 +302,14 @@ function loadData(callback) {
             
         });
         */
+    
        
         // Work with GeoJSON
         // 
+        // data/TopoJSON/mapshaper/us_counties_final-topo.json
+        // data/GeoJSON/counties/cb_2017_us_zcta510_500k_1per.json
         
-
-        d3.json("data/GeoJSON/counties/cb_2017_us_zcta510_500k_1per.json").then(function(oGeoJSON){
+        d3.json("data/TopoJSON/mapshaper/us_counties_final-geo.json").then(function(oGeoJSON){
 
             //console.log('oTopo', oTopo);
 
@@ -321,9 +325,26 @@ function loadData(callback) {
 
             console.log('Centroid Geo Features', aFeatureCentroids);
 
-            // 4. Build a GeoJSON data source
+            // 4. Build a Map of properties.zcta to feature
             // 
-            var aGeoJSON = getFeatureCollectionFromFeatures(aFeatureCentroids);
+            var oZCTAFeature = d3.map(aFeatureCentroids, function(f){
+                return f.properties.ZCTA;
+            });
+
+            // 5. Add a Point feature for every profile
+            // 
+            var aProfileCentroids = aProfiles.map(function(p){
+                // TODO
+                // Find the ZCTA via lookup
+                // 
+                return oZCTAFeature.get(p._zip);
+            }).filter(function(p){
+                return !!p;
+            });
+
+            // 6. Build a GeoJSON data source
+            // 
+            var aGeoJSON = getFeatureCollectionFromFeatures(aProfileCentroids);
 
             console.log('GeoJSON', aGeoJSON);
 
@@ -332,6 +353,7 @@ function loadData(callback) {
             callback(aGeoJSON);
             
         });
+
 
         /*
         d3.csv("data/CSV/uszipsv1.2-zip-to-zcta-reduced.csv").then(function(oTopo){
@@ -396,7 +418,8 @@ function loadData(callback) {
     function getFeaturesFromZip(aFeatures, aZip){
         return aFeatures.filter(function(g){
             // TODO - work with processed GeoJSON with metrics
-            var index = aZip.indexOf(g.properties.ZCTA5CE10);
+            // ZCTA5CE10
+            var index = aZip.indexOf(g.properties.ZCTA);
             if (index > -1) {
                 aZip.splice(index, 1);
                 return true;
