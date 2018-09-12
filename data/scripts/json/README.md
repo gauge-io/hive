@@ -24,4 +24,13 @@ ndjson-filter 'delete d.properties.AWATER10, true' < us_counties-den.ndjson > us
 ndjson-map 'd.properties = {ZCTA:d.ZCTA5CE10,GEOID:d.GEOID10,une:d.unempr,den:d.dens}, d' < us_counties-final.ndjson > us_counties-1.ndjson
 
 # Convert ndjson to GeoJSON
-ndjson-reduce < us_counties-final.ndjson | ndjson-map '{type: "FeatureCollection", features: d}' > us_counties_final.json
+ndjson-reduce < us_counties-final.ndjson | ndjson-map '{type: "FeatureCollection", features: d}' > us_counties_final-geo.json
+
+# Covert to TopoJSON
+geo2topo -n counties=us_counties-final.ndjson > us_counties-final-topo.json
+
+# Simplify TopoJSON
+toposimplify -p 1 -f < us_counties-final-topo.json > us_counties-final-simplified-topo.json 
+
+# Quatify TopoJSON
+topoquantize 1e5 < us_counties-final-simplified-topo.json > us_counties-final-quantized-topo.json
