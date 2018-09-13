@@ -296,7 +296,8 @@
                 metric: 'Purchased Protection',
                 values: [{
                   label: "Has purchased protection",
-                  value: true
+                  value: true,
+                  selected: true
                 }] 
             }, {
                 id: '#filter_perception_protection',
@@ -368,7 +369,8 @@
           'Employment Status', 
           'Hardware Score', 
           'Software Score', 
-          'Annual Support Requests'
+          'Annual Support Requests',
+          'Purchased Protection'
         ];
 
         // Create controls

@@ -27,12 +27,189 @@ Filter.prototype.createHTML = function() {
   config = this.config,
   sType = config.type;
 
+  
+  // Checkbox control
+  // 
+  function _checkbox() {
+
+    var html = '\
+      <label></label>\
+      <div>\
+      <input type="checkbox"/>\
+      <label data-label></label>\
+      </div>\
+    ';
+
+    var dd = d3.select(document.createElement('div'));
+
+    dd.classed('filter filter--'+config.type, true)
+      .html(html);
+
+    dd.select('div')
+      .classed('checkbox', true);
+
+    // Add checked
+    // 
+    
+    dd.select('input')
+      .attr("checked", !!config.selected ? "checked" : "")
+      .attr("id", (config.id + "_lbl").replace('#',''));
+
+    dd.select('[data-label]')
+      .attr("for", (config.id + "_lbl").replace('#','') )
+      .html(config.values[0].label);
+    
+    // Add Label
+    // 
+    dd.select('label')
+      .html(config.label);
+
+    // Insert DOM
+    // 
+    d3.select(config.id).node()
+      .appendChild(dd.node());
+
+    dd.select('input')
+    .on('change', function(d){
+      // trigger onchange
+      // 
+      _this.onchange(this.checked);
+    });
+    
+  }
+
   // Dropdown control
   // 
   function _dropdown() {
 
+    var html = '\
+      <label></label>\
+      <div>\
+      <select></select>\
+      </div>\
+    ';
 
+    var dd = d3.select(document.createElement('div'));
+
+    dd.classed('filter filter--'+config.type, true)
+      .html(html);
+
+    dd.select('div')
+      .classed('dropdown', true);
+
+    // Add options to select
+    // 
     
+    dd.select('select')
+      .selectAll('option')
+      .data(config.values)
+    .enter()
+      .append('option')
+      .attr('value', function(d){
+        return d.value;
+      })
+      .html(function(d){
+        return d.label;
+      })
+      .filter(function(d){
+        return d.selected;
+      })
+      .attr('selected', function(d){
+        return 'selected';
+      });
+
+    // Add Label
+    // 
+    dd.select('label')
+      .html(config.label);
+
+    // Insert DOM
+    // 
+    d3.select(config.id).node()
+      .appendChild(dd.node());
+
+    // Trigger Chosen
+    // 
+    var chosen = jQuery(dd.select('select').node()).chosen();
+
+    chosen.change(function(e){
+
+      // trigger onchange
+      // 
+      _this.onchange(this.value);
+
+    });
+
+  }
+
+  // Multi Select
+  // 
+  function _multidropdown() {
+    
+
+    var html = '\
+      <label></label>\
+      <div>\
+      <select multiple></select>\
+      </div>\
+    ';
+
+    var dd = d3.select(document.createElement('div'));
+
+    dd.classed('filter filter--'+config.type, true)
+      .html(html);
+
+    dd.select('div')
+      .classed('multi-dropdown', true);
+
+    // Add options to select
+    // 
+    
+    dd.select('select')
+      .selectAll('option')
+      .data(config.values)
+    .enter()
+      .append('option')
+      .attr('value', function(d){
+        return d.value;
+      })
+      .html(function(d){
+        return d.label;
+      })
+      .filter(function(d){
+        return d.selected;
+      })
+      .attr('selected', function(d){
+        return 'selected';
+      });
+
+    // Add Label
+    // 
+    dd.select('label')
+      .html(config.label);
+
+    // Insert DOM
+    // 
+    d3.select(config.id).node()
+      .appendChild(dd.node());
+
+    // Trigger Chosen
+    // 
+    var chosen = jQuery(dd.select('select').node()).chosen();
+
+    chosen.change(function(e){
+
+      // trigger onchange
+      // 
+      var el = d3.selectAll(this.selectedOptions),
+      aValues = [];
+      el.each(function(){
+        aValues.push(this.value);
+      })
+
+      _this.onchange(aValues);
+
+    });
   }
 
   // Range Slider
@@ -141,6 +318,22 @@ Filter.prototype.createHTML = function() {
       _node = _rangeslider();
 
       break;
+
+    case "dropdown":
+
+      _node = _dropdown();
+
+      break;
+
+    case "multi-dropdown":
+
+      _node = _multidropdown();
+
+      break;
+
+    case "checkbox":
+
+      _node = _checkbox();
 
   }
 
