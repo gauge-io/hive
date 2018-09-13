@@ -17,6 +17,8 @@ function DataModel(sUrl) {
   // 
   aQueryDataset = [],
 
+  bIsLoaded = false,
+
   postLoadHook = function(){};
 
 
@@ -237,9 +239,12 @@ function DataModel(sUrl) {
   }
 
   function postLoad(callback) {
-     postLoadHook = callback || function(){};
 
-     return DataModel;
+    bIsLoaded = true;
+
+    postLoadHook = callback || function(){};
+
+    return DataModel;
   }
 
   return {
@@ -247,6 +252,10 @@ function DataModel(sUrl) {
     load: load,
 
     then: postLoad,
+
+    isLoaded: function(){
+      return !!bIsLoaded;
+    },
 
     getQuerySet: function(){
       return aQueryDataset;

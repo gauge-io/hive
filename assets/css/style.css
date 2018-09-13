@@ -28,13 +28,19 @@
   padding: 0.5em 0; }
   .filter--range-slider {
     width: auto; }
+  .filter .chosen-container {
+    width: 100% !important; }
+  .filter .range-slider,
+  .filter .multi-dropdown,
+  .filter .dropdown,
+  .filter .checkbox {
+    margin-top: 0.5em; }
 
 .range-slider {
   margin: auto;
   text-align: center;
   position: relative;
   height: 3.5em;
-  padding: 1em;
   box-sizing: border-box; }
   .range-slider input {
     box-shadow: 0;

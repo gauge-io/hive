@@ -69,11 +69,15 @@ Filter.prototype.createHTML = function() {
     d3.select(config.id).node()
       .appendChild(dd.node());
 
+    // Init value
+    // 
+    _this.config.value = !!config.selected;
+
     dd.select('input')
     .on('change', function(d){
       // trigger onchange
       // 
-      _this.onchange(this.checked);
+      _this.onchange(_this.config.value = this.checked);
     });
     
   }
@@ -115,6 +119,7 @@ Filter.prototype.createHTML = function() {
         return d.selected;
       })
       .attr('selected', function(d){
+        _this.config.value = d.value;
         return 'selected';
       });
 
@@ -134,9 +139,11 @@ Filter.prototype.createHTML = function() {
 
     chosen.change(function(e){
 
+      // Update value
+
       // trigger onchange
       // 
-      _this.onchange(this.value);
+      _this.onchange(_this.config.value = this.value);
 
     });
 
@@ -180,6 +187,7 @@ Filter.prototype.createHTML = function() {
         return d.selected;
       })
       .attr('selected', function(d){
+        _this.config.value = [d.value];
         return 'selected';
       });
 
@@ -205,7 +213,11 @@ Filter.prototype.createHTML = function() {
       aValues = [];
       el.each(function(){
         aValues.push(this.value);
-      })
+      });
+
+      // update values
+      // 
+      _this.config.value = aValues;
 
       _this.onchange(aValues);
 
@@ -219,8 +231,8 @@ Filter.prototype.createHTML = function() {
     var html = '\
       <label></label>\
       <div>\
-        <input data-min type="text" value="0"/>\
-        <input data-max type="text" value="0"/>\
+        <input data-min readonly type="text" value="0"/>\
+        <input data-max readonly type="text" value="0"/>\
         <input data-min value="" min="" max="" step="" type="range"/>\
         <input data-max value="" min="" max="" step="" type="range"/>\
         <svg width="100%" height="24">\

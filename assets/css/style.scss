@@ -47,6 +47,18 @@
     width: auto;
   }
 
+  // Chosen
+  .chosen-container {
+    width: 100% !important;
+  }
+
+  .range-slider,
+  .multi-dropdown,
+  .dropdown,
+  .checkbox {
+    margin-top: 0.5em;
+  }
+
 }
 
 
@@ -58,7 +70,7 @@
   text-align: center;
   position: relative;
   height: 3.5em;
-  padding: 1em;
+  //padding: 1em;
   box-sizing: border-box;
 
   input {
