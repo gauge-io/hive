@@ -8,7 +8,8 @@
 
 (function Aux() {
 
-    var dispatch = d3.dispatch('filterUpdate');
+    var dispatch = d3.dispatch('filterUpdate'),
+    sUrlProfile = 'data/viz/profile-data.csv';
 
 
     // UI Layer
@@ -365,6 +366,7 @@
 
                 dispatch.apply('filterUpdate', null, [{
                     metric: oF.metric,
+                    type: oF.type,
                     value: values
                 }]);
 
@@ -380,13 +382,22 @@
 
     // Initialise Mapping
     // 
-    // Instantiate Map
-    // 
-    // 
     function initMap() {
 
     }
 
+    // Initialise Data loading
+    // 
+    function initData(){
+
+      DataModel(sUrlProfile)
+        .then(function(aQueryDataset){
+
+          console.log('Aux - data loaded', aQueryDataset);
+
+        });
+
+    }
 
     // Bind Events
     // 
@@ -401,6 +412,8 @@
     }
 
     initMap();
+
+    initData();
 
     initUI();
 
