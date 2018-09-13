@@ -38,15 +38,17 @@ function getSanitizedZip(sZip) {
 /**
  * Apply a set of filters on a dataset.
  * Filters are AND 
- * @param  {Array} aData    Profile Dataset
  * @param  {Array} aFilters Array of filter Objects
+ * @param  {Array} aData    Profile Dataset
  * @return {Array}          Filtered dataset. Does NOT modifies the input.
  */
-function applyFiltersOnData(aData, aFilters) {
+function applyFiltersOnData(aFilters, aData) {
 
-  var aFilteredData = _.cloneDeep(aData);
+  var aFilteredData = _.cloneDeep(aData),
+  aBooleanFilters = [];
 
   // Loop for each filter type
+  // and build boolean functions
   // 
 
   aFilters.forEach(function(oF){
@@ -66,8 +68,26 @@ function applyFiltersOnData(aData, aFilters) {
           /**
            * value is an object with two properties min & max
            */
-          
+          aBooleanFilters.push(function(d){
+            
+            var b;
 
+            try {
+
+              b = oF.isRange ? (d[oF.metric].min >= oF.value.min && d[oF.metric].max <= oF.value.max) : (d[oF.metric] >= oF.value.min && d[oF.metric] <= oF.value.max);
+
+            }catch(e){
+              b = true;
+              console.log('ERROR', 'boolean', e.message);
+            }
+
+            return !!b;
+
+          });
+
+
+        }catch(e){
+          console.log('ERROR', 'boolean filters', e.message);
         }
 
       }else if (sType === 'dropdown') {
@@ -84,6 +104,23 @@ function applyFiltersOnData(aData, aFilters) {
     }
 
   });
+
+  // Apply functions on the dataset
+  // 
+
+  aFilteredData = aFilteredData.filter(function(d){
+
+    var bPass = true,
+    i = aBooleanFilters.length-1;
+
+    while(i > -1 && bPass){
+      bPass = bPass && aBooleanFilters[i--](d);
+    }
+
+    return bPass;
+
+  });
+
 
   return aFilteredData;
   

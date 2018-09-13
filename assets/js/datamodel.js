@@ -42,43 +42,31 @@ function DataModel(sUrl) {
     d._zip = getSanitizedZip(d.Zip);
 
     // Age
-    // 
+    // Value type isRange
     
     try{
       
       var age = (d.Age || '').split('-');
 
+      d._age = {
+        min: null,
+        max: null
+      };
+
       if (age.length == 2) {
-        d._age_min = parseInt(age[0]) || null;
-        d._age_max = parseInt(age[1]) || null;
+        d._age.min = parseInt(age[0]) || null;
+        d._age.max = parseInt(age[1]) || null;
       }else{
-        d._age_min = d._age_max = null;
+        d._age.min = d._age.max = null;
       }
 
     }catch(e){
       console.log('[ERROR]', 'Age', e.message);
     }
 
-    // Age
-    // 
-    
-    try{
-      
-      var age = (d.Age || '').split('-');
-
-      if (age.length == 2) {
-        d._age_min = parseInt(age[0]) || null;
-        d._age_max = parseInt(age[1]) || null;
-      }else{
-        d._age_min = d._age_max = null;
-      }
-
-    }catch(e){
-      console.log('[ERROR]', 'Age', e.message);
-    }
 
     // HHI
-    // 
+    // Value type isRange
     
     try{
       
@@ -87,24 +75,29 @@ function DataModel(sUrl) {
       _hhi = (d.HHI || '').replace(pattern, ''),
       unit = 1000;
 
+      d._hhi = {
+        min: null,
+        max: null
+      };
+
       if (_hhi.indexOf('-') > -1) { // $100k - $150k
         _hhi = _hhi.split('-');
-        d._hhi_min = parseInt(_hhi[0])*unit || null;
-        d._hhi_max = parseInt(_hhi[1])*unit || null;
+        d._hhi.min = parseInt(_hhi[0])*unit || null;
+        d._hhi.max = parseInt(_hhi[1])*unit || null;
       
       }else if(hhi.indexOf('Under') > -1){ // Under $30k
         
-        d._hhi_min = 0;
-        d._hhi_max = parseInt(_hhi)*unit || null;
+        d._hhi.min = 0;
+        d._hhi.max = parseInt(_hhi)*unit || null;
 
       }else if (!!hhi){ // $100k, $120k+
 
-        d._hhi_min = parseInt(_hhi)*unit || null;
-        d._hhi_max = Infinity;
+        d._hhi.min = parseInt(_hhi)*unit || null;
+        d._hhi.max = Infinity;
 
       }else{
-        d._hhi_min = null;
-        d._hhi_max = null;
+        d._hhi.min = null;
+        d._hhi.max = null;
       }
 
     }catch(e){
@@ -138,17 +131,29 @@ function DataModel(sUrl) {
 
   function postLoad(callback) {
      postLoadHook = callback || function(){};
+
+     return DataModel;
   }
-
-
-  // Trigger load
-  // 
-  load();
-
 
   return {
 
-    then: postLoad
+    load: load,
+
+    then: postLoad,
+
+    getQuerySet: function(){
+      return aQueryDataset;
+    },
+
+    setQuerySet: function(aData){
+      aQueryDataset = aData;
+
+      return DataModel;
+    },
+
+    getMainSet: function(){
+      return _.cloneDeep(aMasterDataset);
+    }
 
   }
   

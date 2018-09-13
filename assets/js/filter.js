@@ -63,6 +63,14 @@ Filter.prototype.createHTML = function() {
     // 
     var step = config.range.step || (config.range.max/config.range.min);
 
+    // init default values
+    config.value = {
+      min: config.range.min,
+      max: config.range.max
+    };
+
+    config.isRange = true;
+
     rs.select('[type="range"][data-min]')
       .attr("min", config.range.min)
       .attr("max", config.range.max);
@@ -72,10 +80,10 @@ Filter.prototype.createHTML = function() {
       .attr("max", config.range.max);
 
     rs.selectAll('[data-min]')
-      .attr("value", config.range.minValue || config.range.min);
+      .attr("value", config.range.min);
 
     rs.selectAll('[data-max]')
-      .attr("value", config.range.maxValue || config.range.max);
+      .attr("value", config.range.max);
 
     rs.selectAll('[type="range"]')
       .attr("step", step);
@@ -103,6 +111,13 @@ Filter.prototype.createHTML = function() {
 
         numberS[0].value = slide1;
         numberS[1].value = slide2;
+
+        // Update current config
+        // 
+        _this.config.value = {
+          min: slide1,
+          max: slide2
+        }
 
         // trigger onchange
         // 
@@ -133,6 +148,12 @@ Filter.prototype.createHTML = function() {
 
   return _node;
   
+};
+
+// Return Config with active values
+// 
+Filter.prototype.getState = function() {
+  return _.cloneDeep(this.config);
 };
 
 Filter.prototype.onchange = function(oValue) {

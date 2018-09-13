@@ -8,8 +8,10 @@
 
 (function Aux() {
 
-    var dispatch = d3.dispatch('filterUpdate'),
-    sUrlProfile = 'data/viz/profile-data.csv';
+    var dispatch = d3.dispatch('filterUpdate', 'applyFiltersOnData'),
+    sUrlProfile = 'data/viz/profile-data.csv',
+
+    DataManager;
 
 
     // UI Layer
@@ -70,7 +72,7 @@
                 id: '#filter_age',
                 label: 'Age',
                 type: 'range-slider',
-                metric: 'Age',
+                metric: '_age',
                 range: {
                     //TODO - derive from data
                     min: 0,
@@ -348,7 +350,11 @@
                 ]
             }
 
-        ];
+        ],
+        
+        // Array of Filter instances
+        // 
+        aActiveFilters = [];
 
         // Create controls
         // 
@@ -356,6 +362,10 @@
         aFilters.forEach(function(oF) {
 
             var oFilter = new Filter(oF);
+
+            // Preserve instance
+            // 
+            aActiveFilters.push(oFilter);
 
             // add to DOM
             // 
@@ -374,9 +384,43 @@
 
         });
 
+        // Apply active filters on the dataset
+        // 
+        function applyFilters() {
+
+          // Build filter objects
+          // 
+          
+          var _aFilters = aActiveFilters.map(function(oF){
+            
+            return oF.getState();
+
+          });
+
+          // TODO
+          // Do this in a Worker
+          // 
+          DataManager.setQuerySet( applyFiltersOnData(_aFilters, DataManager.getMainSet()) );
+
+          console.log('Filtered Data', DataManager.getQuerySet());
+          
+        }
+
         // Do Event Binding
         // 
+        
+        // Listen to requests for Filtering dataset
+        dispatch.on('applyFiltersOnData.aux', function(){
 
+          console.log('Filtering Dataset');
+
+          setTimeout(function(){
+            
+            applyFilters();
+
+          }, 1);
+
+        });
 
     }
 
@@ -390,12 +434,17 @@
     // 
     function initData(){
 
-      DataModel(sUrlProfile)
-        .then(function(aQueryDataset){
+      DataManager = DataModel(sUrlProfile);
+      
+      DataManager.then(function(aQueryDataset){
 
-          console.log('Aux - data loaded', aQueryDataset);
+        console.log('Aux - data loaded', aQueryDataset);
 
-        });
+      });
+
+      // Load data
+      // 
+      DataManager.load();
 
     }
 
@@ -403,11 +452,20 @@
     // 
     function bindEvents() {
 
-        dispatch.on('filterUpdate', function(oPayload) {
+      var iFilterUpdateTimer;
 
-            console.log('dispatch filterUpdate', oPayload);
+      dispatch.on('filterUpdate', function(oPayload) {
 
-        });
+          console.log('dispatch filterUpdate', oPayload);
+
+          clearTimeout(iFilterUpdateTimer);
+          iFilterUpdateTimer = setTimeout(function(){
+            
+            dispatch.apply('applyFiltersOnData');
+
+          }, 100);
+
+      });
 
     }
 
