@@ -31,7 +31,7 @@
                 id: '#filter_hardware',
                 label: 'Hardware',
                 type: 'range-slider',
-                metric: 'Hardware',
+                metric: 'Hardware Score',
                 range: {
                     min: 0,
                     max: 99,
@@ -42,7 +42,7 @@
                 id: '#filter_software',
                 label: 'Software',
                 type: 'range-slider',
-                metric: 'Software',
+                metric: 'Software Score',
                 range: {
                     min: 0,
                     max: 99,
@@ -73,6 +73,7 @@
                 label: 'Age',
                 type: 'range-slider',
                 metric: '_age',
+                isRangeValue: true,
                 range: {
                     //TODO - derive from data
                     min: 0,
@@ -84,40 +85,41 @@
                 label: 'Employment Status',
                 type: 'multi-dropdown',
                 metric: 'Employment Status',
+
                 values: [{
                         label: "All",
                         value: "All",
                         selected: true
                     }, {
                         label: "Employed full-time",
-                        value: "Employed full-time"
+                        value: "Working F/T"
                     },
                     {
                         label: "Employed part-time",
-                        value: "Employed part-time"
+                        value: "Working P/T"
                     }, {
                         label: "Self-employed",
-                        value: "Self-employed"
+                        value: "Self-Employed"
                     },
                     {
                         label: "Temporarily unemployed",
-                        value: "Temporarily unemployed"
+                        value: "Unemployed/Looking for work"
                     }, {
                         label: "Full-time student",
-                        value: "Full-time student"
+                        value: "F/T Student"
                     }, {
                         label: "Retired",
                         value: "Retired"
                     }, {
                         label: "A homemaker",
-                        value: "A homemaker"
+                        value: "Homemaker"
                     }
                 ]
             }, {
                 id: '#filter_ownrent',
                 label: 'Own or Rent',
                 type: 'dropdown',
-                metric: 'Own Rent',
+                metric: 'Own-Rent',
                 values: [{
                         label: "All",
                         value: "All",
@@ -280,7 +282,7 @@
                 id: '#filter_annual_support',
                 label: 'Annual Support Requests',
                 type: 'range-slider',
-                metric: 'Annual Support Requests',
+                metric: '_support_req',
                 range: {
                     min: 0,
                     max: 10,
@@ -354,12 +356,27 @@
         
         // Array of Filter instances
         // 
-        aActiveFilters = [];
+        aActiveFilters = [],
+
+        // Enable filters that are currenlty applicable here
+        // 
+        aEnabledFilters = [
+          '_age', 
+          '_hhi', 
+          'Gender', 
+          'Own-Rent', 
+          'Employment Status', 
+          'Hardware Score', 
+          'Software Score', 
+          'Annual Support Requests'
+        ];
 
         // Create controls
         // 
 
-        aFilters.forEach(function(oF) {
+        aFilters.filter(function(oF){
+          return aEnabledFilters.indexOf(oF.metric) > -1;
+        }).forEach(function(oF) {
 
             var oFilter = new Filter(oF);
 
@@ -392,9 +409,7 @@
           // 
           
           var _aFilters = aActiveFilters.map(function(oF){
-            
             return oF.getState();
-
           });
 
           // TODO

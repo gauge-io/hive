@@ -42,7 +42,7 @@ function DataModel(sUrl) {
     d._zip = getSanitizedZip(d.Zip);
 
     // Age
-    // Value type isRange
+    // Value type isRangeValue
     
     try{
       
@@ -61,12 +61,119 @@ function DataModel(sUrl) {
       }
 
     }catch(e){
-      console.log('[ERROR]', 'Age', e.message);
+      console.log('[ERROR]', e.message);
     }
 
 
+    // Gender
+    // 
+    try{
+      
+      var metric = 'Gender';
+
+      d[metric] = d[metric] || null;
+
+    }catch(e){
+      console.log('[ERROR]', e.message);
+    }
+
+    // Own-Rent
+    //
+    try{
+      
+      var metric = 'Own-Rent';
+
+      d[metric] = d[metric] || null;
+
+    }catch(e){
+      console.log('[ERROR]', e.message);
+    }
+
+    // Employment Status
+    // 
+    try{
+      
+      var metric = 'Employment Status';
+
+      d[metric] = d[metric] || null;
+
+    }catch(e){
+      console.log('[ERROR]', e.message);
+    }
+
+    // Hardware Score
+    // 
+    try{
+      
+      var metric = 'Hardware Score';
+
+      d[metric] = parseInt(d[metric]);
+
+    }catch(e){
+      console.log('[ERROR]', e.message);
+    }
+
+    // Software Score
+    // 
+    try{
+      
+      var metric = 'Software Score';
+
+      d[metric] = parseInt(d[metric]);
+
+    }catch(e){
+      console.log('[ERROR]', e.message);
+    }
+
+    // Children in Home
+    // 
+    try{
+      
+      var metric = 'Children in Home';
+
+      d[metric] = parseInt(d[metric]) || null;
+
+    }catch(e){
+      console.log('[ERROR]', e.message);
+    }
+
+    // Annual Support Requests
+    // 
+    try{
+      
+      var metric = 'Annual Support Requests',
+      pattern = /[a-z,A-Z,\ ,+]/gi,
+      support_req = (d[metric] || ''),
+      _support_req = (d[metric] || '').replace(pattern, '');
+
+      d._support_req = {
+        min: null,
+        max: null
+      };
+
+      if (_support_req.indexOf('-') > -1) { // 1 - 5 times
+        _support_req = _support_req.split('-');
+        d._support_req.min = parseInt(_support_req[0]) || null;
+        d._support_req.max = parseInt(_support_req[1]) || null;
+      
+      }else if(support_req.indexOf('Zero') > -1){ // Zero...
+        
+        d._support_req.min = 0;
+        d._support_req.max = 0;
+
+      }else if (support_req.indexOf('More') > -1){ // More...
+
+        d._support_req.min = parseInt(_support_req) || null;
+        d._support_req.max = Infinity;
+
+      }
+
+    }catch(e){
+      console.log('[ERROR]', e.message);
+    }
+
     // HHI
-    // Value type isRange
+    // Value type isRangeValue
     
     try{
       
@@ -101,7 +208,7 @@ function DataModel(sUrl) {
       }
 
     }catch(e){
-      console.log('[ERROR]', 'HHI', e.message);
+      console.log('[ERROR]', e.message);
     }
 
     

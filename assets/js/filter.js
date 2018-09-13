@@ -69,8 +69,6 @@ Filter.prototype.createHTML = function() {
       max: config.range.max
     };
 
-    config.isRange = true;
-
     rs.select('[type="range"][data-min]')
       .attr("min", config.range.min)
       .attr("max", config.range.max);

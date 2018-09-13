@@ -74,7 +74,7 @@ function applyFiltersOnData(aFilters, aData) {
 
             try {
 
-              b = oF.isRange ? (d[oF.metric].min >= oF.value.min && d[oF.metric].max <= oF.value.max) : (d[oF.metric] >= oF.value.min && d[oF.metric] <= oF.value.max);
+              b = oF.isRangeValue ? (d[oF.metric].min >= oF.value.min && d[oF.metric].max <= oF.value.max) : (d[oF.metric] >= oF.value.min && d[oF.metric] <= oF.value.max);
 
             }catch(e){
               b = true;
