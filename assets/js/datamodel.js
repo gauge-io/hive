@@ -17,15 +17,34 @@ function DataModel(sUrl) {
   // 
   aQueryDataset = [],
 
+  // Map of Zip to ZCTA / GEOID
+  oZipMap = {},
+
   bIsLoaded = false,
 
-  postLoadHook = function(){};
+  postLoadHook = function(){},
+
+  // URLS
+  // 
+  sCodeMapUrl = 'data/viz/zip-zcta-geoid5.csv';
 
 
   // Load the dataset
   function load() {
 
-    d3.csv(sUrl, parseRow).then(processData);
+    load_zip_zcta_geoid_map(function(){
+      d3.csv(sUrl, parseRow).then(processData);
+    });
+    
+  }
+
+  // Load Zip to ZCTA/GEOID Mapping
+  // 
+  function load_zip_zcta_geoid_map(callback) {
+
+    d3.csv(sCodeMapUrl, function(d){
+      oZipMap[getSanitizedZip(d.ZIP)] = d;
+    }).then(callback);
     
   }
 
@@ -42,6 +61,14 @@ function DataModel(sUrl) {
     // Zip
     // 
     d._zip = getSanitizedZip(d.Zip);
+
+    // GEOID
+    // 
+    d._GEOID = oZipMap[d._zip].GEOID || d._zip;
+
+    // ZCTA
+    // 
+    d._ZCTA = oZipMap[d._zip].ZCTA5 || d._zip;
 
     // Age
     // Value type isRangeValue
@@ -269,6 +296,14 @@ function DataModel(sUrl) {
 
     getMainSet: function(){
       return _.cloneDeep(aMasterDataset);
+    },
+
+    getZIP2ZCTA: function(sZip){
+      return oZipMap[sZip] ? oZipMap[sZip].ZCTA5 : sZip;
+    },
+
+    getZIP2GEOID: function(sZip){
+      return oZipMap[sZip] ? oZipMap[sZip].GEOID : sZip;
     }
 
   }

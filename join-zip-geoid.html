@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
+	<script src="assets/js/util.js"></script>
+</head>
+<body>
+
+
+	<script type="text/javascript">
+
+		var oZipMap = {},
+		oProfileZip = {},
+		oGeo2Zip = {},
+		aProfileGeo = [],
+		aFeatureGEOIDs = [];
+
+		d3.csv('data/viz/zip-zcta-geoid5.csv', function(d){
+			
+			oZipMap[getSanitizedZip(d.ZIP)] = d;
+
+			return d;
+		}).then(function(){
+
+			d3.json('data/GeoJSON/counties/counties-metrics-geo.json').then(function(oGeo){
+
+				// For each profile zip, check if we have the zip;
+				// 
+
+				aFeatureGEOIDs = oGeo.features.map(function(p){
+
+					//console.log('Feature GeoID Map Found?', p.properties.GEOID, aProfileGeo.indexOf(p.properties.GEOID) > -1);
+					return p.properties.GEOID;
+
+				})
+
+				d3.csv('data/viz/profile-data.csv', function(d){
+
+					oProfileZip[getSanitizedZip(d.Zip)] = d;
+
+					return d;
+				}).then(function(aProfiles){
+
+					// For each profile zip, check if we have the zip;
+					// 
+
+					aProfiles.forEach(function(p){
+
+						var zip = getSanitizedZip(p.Zip),
+						sZIP2GEO = oZipMap[zip].GEOID;
+
+						//oGeo2Zip[oZipMap[zip].GEOID] = zip;
+						//
+						//Store found Zip to "GEOID"
+						//aProfileGeo.push(oZipMap[zip].GEOID);
+
+						console.log('Zip Found?', zip, sZIP2GEO, aFeatureGEOIDs.indexOf(sZIP2GEO) > -1);
+
+					})
+
+
+				});
+
+			});
+		});
+		
+	</script>
+
+</body>
+</html>

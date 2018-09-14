@@ -50,6 +50,41 @@ function getUniqueZipFromProfile(aProfiles) {
 }
 
 /**
+ * Get Unique GEOID Codes from Profiles data
+ * @param  {[type]} aProfiles [description]
+ * @return {[type]}           [description]
+ */
+function getUniqueGEOIDFromProfile(aProfiles) {
+  
+  var aGEOID = aProfiles.map(function(d){
+      return d._GEOID;
+  });
+  
+  return _.uniq(aGEOID);
+}
+
+
+
+/**
+ * Get GeoID from ZIP using iterator
+ * We are using the DataManager getZIP2GEOID() as iterator
+ * @param  {array} aZipUnique 
+ * @param  {function} fnIterator 
+ * @return {array}            
+ */
+function getGeoIDFromZip(aZipUnique, fnIterator) {
+
+  return aZipUnique.map(fnIterator);
+  
+}
+
+function getZCTAFromZip(aZipUnique, fnIterator) {
+
+  return aZipUnique.map(fnIterator);
+  
+}
+
+/**
  * Get Topologies for Zip codes
  * @param  {TopoJSON} aTopologies 
  * @param  {array}    aZip        Unique Zip code
@@ -69,11 +104,31 @@ function getTopoFromZip(aGeometry, aZip) {
 
 function getFeaturesFromZip(aFeatures, aZip) {
   return aFeatures.filter(function(g) {
-    // TODO - work with processed GeoJSON with metrics
-    // ZCTA5CE10
     var index = aZip.indexOf(g.properties.ZCTA);
     if (index > -1) {
       aZip.splice(index, 1);
+      return true;
+    }
+    return false;
+  });
+}
+
+function getFeaturesFromZCTA(aFeatures, aZip) {
+  return aFeatures.filter(function(g) {
+    var index = aZip.indexOf(g.properties.ZCTA);
+    if (index > -1) {
+      aZip.splice(index, 1);
+      return true;
+    }
+    return false;
+  });
+}
+
+function getFeaturesFromGeoID(aFeatures, aGeoID) {
+  return aFeatures.filter(function(g) {
+    var index = aGeoID.indexOf(g.properties.GEOID);
+    if (index > -1) {
+      aGeoID.splice(index, 1);
       return true;
     }
     return false;

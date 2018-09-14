@@ -507,13 +507,10 @@
 
         // Work with GeoJSON
         // 
-        // data/TopoJSON/mapshaper/us_counties_final-topo.json
-        // data/GeoJSON/counties/cb_2017_us_zcta510_500k_1per.json
+        // data/TopoJSON/mapshaper/us_counties_final-geo.json
         
-        d3.json("data/TopoJSON/mapshaper/us_counties_final-geo.json").then(function(oGeoJSON){
-
-            //console.log('oTopo', oTopo);
-            //
+        d3.json("data/GeoJSON/counties/counties-metrics-geo-3220.json").then(function(oGeoJSON){
+            
             oCountiesGeoJSON = oGeoJSON;
             
         });
@@ -534,13 +531,18 @@
       function buildProfileFeatureData() {
 
         var aProfiles = DataManager.getMainSet(),
-        aZipUnique = getUniqueZipFromProfile(aProfiles);
+        aZipUnique = getUniqueZipFromProfile(aProfiles),
+        aGeoID = getUniqueGEOIDFromProfile(aProfiles);
+        //aGeoID = getGeoIDFromZip(aZipUnique, DataManager.getZIP2GEOID),
+        //aZCTA = getZCTAFromZip(aZipUnique, DataManager.getZIP2ZCTA);
 
         // 1. Filter features where our profiles are situated.
         // 
-        var aFeatureGeo = getFeaturesFromZip(oCountiesGeoJSON.features, aZipUnique);
+        var aFeatureGeo = getFeaturesFromGeoID(oCountiesGeoJSON.features, aGeoID);
+        //var aFeatureGeo = getFeaturesFromZip(oCountiesGeoJSON.features, aZipUnique);
+        //var aFeatureGeo = getFeaturesFromZCTA(oCountiesGeoJSON.features, aZCTA);
 
-        console.log("Found features", aFeatureGeo, 'aMissingZCTA' , aZipUnique);
+        console.log("Found features", aFeatureGeo, 'aMissingZCTA' , aGeoID/*, aZipUnique*/);
 
         // 3. Get centroid of GeoJSON features
         // 
@@ -550,17 +552,18 @@
 
         // 4. Build a Map of properties.zcta to feature
         // 
-        var oZCTAFeature = d3.map(aFeatureCentroids, function(f){
-            return f.properties.ZCTA;
+        var oGEOIDFeature = d3.map(aFeatureCentroids, function(f){
+            return f.properties.GEOID;
+            //return f.properties.ZCTA;
         });
 
         // 5. Add a Point feature for every profile
         // 
         var aProfileCentroids = aProfiles.map(function(p){
-            // TODO
-            // Find the ZCTA via lookup
+            // Find the GEOID via lookup
             // 
-            return oZCTAFeature.get(p._zip);
+            return oGEOIDFeature.get(DataManager.getZIP2GEOID(p._zip));
+            //return oGEOIDFeature.get(DataManager.getZIP2ZCTA(p._zip));
         }).filter(function(p){
             return !!p;
         });
