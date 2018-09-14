@@ -483,7 +483,8 @@
       // Join local JSON data with vector tile geometry
       // USA unemployment rate in 2009
       // Source https://data.bls.gov/timeseries/LNS14000000
-      var maxValue = 13;
+      var maxValue = 13,
+      iCountyZoomThreshold = 4;
 
       map.on('load', function() {
 
@@ -578,6 +579,10 @@
         // 
         setupProfileClusterLayer(aGeoJSON);
 
+        // 6. Add the Counties layer
+        // 
+        setupCountyLayer(oCountiesGeoJSON);
+
       }
 
       function setupProfileClusterLayer(aGeoJSON) {
@@ -589,7 +594,7 @@
               data: aGeoJSON,
               cluster: true,
               // Max zoom to cluster points on
-              clusterMaxZoom: 14,
+              clusterMaxZoom: iCountyZoomThreshold,
               // Radius of each cluster when clustering points (defaults to 50)
               clusterRadius: 50
           });
@@ -598,6 +603,7 @@
               id: "clusters",
               type: "circle",
               source: "profiles",
+              //maxzoom: iCountyZoomThreshold,
               filter: ["has", "point_count"],
               paint: {
                   // Use step expressions (https://www.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
@@ -608,20 +614,29 @@
                   "circle-color": [
                       "step",
                       ["get", "point_count"],
-                      "#51bbd6",
+                      "#666",
                       10,
-                      "#f1f075",
+                      "#666",
                       75,
-                      "#f28cb1"
+                      "#666"
                   ],
                   "circle-radius": [
+                    // TODO - Linear scale?
+                    'interpolate',
+                    ['linear'],
+                    ['get', 'point_count'],
+                    5, 10,
+                    100, 40,
+                    1000, 50
+                    /*
                       "step",
                       ["get", "point_count"],
-                      20,
-                      2,
-                      30,
-                      5,
-                      40
+                      10,
+                      10, // count
+                      20, // size
+                      30, // count
+                      30 // size
+                    */
                   ]
               }
           });
@@ -630,11 +645,15 @@
               id: "cluster-count",
               type: "symbol",
               source: "profiles",
+              //maxzoom: iCountyZoomThreshold,
               filter: ["has", "point_count"],
               layout: {
                   "text-field": "{point_count_abbreviated}",
                   "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
                   "text-size": 12
+              },
+              paint: {
+                "text-color": "#fff"
               }
           });
 
@@ -644,7 +663,7 @@
               source: "profiles",
               filter: ["!", ["has", "point_count"]],
               paint: {
-                  "circle-color": "#11b4da",
+                  "circle-color": "#ef6548",
                   "circle-radius": 4,
                   "circle-stroke-width": 1,
                   "circle-stroke-color": "#fff"
@@ -652,6 +671,47 @@
           });
 
 
+      }
+
+      function setupCountyLayer(aGeoJSON) {
+
+        // Add a new source from our Counties GeoJSON data
+        //
+        map.addSource("counties", {
+            type: "geojson",
+            data: aGeoJSON,
+            // Max zoom to cluster points on
+            clusterMaxZoom: 14,
+            // Radius of each cluster when clustering points (defaults to 50)
+            clusterRadius: 50
+        });
+
+        // Add Layer
+        // 
+        map.addLayer({
+          'id': 'county',
+          'source': 'counties',
+          //'source-layer': 'state_county_population_2014_cen',
+          'minzoom': iCountyZoomThreshold,
+          'type': 'fill',
+          //'filter': ['==', 'isCounty', true],
+          'paint': {
+              'fill-color': [
+                  'interpolate',
+                  ['linear'],
+                  ['get', 'unemp'],
+                  2, '#eff3ff',
+                  4, '#c6dbef',
+                  6, '#9ecae1',
+                  8, '#6baed6',
+                  10, '#4292c6',
+                  12, '#2171b5',
+                  14, '#084594'
+              ],
+              'fill-opacity': 0.75
+          }
+        }, 'clusters');
+        
       }
 
 
