@@ -32,5 +32,5 @@ geo2topo -n counties=us_counties-final.ndjson > us_counties-final-topo.json
 # Simplify TopoJSON
 toposimplify -p 1 -f < us_counties-final-topo.json > us_counties-final-simplified-topo.json 
 
-# Quatify TopoJSON
+# Quantify TopoJSON
 topoquantize 1e5 < us_counties-final-simplified-topo.json > us_counties-final-quantized-topo.json
