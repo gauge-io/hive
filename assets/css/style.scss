@@ -8,7 +8,7 @@
   top: 0;
   right: 0;
   bottom: 0;
-  padding: 1em;
+  padding: 1em 0;
   background-color: #fff;
   box-shadow:0 1px 2px rgba(0, 0, 0, 0.20);
   border-radius: 3px;
@@ -32,6 +32,8 @@
   .filter-panel-body {
     height: calc(100% - 3em);
     overflow-y: auto;
+    padding: 0 1em 10em 1em;
+    box-sizing: border-box;
   }
 
 }
@@ -60,6 +62,53 @@
   }
 
 }
+
+// Tabs
+// 
+.tabbox {
+
+  &--horizontal {
+
+
+
+  }
+
+  &_tab {
+
+    $btn-color: #aaa;
+  
+    outline: none;
+    text-align: center;
+    border-radius: 2px;
+    background: #fff;
+    border: 1px solid #aaa;
+    text-shadow: 0;
+    font-size: 1.1em;
+    cursor: pointer;
+    padding: .5em;
+    
+    &:hover {
+      color:white;
+      background: $btn-color;
+    }
+
+    &--active {
+      color:white;
+      background: $btn-color;
+    }
+
+    &:first-child {
+      float: left;
+    }
+
+    &:last-child {
+      float: right;
+    }
+
+  }
+
+}
+
 
 
 // Range Slider

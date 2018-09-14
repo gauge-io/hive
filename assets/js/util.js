@@ -344,7 +344,7 @@ function applyFiltersOnData(aFilters, aData) {
 
           try {
 
-            b = oF.value == (d[oF.metric] || '').toLowerCase();
+            b = oF.value == !!d[oF.metric];
 
           } catch (e) {
             console.log('ERROR', e.message);

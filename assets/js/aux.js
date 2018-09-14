@@ -8,7 +8,7 @@
 
 (function Aux() {
 
-    var dispatch = d3.dispatch('filterUpdate', 'applyFiltersOnData', 'datasetRefreshed', 'mapLoaded', 'dataLoaded'),
+    var dispatch = d3.dispatch('filterUpdate', 'applyFiltersOnData', 'datasetRefreshed', 'mapLoaded', 'dataLoaded', 'updateProfileGeoJSON', 'adhocMetricUpdate', 'adhocUpdateDone'),
     sUrlProfile = 'data/viz/profile-data.csv',
 
     DataManager,
@@ -50,6 +50,17 @@
                 range: {
                     min: 0,
                     max: 99,
+                    step: 1
+                }
+            },
+            {
+                id: '#filter_savviness',
+                label: 'Savviness Index',
+                type: 'range-slider',
+                metric: 'Savviness Index',
+                range: {
+                    min: 0,
+                    max: 300,
                     step: 1
                 }
             },
@@ -138,24 +149,6 @@
                     }
                 ]
             }, {
-                id: '#filter_decision',
-                label: 'Decision Maker',
-                type: 'dropdown',
-                metric: 'Decision Maker',
-                values: [{
-                        label: "All",
-                        value: "All",
-                        selected: true
-                    }, {
-                        label: "Yes",
-                        value: "Yes"
-                    },
-                    {
-                        label: "No",
-                        value: "No"
-                    }
-                ]
-            }, {
                 id: '#filter_hhi',
                 label: 'Annual HHI',
                 type: 'range-slider',
@@ -185,17 +178,19 @@
                 label: 'Density Sq. Mile',
                 type: 'range-slider',
                 metric: 'den',
+                isAdhoc: true,
                 range: {
                     //TODO - derive from data
                     min: 0,
-                    max: 20,
-                    step: 1
+                    max: 200000,
+                    step: 2000
                 }
             }, {
                 id: '#filter_zip_unemp',
                 label: 'Unemployment Rate',
                 type: 'range-slider',
-                metric: 'une',
+                metric: 'unemp',
+                isAdhoc: true,
                 range: {
                     //TODO - derive from data
                     min: 0,
@@ -207,26 +202,6 @@
             // Usage
             // 
             {
-                id: '#filter_adop_device',
-                label: 'Device Adoption Score',
-                type: 'range-slider',
-                metric: 'Device Adoption Score',
-                range: {
-                    min: 0,
-                    max: 99,
-                    step: 1
-                }
-            }, {
-                id: '#filter_adop_software',
-                label: 'Software Adoption Score',
-                type: 'range-slider',
-                metric: 'Software Adoption Score',
-                range: {
-                    min: 0,
-                    max: 99,
-                    step: 1
-                }
-            }, {
                 id: '#filter_device_usage',
                 label: 'Device Usage',
                 type: 'dropdown',
@@ -329,30 +304,33 @@
                         value: "Smart and responsible thing to do"
                     }
                 ]
-            },
-
-            // Consent
-            // 
-            {
-                id: '#filter_video_diaries',
-                label: 'Video Diaries',
+            }, {
+                id: '#filter_techsupport',
+                label: 'Tech Support Person',
                 type: 'multi-dropdown',
-                metric: 'Video Diaries',
+                metric: 'Tech Support Person',
                 values: [{
                         label: "All",
                         value: "All",
                         selected: true
+                    },{
+                        label: "A Child",
+                        value: "A child"
                     }, {
-                        label: "Smartphone, no assistance",
-                        value: "Smartphone, no assistance"
+                        label: "Me",
+                        value: "Me"
                     },
                     {
-                        label: "No Smartphone",
-                        value: "No Smartphone"
+                        label: "A partner or spouse",
+                        value: "A partner or spouse"
                     },
                     {
-                        label: "Smartphone, with assistance",
-                        value: "Smartphone, with assistance"
+                        label: "Someone else that does not live in the household",
+                        value: "Someone else that does not live in the household"
+                    },
+                    {
+                        label: "I typically seek out a professional for tech support",
+                        value: "I typically seek out a professional for tech support"
                     }
                 ]
             }
@@ -372,9 +350,15 @@
           'Own-Rent', 
           'Employment Status', 
           'Hardware Score', 
-          'Software Score', 
-          'Annual Support Requests'//,
-          //'Purchased Protection'
+          'Software Score',
+          'Savviness Index', 
+          'Annual Support Requests',
+          'Purchased Protection',
+          'Perception of Protection',
+          'Tech Support Person',
+          'Children in Home',
+          'unemp',
+          'den'
         ];
 
         // Create controls
@@ -397,11 +381,27 @@
             // Bind a dispatch
             oFilter.onchange = function(values) {
 
-              dispatch.apply('filterUpdate', null, [{
+              // Don't trigger for adhoc filters
+              // They handle their change via dispatches
+              // 
+              if (oF.isAdhoc) {
+
+                dispatch.apply('adhocMetricUpdate', null, [{
                   metric: oF.metric,
+                  isAdhoc: true,
                   type: oF.type,
                   value: values
-              }]);
+                }])
+
+              }else{
+
+                dispatch.apply('filterUpdate', null, [{
+                    metric: oF.metric,
+                    type: oF.type,
+                    value: values
+                }]);
+
+              }
 
             }
 
@@ -467,6 +467,22 @@
 
         });
 
+        dispatch.on('adhocUpdateDone.ui', function(oPayload){
+
+          updateFilterPanel({
+            recordCount: oPayload.count
+          });
+
+        });
+
+        dispatch.on('dataLoaded.ui', function(){
+          
+          updateFilterPanel({
+            recordCount: DataManager.getQuerySet().length
+          });
+
+        });
+
     }
 
     // Initialise Mapping
@@ -528,10 +544,10 @@
       // 4. Build a Map of properties.zcta to feature
       // 5. Add a Point feature for every profile
       // 6. Build a GeoJSON data source
+      
+      function buildProfileFeatureData(bReturnData) {
 
-      function buildProfileFeatureData() {
-
-        var aProfiles = DataManager.getMainSet(),
+        var aProfiles = DataManager.getQuerySet(),
         aZipUnique = getUniqueZipFromProfile(aProfiles),
         aGeoID = getUniqueGEOIDFromProfile(aProfiles);
         //aGeoID = getGeoIDFromZip(aZipUnique, DataManager.getZIP2GEOID),
@@ -577,12 +593,43 @@
 
         // 5. Add the data source to map with clustering
         // 
-        setupProfileClusterLayer(aGeoJSON);
+        //setupProfileClusterLayer(aGeoJSON);
+
+        // 6. Add the Counties layer
+        // 
+        //setupCountyLayer(oCountiesGeoJSON);
+        //
+
+        if (bReturnData) {
+          return aGeoJSON;
+        }
+
+        // Dispatch event
+        // 
+        dispatch.apply('updateProfileGeoJSON', null, [aGeoJSON]);
+
+      }
+
+      /**
+       * Set up the Map
+       *
+       * 1. Add necessary data sources
+       * 2. Add all the needed layers
+       * 
+       * Should be called only once in a Lifetime
+       */
+      function setupMap() {
+
+        // 5. Add the data source to map with clustering
+        // 
+        setupProfileClusterLayer(buildProfileFeatureData(true));
 
         // 6. Add the Counties layer
         // 
         setupCountyLayer(oCountiesGeoJSON);
 
+        //buildProfileFeatureData();
+        
       }
 
       function setupProfileClusterLayer(aGeoJSON) {
@@ -591,13 +638,15 @@
           // 'cluster' option to true. GL-JS will add the point_count property to your source data.
           map.addSource("profiles", {
               type: "geojson",
-              data: aGeoJSON,
+              data: aGeoJSON || [],
               cluster: true,
               // Max zoom to cluster points on
               clusterMaxZoom: iCountyZoomThreshold,
               // Radius of each cluster when clustering points (defaults to 50)
               clusterRadius: 50
           });
+
+
 
           map.addLayer({
               id: "clusters",
@@ -671,12 +720,56 @@
           });
 
 
+          // Event Binding
+          // 
+
+          // When new data update is available, update the datasource
+          // 
+          dispatch.on('updateProfileGeoJSON.cluster-layer', function(aProfilesGeoJSON){
+
+            map.getSource("profiles")
+              .setData(aProfilesGeoJSON);
+
+          });
+
+
       }
 
       function setupCountyLayer(aGeoJSON) {
 
+        var oFilters = {
+          'unemp': [
+                  'interpolate',
+                  ['linear'],
+                  ['get', 'unemp'],
+                  2, '#eff3ff',
+                  4, '#c6dbef',
+                  6, '#9ecae1',
+                  8, '#6baed6',
+                  10, '#4292c6',
+                  12, '#2171b5',
+                  14, '#084594'
+              ],
+
+          'den': [
+                  'interpolate',
+                  ['linear'],
+                  ['get', 'den'],
+                  0, '#F2F12D',
+                  1000, '#EED322',
+                  5000, '#E6B71E',
+                  15000, '#DA9C20',
+                  25000, '#CA8323',
+                  50000, '#B86B25',
+                  100000, '#A25626',
+                  150000, '#8B4225',
+                  250000, '#723122'
+              ]
+        };
+
         // Add a new source from our Counties GeoJSON data
-        //
+        // NOTE - Source needs data at the time of creation
+        // 
         map.addSource("counties", {
             type: "geojson",
             data: aGeoJSON,
@@ -687,9 +780,25 @@
         });
 
         // Add Layer
+        // For Unemployment / Population Density Metric
         // 
         map.addLayer({
-          'id': 'county',
+          'id': 'county-metric',
+          'source': 'counties',
+          //'source-layer': 'state_county_population_2014_cen',
+          'minzoom': iCountyZoomThreshold,
+          'type': 'fill',
+          //'filter': ['==', 'isCounty', true],
+          'paint': {
+              'fill-color': oFilters['unemp'],
+              'fill-opacity': 0.75
+          }
+        }, 'waterway-label');
+
+        /*
+
+        map.addLayer({
+          'id': 'county-highlighted',
           'source': 'counties',
           //'source-layer': 'state_county_population_2014_cen',
           'minzoom': iCountyZoomThreshold,
@@ -710,7 +819,53 @@
               ],
               'fill-opacity': 0.75
           }
-        }, 'clusters');
+        });
+
+        */
+
+
+        // Event Binding
+        // 
+
+        // When new data update is available, update the datasource
+        // 
+        var iLayerFilterUpdateTimer;
+        dispatch.on('adhocMetricUpdate.county-layer', function(oPayload){
+
+          clearTimeout(iLayerFilterUpdateTimer);
+
+          iLayerFilterUpdateTimer = setTimeout(function(){
+
+            // Update Paint fill of layer
+            // 
+            map.setPaintProperty("county-metric", "fill-color", oFilters[oPayload.metric]);
+
+            // Set Filter
+            // 
+            map.setFilter("county-metric", null);
+            map.setFilter("county-metric", ['all', ['>=', oPayload.metric, oPayload.value.min], ['<=', oPayload.metric, oPayload.value.max]]);
+
+            // Update Profiles based on matchinf features
+            // 
+            var aJson = buildProfileFeatureData(true);
+            if (aJson && aJson.features) {
+
+              var _aJson = aJson.features.filter(function(f){
+                return f.properties[oPayload.metric] >= oPayload.value.min && f.properties[oPayload.metric] <= oPayload.value.max;
+              });
+
+              dispatch.apply('updateProfileGeoJSON', null, [getFeatureCollectionFromFeatures(_aJson)]);
+
+              dispatch.apply('adhocUpdateDone', null, [{
+                count: _aJson.length
+              }]);
+
+            }
+
+          }, 200);
+
+
+        });
         
       }
 
@@ -718,8 +873,20 @@
       // Event Binding
       // 
 
+      // Our pre-requiste dataset has loaded
+      // 
       dispatch.on('dataLoaded.map', function(){
-        buildProfileFeatureData();
+        
+        setupMap();
+
+      });
+
+      // When new data update is available
+      // 
+      dispatch.on('datasetRefreshed.cluster-layer', function(aProfiles){
+
+        buildProfileFeatureData(/*aProfiles*/);
+
       });
 
     }

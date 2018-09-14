@@ -5,7 +5,7 @@
   top: 0;
   right: 0;
   bottom: 0;
-  padding: 1em;
+  padding: 1em 0;
   background-color: #fff;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   border-radius: 3px;
@@ -22,7 +22,9 @@
       font-weight: bold; }
   .filter-panel .filter-panel-body {
     height: calc(100% - 3em);
-    overflow-y: auto; }
+    overflow-y: auto;
+    padding: 0 1em 10em 1em;
+    box-sizing: border-box; }
 
 .filter {
   padding: 0.5em 0; }
@@ -35,6 +37,27 @@
   .filter .dropdown,
   .filter .checkbox {
     margin-top: 0.5em; }
+
+.tabbox_tab {
+  outline: none;
+  text-align: center;
+  border-radius: 2px;
+  background: #fff;
+  border: 1px solid #aaa;
+  text-shadow: 0;
+  font-size: 1.1em;
+  cursor: pointer;
+  padding: .5em; }
+  .tabbox_tab:hover {
+    color: white;
+    background: #aaa; }
+  .tabbox_tab--active {
+    color: white;
+    background: #aaa; }
+  .tabbox_tab:first-child {
+    float: left; }
+  .tabbox_tab:last-child {
+    float: right; }
 
 .range-slider {
   margin: auto;

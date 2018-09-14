@@ -154,6 +154,30 @@ function DataModel(sUrl) {
       console.log('[ERROR]', e.message);
     }
 
+    // Savviness Score
+    // 
+    try{
+      
+      var metric = 'Savviness Index';
+
+      d[metric] = parseFloat(d[metric]);
+
+    }catch(e){
+      console.log('[ERROR]', e.message);
+    }
+
+    // Purchased Protection
+    // 
+    try{
+      
+      var metric = 'Purchased Protection';
+
+      d[metric] = !!parseInt(d[metric]);
+
+    }catch(e){
+      console.log('[ERROR]', e.message);
+    }
+
     // Children in Home
     // 
     try{

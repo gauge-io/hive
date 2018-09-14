@@ -207,6 +207,16 @@ Filter.prototype.createHTML = function() {
 
     chosen.change(function(e){
 
+      // if selection is not 'All' and 'All' is also selected, de-select it
+      // 
+      var aVal = jQuery(this).val();
+      if (aVal.length > 1 && aVal.indexOf('All') > -1) {
+        jQuery(this).find('[value="All"]')
+          .removeAttr("selected");
+
+        chosen.trigger('chosen:updated');
+      }
+
       // trigger onchange
       // 
       var el = d3.selectAll(this.selectedOptions),
