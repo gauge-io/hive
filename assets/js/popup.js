@@ -6,7 +6,8 @@
 var Popup = (function _popup() {
 
   var _mini_popup_wrapper = '',
-  imagePath = 'images/avatars/';
+  imagePath = 'images/avatars/',
+  onProfileclick = function (){};
 
 
   function miniPopup(aData) {
@@ -76,6 +77,7 @@ var Popup = (function _popup() {
       .append('li')
       .on('click', function(d){
         console.log('clicked profile', d);
+        onProfileclick(d);
       })
       .html(function(d){
         return getItem(d);
@@ -85,9 +87,124 @@ var Popup = (function _popup() {
     
   }
 
+  function profilePopup(aData) {
+
+    /*
+    <div class="profilepanel">
+
+      <div class="profilepanel__toolbar pbar">
+        <h3 class="pbar__left">ID13: Marilyn</h3>
+
+        <h3 class="pbar__center">Retail, Owner</h3>
+
+        <div class="pbar__right">Bookmark</div>
+      </div>
+
+      <div class="profilepanel__head phead">
+        <div class="phead__img avatar-img"></div>
+        <div class="phead__attributes">
+          <ul>
+            <li>Female, 60-64, Caucasian</li>
+            <li>Single, Owner</li>
+            <li>Self-Employed</li>
+            <li>0 Children in Home</li>
+            <li>Android Phone</li>
+            <li>Some College, $50k-$74.9k</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="profilepanel__body pbody">
+
+        <ul class="accordion">
+          <li class="accordion__item">
+            <input type="checkbox" checked>
+            <i></i>
+            <div class="aitem__head ahbar">
+              <h2 class="ahbar__left">Hardware Adoption</h2>
+              <h2 class="ahbar__right">12</h2>
+            </div>
+
+            <div class="aitem__body">
+              <ul class="list list--inline">
+                <li>TVs ()</li>
+                <li>TVs ()</li>
+                <li>TVs ()</li>
+                <li>TVs ()</li>
+                <li>TVs ()</li>
+              </ul>
+            </div>
+          </li>
+          <li class="accordion__item">
+            <input type="checkbox" checked>
+            <i></i>
+            <div class="aitem__head ahbar">
+              <h2 class="ahbar__left">Software Adoption</h2>
+              <h2 class="ahbar__right">12</h2>
+            </div>
+            <div class="aitem__body">
+              <div class="colflex">
+                <div>
+                  <h4>Hourly/Daily</h4>
+                  <ul class="list">
+                    <li>Social Media</li>
+                    <li>Social Media</li>
+                    <li>Social Media</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4>Weekly</h4>
+                  <ul class="list"></ul>
+                </div>
+
+                <div>
+                  <h4>Monthly/Yearly</h4>
+                  <ul class="list">
+                    <li>Social Media</li>
+                    <li>Social Media</li>
+                  </ul>
+                </div>
+
+              </div>
+            </div>
+          </li>
+          <li class="accordion__item">
+            <input type="checkbox" checked>
+            <i></i>
+            <div class="aitem__head ahbar">
+              <h2 class="ahbar__left">Tech Savviness</h2>
+              <h2 class="ahbar__right">12</h2>
+            </div>
+            <div class="aitem__body">
+              <ul class="list list--block">
+                <li>TVs ()</li>
+                <li>TVs ()</li>
+                <li>TVs ()</li>
+                <li>TVs ()</li>
+                <li>TVs ()</li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+
+      </div>
+
+    </div>
+    */
+   
+    return '<div class="profilepanel"> <div class="profilepanel__toolbar pbar"> <h3 class="pbar__left">ID13: Marilyn</h3> <h3 class="pbar__center">Retail, Owner</h3> <div class="pbar__right">Bookmark</div> </div> <div class="profilepanel__head phead"> <div class="phead__img avatar-img"></div> <div class="phead__attributes"> <ul> <li>Female, 60-64, Caucasian</li> <li>Single, Owner</li> <li>Self-Employed</li> <li>0 Children in Home</li> <li>Android Phone</li> <li>Some College, $50k-$74.9k</li> </ul> </div> </div> <div class="profilepanel__body pbody"> <ul class="accordion"> <li class="accordion__item"> <input type="checkbox" checked> <i></i> <div class="aitem__head ahbar"> <h2 class="ahbar__left">Hardware Adoption</h2> <h2 class="ahbar__right">12</h2> </div> <div class="aitem__body"> <ul class="list list--inline"> <li>TVs ()</li> <li>TVs ()</li> <li>TVs ()</li> <li>TVs ()</li> <li>TVs ()</li> </ul> </div> </li> <li class="accordion__item"> <input type="checkbox" checked> <i></i> <div class="aitem__head ahbar"> <h2 class="ahbar__left">Software Adoption</h2> <h2 class="ahbar__right">12</h2> </div> <div class="aitem__body"> <div class="colflex"> <div> <h4>Hourly/Daily</h4> <ul class="list"> <li>Social Media</li> <li>Social Media</li> <li>Social Media</li> </ul> </div> <div> <h4>Weekly</h4> <ul class="list"></ul> </div> <div> <h4>Monthly/Yearly</h4> <ul class="list"> <li>Social Media</li> <li>Social Media</li> </ul> </div> </div> </div> </li> <li class="accordion__item"> <input type="checkbox" checked> <i></i> <div class="aitem__head ahbar"> <h2 class="ahbar__left">Tech Savviness</h2> <h2 class="ahbar__right">12</h2> </div> <div class="aitem__body"> <ul class="list list--block"> <li>TVs ()</li> <li>TVs ()</li> <li>TVs ()</li> <li>TVs ()</li> <li>TVs ()</li> </ul> </div> </li> </ul> </div> </div>';
+  }
+
   return {
 
-    miniPopup: miniPopup
+    miniPopup: miniPopup,
+
+    profilePopup: profilePopup,
+
+    onProfileclick: function(fn){
+      onProfileclick = fn;
+    }
 
   }
   

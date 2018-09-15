@@ -998,6 +998,10 @@
 
           });
 
+          Popup.onProfileclick(function(d){
+            popupMini.setHTML(Popup.profilePopup());
+          })
+
           map.on('mouseenter', 'clusters', function () {
               map.getCanvas().style.cursor = 'pointer';
           });
