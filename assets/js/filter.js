@@ -49,10 +49,12 @@ Filter.prototype.createHTML = function() {
       .classed('checkbox', true);
 
     // Add checked
+    // Init value
     // 
+    var bSelected = _this.config.value = (config.values && config.values[0] && !!config.values[0].selected );
     
     dd.select('input')
-      .attr("checked", !!config.selected ? "checked" : "")
+      .attr("checked", bSelected ? "checked" : "")
       .attr("id", (config.id + "_lbl").replace('#',''));
 
     dd.select('[data-label]')
@@ -68,10 +70,6 @@ Filter.prototype.createHTML = function() {
     // 
     d3.select(config.id).node()
       .appendChild(dd.node());
-
-    // Init value
-    // 
-    _this.config.value = !!config.selected;
 
     dd.select('input')
     .on('change', function(d){

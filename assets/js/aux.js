@@ -414,7 +414,13 @@
           // Build filter objects
           // 
           
-          var _aFilters = aActiveFilters.map(function(oF){
+          // AdHoc Filters should be skipped as they handle their
+          // filtering separately ( not directly bound to profile dataset )
+          // property isAdhoc = true
+          // 
+          var _aFilters = aActiveFilters.filter(function(oF){
+            return !oF.getState().isAdhoc;
+          }).map(function(oF){
             return oF.getState();
           });
 
