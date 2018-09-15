@@ -8,7 +8,7 @@
 
 (function Aux() {
 
-    var dispatch = d3.dispatch('filterUpdate', 'applyFiltersOnData', 'datasetRefreshed', 'mapLoaded', 'dataLoaded', 'updateProfileGeoJSON', 'adhocMetricUpdate', 'adhocUpdateDone'),
+    var dispatch = d3.dispatch('filterUpdate', 'applyFiltersOnData', 'datasetRefreshed', 'mapLoaded', 'dataLoaded', 'updateProfileGeoJSON', 'adhocMetricUpdate', 'adhocUpdateDone', 'profile-features-joined'),
     sUrlProfile = 'data/viz/profile-data.csv',
 
     DataManager,
@@ -200,11 +200,12 @@
                 type: 'range-slider',
                 metric: 'den',
                 isAdhoc: true,
+                isFeatureDriven: true,
                 range: {
                     //TODO - derive from data
                     min: 0,
-                    max: 200000,
-                    step: 2000
+                    max: 157000,
+                    step: 1
                 }
             }, {
                 id: '#filter_zip_unemp',
@@ -212,10 +213,11 @@
                 type: 'range-slider',
                 metric: 'unemp',
                 isAdhoc: true,
+                isFeatureDriven: true,
                 range: {
                     //TODO - derive from data
                     min: 0,
-                    max: 15,
+                    max: 100,
                     step: 1
                 }
             },
@@ -390,6 +392,10 @@
 
         aDataDrivenFilters = aFilters.filter(function(oF){
           return oF.isDataDriven;
+        }),
+
+        aFeatureDrivenFilters = aFilters.filter(function(oF){
+          return oF.isFeatureDriven;
         });
 
         // Update
@@ -515,10 +521,6 @@
           // 
           aDataDrivenFilters.map(function(oF){
 
-            if (oF.metric == 'Children in Home') {
-              console.log('filter', oF);
-            }
-
             if (oF.type == 'dropdown' || oF.type == 'multi-dropdown') {
 
               oF.values = d3.map(oF.values, function(d){
@@ -549,6 +551,59 @@
 
           });
 
+        }
+
+        // Initialize feature based filters
+        // 
+        function initFeatureBasedMetrics(aGeoJSON) {
+
+          aGeoJSON.features.forEach(function(f){
+
+            aFeatureDrivenFilters.forEach(function(oF){
+
+              if(oF.type == 'range-slider'){
+
+                // Define a range property
+                // 
+
+                oF._values = oF._values || [];
+
+                oF._values.push(parseFloat(f.properties[oF.metric]) || 0);
+
+              }
+
+            })
+
+          });
+
+          // Make the filter values Unique
+          // and Update filters map
+          // 
+          aFeatureDrivenFilters.map(function(oF){
+
+            if(oF.type == 'range-slider'){
+
+              var aExtent = d3.extent(oF._values),
+              // only max to 10 when value is large
+              step = aExtent[1] < 100 ? 1 : Math.round(Math.max(aExtent[1]/10, 1));
+
+              delete oF._values;
+
+              oF.range = {
+                min: aExtent[0],
+                max: Math.round(Math.max(aExtent[1], step * 10)),
+                // max 10 steps
+                step: step
+              }
+
+            }
+
+            // Update original filter
+            // 
+            oFiltersMap.set(oF.id, oF);
+
+          });
+          
         }
 
         // Apply active filters on the dataset
@@ -636,6 +691,15 @@
           // Initialize Data Driven Filters
           // 
           initFilters();
+
+        });
+
+        // Profile dataset has been joined with Map
+        // Called only once
+        // 
+        dispatch.on('profile-features-joined.ui', function(aGeoJSON){
+
+          initFeatureBasedMetrics(aGeoJSON);
 
         });
 
@@ -778,14 +842,18 @@
 
         // 5. Add the data source to map with clustering
         // 
-        setupProfileClusterLayer(buildProfileFeatureData(true));
+        var aGeoJSON = buildProfileFeatureData(true);
+        
+        setupProfileClusterLayer(aGeoJSON);
 
         // 6. Add the Counties layer
         // 
         setupCountyLayer(oCountiesGeoJSON);
 
-        //buildProfileFeatureData();
-        
+        // Setup metrics which depend on Feature-Profile Join Data
+        // 
+        dispatch.apply('profile-features-joined', null, [aGeoJSON]);
+
       }
 
       function setupProfileClusterLayer(aGeoJSON) {
