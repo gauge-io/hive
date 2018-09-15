@@ -29,11 +29,31 @@
         // 
 
         var aFilters = [
+            // Bookmarked
+            //
+            {
+                id: '#filter_bookmarked',
+                label: 'Bookmark Status',
+                type: 'dropdown',
+                metric: '_bookmark',
+                values: [{
+                    label: 'All',
+                    selected: true,
+                    value: 'All'
+                }, {
+                    label: 'Yes',
+                    value: true
+                }, {
+                    label: 'No',
+                    value: false
+                }]
+            },
+
             // Adoption Score
             //
             {
                 id: '#filter_hardware',
-                label: 'Hardware',
+                label: 'Hardware Adoption',
                 type: 'range-slider',
                 metric: 'Hardware Score',
                 range: {
@@ -44,7 +64,7 @@
             },
             {
                 id: '#filter_software',
-                label: 'Software',
+                label: 'Software Adoption',
                 type: 'range-slider',
                 metric: 'Software Score',
                 range: {
@@ -55,7 +75,7 @@
             },
             {
                 id: '#filter_savviness',
-                label: 'Savviness Index',
+                label: 'Technology Savviness',
                 type: 'range-slider',
                 metric: 'Savviness Index',
                 range: {
@@ -89,8 +109,8 @@
                 type: 'range-slider',
                 metric: '_age',
                 isRangeValue: true,
+                isDataDriven: true,
                 range: {
-                    //TODO - derive from data
                     min: 0,
                     max: 100,
                     step: 1
@@ -152,9 +172,10 @@
                 id: '#filter_hhi',
                 label: 'Annual HHI',
                 type: 'range-slider',
-                metric: 'Annual HHI',
+                metric: '_hhi',
+                isDataDriven: true,
+                isRangeValue: true,
                 range: {
-                    //TODO - derive from data
                     min: 0,
                     max: 100000,
                     step: 1
@@ -164,8 +185,8 @@
                 label: 'Children in Home',
                 type: 'range-slider',
                 metric: 'Children in Home',
+                isDataDriven: true,
                 range: {
-                    //TODO - derive from data
                     min: 0,
                     max: 10,
                     step: 1
@@ -202,66 +223,11 @@
             // Usage
             // 
             {
-                id: '#filter_device_usage',
-                label: 'Device Usage',
-                type: 'dropdown',
-                metric: 'Device Usage',
-                values: [{
-                        label: "All",
-                        value: "All",
-                        selected: true
-                    }, {
-                        label: "Leisure only",
-                        value: "Leisure only"
-                    },
-                    {
-                        label: "Work & leisure",
-                        value: "Work & leisure"
-                    },
-                    {
-                        label: "Entirety of day",
-                        value: "Entirety of day"
-                    }
-                ]
-            }, {
-                id: '#filter_habit_purchase',
-                label: 'Purchase Habits',
-                type: 'multi-dropdown',
-                metric: 'Purchase Habits',
-                values: [{
-                        label: "All",
-                        value: "All",
-                        selected: true
-                    }, {
-                        label: "Leisure only",
-                        value: "Leisure only"
-                    },
-                    {
-                        label: "Manufacturer's retail store",
-                        value: "Manufacturer's retail store"
-                    },
-                    {
-                        label: "Third-party store",
-                        value: "Third-party store"
-                    },
-                    {
-                        label: "Second-hand",
-                        value: "Second-hand"
-                    },
-                    {
-                        label: "Manufacturer's website",
-                        value: "Manufacturer's website"
-                    },
-                    {
-                        label: "Third-party website",
-                        value: "Third-party website"
-                    }
-                ]
-            }, {
                 id: '#filter_annual_support',
                 label: 'Annual Support Requests',
                 type: 'range-slider',
                 metric: '_support_req',
+                isDataDriven: true,
                 range: {
                     min: 0,
                     max: 10,
@@ -271,13 +237,32 @@
             }, {
                 id: '#filter_purchased_protection',
                 label: 'Purchased Protection',
-                type: 'checkbox',
+                type: 'dropdown',
                 metric: 'Purchased Protection',
                 values: [{
-                  label: "Has purchased protection",
-                  value: true,
-                  selected: true
-                }] 
+                        label: "All",
+                        value: "All",
+                        selected: true
+                    }, {
+                        label: "Yes",
+                        value: "1"
+                    },
+                    {
+                        label: "No",
+                        value: "0"
+                    }
+                ]
+            },{
+                id: '#filter_num_device_protection',
+                label: 'Devices with Protection Plans',
+                type: 'range-slider',
+                metric: '# of Devices with Protection Plans',
+                isDataDriven: true,
+                range: {
+                    min: 0,
+                    max: 15,
+                    step: 1
+                }
             }, {
                 id: '#filter_perception_protection',
                 label: 'Perception of Protection',
@@ -333,9 +318,49 @@
                         value: "I typically seek out a professional for tech support"
                     }
                 ]
+            }, { 
+                id: '#filter_ethnicity',
+                label: 'Ethnicity',
+                type: 'multi-dropdown',
+                metric: 'Ethnicity',
+                isDataDriven: true,
+                values: [{
+                        label: "All",
+                        value: "All",
+                        selected: true
+                    },{
+                        label: "African American",
+                        value: "African American"
+                    }, {
+                        label: "Asian",
+                        value: "Asian"
+                    }, {
+                        label: "Caucasian",
+                        value: "Caucasian"
+                    },
+                    {
+                        label: "Hispanic/Latino",
+                        value: "Hispanic/Latino"
+                    },
+                    {
+                        label: "Mid-Eastern",
+                        value: "Mid-Eastern"
+                    },
+                    {
+                        label: "Pacific Islander",
+                        value: "Pacific Islander"
+                    },{
+                        label: "Native American",
+                        value: "Native American"
+                    }
+                ]
             }
 
         ],
+
+        oFiltersMap = d3.map(aFilters, function(d){
+          return d.id;
+        }),
         
         // Array of Filter instances
         // 
@@ -358,57 +383,176 @@
           'Tech Support Person',
           'Children in Home',
           'unemp',
-          'den'
-        ];
+          'den',
+          'Ethnicity',
+          '# of Devices with Protection Plans'
+        ],
+
+        aDataDrivenFilters = aFilters.filter(function(oF){
+          return oF.isDataDriven;
+        });
+
+        // Update
 
         // Create controls
         // 
+        function initFilters() {
 
-        aFilters.filter(function(oF){
-          return aEnabledFilters.indexOf(oF.metric) > -1;
-        }).forEach(function(oF) {
 
-            var oFilter = new Filter(oF);
+          // Initialize data driven filters
+          // 
+          initDataDrivenFilters();
 
-            // Preserve instance
-            // 
-            aActiveFilters.push(oFilter);
+          // Update Filters from Map
+          // 
+          aFilters = oFiltersMap.values();
+          
 
-            // add to DOM
-            // 
-            oFilter.createHTML();
+          // Create Controls
+          // 
+          aFilters.filter(function(oF){
+            return aEnabledFilters.indexOf(oF.metric) > -1;
+          }).forEach(function(oF) {
 
-            // Bind a dispatch
-            oFilter.onchange = function(values) {
+              var oFilter = new Filter(oF);
 
-              // Don't trigger for adhoc filters
-              // They handle their change via dispatches
+              // Preserve instance
               // 
-              if (oF.isAdhoc) {
+              aActiveFilters.push(oFilter);
 
-                dispatch.apply('adhocMetricUpdate', null, [{
-                  metric: oF.metric,
-                  isAdhoc: true,
-                  type: oF.type,
-                  value: values
-                }])
+              // add to DOM
+              // 
+              oFilter.createHTML();
 
-              }else{
+              // Bind a dispatch
+              oFilter.onchange = function(values) {
 
-                dispatch.apply('filterUpdate', null, [{
+                // Don't trigger for adhoc filters
+                // They handle their change via dispatches
+                // 
+                if (oF.isAdhoc) {
+
+                  dispatch.apply('adhocMetricUpdate', null, [{
                     metric: oF.metric,
+                    isAdhoc: true,
                     type: oF.type,
                     value: values
-                }]);
+                  }])
 
+                }else{
+
+                  dispatch.apply('filterUpdate', null, [{
+                      metric: oF.metric,
+                      type: oF.type,
+                      value: values
+                  }]);
+
+                }
+
+              }
+
+          });
+
+        }
+
+        // Initialize data driven filters
+        // 
+        function initDataDrivenFilters() {
+
+          var aData = DataManager.getMainSet();
+
+          aData.forEach(function(d){
+
+            // For every filter
+            // 
+            aDataDrivenFilters.forEach(function(oF){
+
+              if (oF.type == 'dropdown' || oF.type == 'multi-dropdown') {
+                // Create an array of values
+                // 
+                if (d[oF.metric]) {
+
+                  oF.values = oF.values || [{
+                    label: 'All',
+                    value: 'All',
+                    selected: true
+                  }];
+
+                  oF.values.push({
+                    label: _.capitalize(d[oF.metric]),
+                    value: d[oF.metric]
+                  });
+
+                }
+
+              }else if(oF.type == 'range-slider'){
+
+                // Define a range property
+                // 
+                if (d[oF.metric]) {
+
+                  oF._values = oF._values || [];
+
+                  // is isRangeValue
+                  // 
+                  if (oF.isRangeValue) {
+                    oF._values.push(parseFloat(d[oF.metric].min) || 0);
+                    oF._values.push(parseFloat(d[oF.metric].max) || 0);
+                  }else{
+                    oF._values.push(parseFloat(d[oF.metric]) || 0);
+                  }
+
+                }
+
+              }
+
+            });
+
+          });
+
+          // Make the filter values Unique
+          // and Update filters map
+          // 
+          aDataDrivenFilters.map(function(oF){
+
+            if (oF.metric == 'Children in Home') {
+              console.log('filter', oF);
+            }
+
+            if (oF.type == 'dropdown' || oF.type == 'multi-dropdown') {
+
+              oF.values = d3.map(oF.values, function(d){
+                return d.value;
+              }).values();
+              
+            }else if(oF.type == 'range-slider'){
+
+
+              var aExtent = d3.extent(oF._values),
+              // only max to 10 when value is large
+              step = aExtent[1] < 100 ? 1 : Math.round(Math.max(aExtent[1]/10, 1));
+
+              delete oF._values;
+
+              oF.range = {
+                min: aExtent[0],
+                max: Math.max(aExtent[1], step * 10),
+                // max 10 steps
+                step: step
               }
 
             }
 
-        });
+            // Update original filter
+            // 
+            oFiltersMap.set(oF.id, oF);
+
+          });
+
+        }
 
         // Apply active filters on the dataset
-        // 
+        // oFiltersMap
         function applyFilters() {
 
           // Build filter objects
@@ -483,9 +627,15 @@
 
         dispatch.on('dataLoaded.ui', function(){
           
+          // Update Count
+          // 
           updateFilterPanel({
             recordCount: DataManager.getQuerySet().length
           });
+
+          // Initialize Data Driven Filters
+          // 
+          initFilters();
 
         });
 

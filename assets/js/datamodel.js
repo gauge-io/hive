@@ -217,7 +217,8 @@ function DataModel(sUrl) {
       }else if (support_req.indexOf('More') > -1){ // More...
 
         d._support_req.min = parseInt(_support_req) || null;
-        d._support_req.max = Infinity;
+        // Assume 20% more than min
+        d._support_req.max = Math.ceil(d._support_req.min * 1.2) || null;
 
       }
 
@@ -253,7 +254,8 @@ function DataModel(sUrl) {
       }else if (!!hhi){ // $100k, $120k+
 
         d._hhi.min = parseInt(_hhi)*unit || null;
-        d._hhi.max = Infinity;
+        // Assume 20% more than min
+        d._hhi.max = d._hhi.min * 1.2 || null;
 
       }else{
         d._hhi.min = null;
