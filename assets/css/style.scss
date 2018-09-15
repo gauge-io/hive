@@ -255,3 +255,131 @@
 }
 
 // ./ Filter Styles
+// 
+
+
+
+// Pop Up Styles
+// 
+
+.popup {
+  
+  &--mini {
+    
+    background: #fff;
+    max-height: 10.35em;
+    max-width: 250px;
+    overflow-y: auto;
+    
+  }
+  
+  &__list {
+    
+    list-style: none;
+    border: solid 1px #eee;
+    padding: 0;
+    margin: 0;
+    
+    li {
+      
+      padding: 5px;
+
+      &:not(:last-child){
+       border-bottom: solid 1px #eee; 
+      }
+      > * {
+        display: inline-block;
+        //display: inline-flex;
+        vertical-align: middle;
+        box-sizing: border-box;
+      }
+        
+        .profile-icon {
+          background: blueviolet;
+          width: 2.5em;
+          height: 2.5em;
+          border-radius: 2.5em;
+          margin-right: 5px;
+          background-size: contain;
+        }
+        
+        .miniscore {
+          width: 60px;
+          &__label {
+            padding: 5px;
+            color: #fff;
+            border-radius: 4px;
+          }
+          &__value {
+            color: #444;
+            background: white;
+            padding: 0 5px;
+            border-radius: 3px;
+          }
+        }
+      }
+    }
+    
+}
+
+.miniscore {
+  
+  &--h {
+    .miniscore__label {
+      background: #ff3c41;
+    }
+  }
+  
+  &--s {
+    .miniscore__label {
+      background: #47cf73;
+    }
+  }
+  
+  &--t {
+    .miniscore__label {
+      background: #0ebeff;
+    }
+  }
+  
+}
+
+.mapboxgl-popup-content {
+  padding: 10px;
+  border-radius: 4px 0 4px
+}
+
+.mapboxgl-popup-close-button {
+  font-size: 1.5em;
+  color: #aaa;
+  font-weight: normal;
+  width: 1.4em;
+  right: -1.4em;
+  top: 0;
+  border: 0;
+  border-radius: 0 4px 4px 0;
+  background-color: #fff;
+  &:hover {
+    background-color: #eee;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

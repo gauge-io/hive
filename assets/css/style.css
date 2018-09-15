@@ -168,4 +168,65 @@
     background: #a1d0ff;
     cursor: pointer; }
 
+.popup--mini {
+  background: #fff;
+  max-height: 10.35em;
+  max-width: 250px;
+  overflow-y: auto; }
+.popup__list {
+  list-style: none;
+  border: solid 1px #eee;
+  padding: 0;
+  margin: 0; }
+  .popup__list li {
+    padding: 5px; }
+    .popup__list li:not(:last-child) {
+      border-bottom: solid 1px #eee; }
+    .popup__list li > * {
+      display: inline-block;
+      vertical-align: middle;
+      box-sizing: border-box; }
+    .popup__list li .profile-icon {
+      background: blueviolet;
+      width: 2.5em;
+      height: 2.5em;
+      border-radius: 2.5em;
+      margin-right: 5px;
+      background-size: contain; }
+    .popup__list li .miniscore {
+      width: 60px; }
+      .popup__list li .miniscore__label {
+        padding: 5px;
+        color: #fff;
+        border-radius: 4px; }
+      .popup__list li .miniscore__value {
+        color: #444;
+        background: white;
+        padding: 0 5px;
+        border-radius: 3px; }
+
+.miniscore--h .miniscore__label {
+  background: #ff3c41; }
+.miniscore--s .miniscore__label {
+  background: #47cf73; }
+.miniscore--t .miniscore__label {
+  background: #0ebeff; }
+
+.mapboxgl-popup-content {
+  padding: 10px;
+  border-radius: 4px 0 4px; }
+
+.mapboxgl-popup-close-button {
+  font-size: 1.5em;
+  color: #aaa;
+  font-weight: normal;
+  width: 1.4em;
+  right: -1.4em;
+  top: 0;
+  border: 0;
+  border-radius: 0 4px 4px 0;
+  background-color: #fff; }
+  .mapboxgl-popup-close-button:hover {
+    background-color: #eee; }
+
 /*# sourceMappingURL=style.css.map */

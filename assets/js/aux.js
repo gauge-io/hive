@@ -787,7 +787,7 @@
 
         console.log('Centroid Geo Features', aFeatureCentroids);
 
-        // 4. Build a Map of properties.zcta to feature
+        // 4. Build a Map of properties.GEOID to feature
         // 
         var oGEOIDFeature = d3.map(aFeatureCentroids, function(f){
             return f.properties.GEOID;
@@ -799,7 +799,17 @@
         var aProfileCentroids = aProfiles.map(function(p){
             // Find the GEOID via lookup
             // 
-            return oGEOIDFeature.get(DataManager.getZIP2GEOID(p._zip));
+            var oF = oGEOIDFeature.get(DataManager.getZIP2GEOID(p._zip));
+
+            // if feature is found,
+            // add profile properties to the feature
+            // 
+            if (oF) {
+              oF.properties = Object.assign(oF.properties, p);
+            }
+
+            return oF;
+
             //return oGEOIDFeature.get(DataManager.getZIP2ZCTA(p._zip));
         }).filter(function(p){
             return !!p;
@@ -857,6 +867,8 @@
       }
 
       function setupProfileClusterLayer(aGeoJSON) {
+
+        var popupMini = new mapboxgl.Popup({closeOnClick: false});
           
           // Add a new source from our GeoJSON data and set the
           // 'cluster' option to true. GL-JS will add the point_count property to your source data.
@@ -869,8 +881,6 @@
               // Radius of each cluster when clustering points (defaults to 50)
               clusterRadius: 50
           });
-
-
 
           map.addLayer({
               id: "clusters",
@@ -929,7 +939,7 @@
                 "text-color": "#fff"
               }
           });
-
+          
           map.addLayer({
               id: "unclustered-point",
               type: "circle",
@@ -942,6 +952,103 @@
                   "circle-stroke-color": "#fff"
               }
           });
+
+          // inspect a cluster on click
+          map.on('click', 'clusters', function (e) {
+              var features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
+              var clusterId = features[0].properties.cluster_id,
+              point_count = features[0].properties.point_count,
+              clusterSource = map.getSource('profiles');
+
+              var coordinates = features[0].geometry.coordinates.slice();
+
+              // Ensure that if the map is zoomed out such that multiple
+              // copies of the feature are visible, the popup appears
+              // over the copy being pointed to.
+              while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                  coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+              }
+
+              clusterSource.getClusterExpansionZoom(clusterId, function (err, zoom) {
+                  if (err)
+                      return;
+
+                  map.easeTo({
+                      center: features[0].geometry.coordinates,
+                      zoom: zoom
+                  });
+              });
+
+              // Get cluster Children at next level
+              // 
+              clusterSource.getClusterChildren(clusterId, function(err, aFeatures){
+                console.log('getClusterChildren', err, aFeatures);
+              });
+
+              // Get cluster's direct children
+              // 
+              clusterSource.getClusterLeaves(clusterId, point_count, 0, function(err, aFeatures){
+                console.log('getClusterLeaves', err, aFeatures);
+
+                popupMini.setDOMContent(Popup.miniPopup(aFeatures.map(function(d){ return d.properties; })))
+                  .setLngLat(coordinates)
+                  .addTo(map);
+
+              });
+
+          });
+
+          map.on('mouseenter', 'clusters', function () {
+              map.getCanvas().style.cursor = 'pointer';
+          });
+          map.on('mouseleave', 'clusters', function () {
+              map.getCanvas().style.cursor = '';
+          });
+
+          
+            //.setLngLat([-96, 37.8])
+            //.setHTML('<h1>Hello World!</h1>')
+            //.addTo(map);
+          
+          /* // TODO Later - Points are image based icon
+          // Ethinicty to Image mapping
+        // Values are for images based in images/avatars
+        // 
+        var oEthinicityImageMap = {
+          "African American": "african-american",
+          "Asian": "asian",
+          "Caucasian": "caucasian",
+          "Hispanic/Latino": "hispanic",
+          "Mid-Eastern": "mid-eastern",
+          "Pacific Islander": "pacific-islander",
+          "Native American": "other",
+          "Other": "other"
+        };
+
+        function getProfileAvatar(sGender, sEthinicty) {
+
+          var img = oEthinicityImageMap[sEthinicty] || oEthinicityImageMap['Other'];
+          // Add gender version
+          // 
+          return img + '-' + sGender == 'Male' ? 'male.png' : 'female.png';
+          
+        }
+          map.addLayer({
+              id: "unclustered-point",
+              type: "symbol",
+              source: "profiles",
+              filter: ["!", ["has", "point_count"]],
+              layout: {
+                "icon-image": [
+                  "match",
+                  ["get","Gender"],
+                  "Male", ""
+                ],
+                "icon-padding": 0,
+                "icon-allow-overlap": true
+              }
+          });
+          */
 
 
           // Event Binding
@@ -1044,6 +1151,22 @@
               'fill-opacity': 0.75
           }
         });
+
+        map.on('click', 'county-metric' function(e) {
+          // set bbox as 5px reactangle area around clicked point
+          var bbox = [[e.point.x - 5, e.point.y - 5], [e.point.x + 5, e.point.y + 5]];
+          var features = map.queryRenderedFeatures(bbox, { layers: ['county-metric'] });
+
+          // Run through the selected features and set a filter
+          // to match features with unique FIPS codes to activate
+          // the `counties-highlighted` layer.
+          var filter = features.reduce(function(memo, feature) {
+              memo.push(feature.properties.GEOID);
+              return memo;
+          }, ['in', 'GEOID']);
+
+          map.setFilter("county-highlighted", filter);
+      });
 
         */
 
