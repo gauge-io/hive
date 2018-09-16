@@ -210,7 +210,7 @@ function DataModel(sUrl) {
       
       var metric = 'Children in Home';
 
-      d[metric] = parseInt(d[metric]) || null;
+      d[metric] = parseInt(d[metric]) || 0;
 
     }catch(e){
       console.log('[ERROR]', e.message);
@@ -226,14 +226,14 @@ function DataModel(sUrl) {
       _support_req = (d[metric] || '').replace(pattern, '');
 
       d._support_req = {
-        min: null,
-        max: null
+        min: 0,
+        max: 0
       };
 
       if (_support_req.indexOf('-') > -1) { // 1 - 5 times
         _support_req = _support_req.split('-');
-        d._support_req.min = parseInt(_support_req[0]) || null;
-        d._support_req.max = parseInt(_support_req[1]) || null;
+        d._support_req.min = parseInt(_support_req[0]) || 0;
+        d._support_req.max = parseInt(_support_req[1]) || 0;
       
       }else if(support_req.indexOf('Zero') > -1){ // Zero...
         
@@ -242,9 +242,9 @@ function DataModel(sUrl) {
 
       }else if (support_req.indexOf('More') > -1){ // More...
 
-        d._support_req.min = parseInt(_support_req) || null;
+        d._support_req.min = parseInt(_support_req) || 0;
         // Assume 20% more than min
-        d._support_req.max = Math.ceil(d._support_req.min * 1.2) || null;
+        d._support_req.max = Math.ceil(d._support_req.min * 1.2) || 0;
 
       }
 
@@ -395,6 +395,18 @@ function DataModel(sUrl) {
 
       }
 
+    },
+
+    getBookmarkCount: function(){
+      return oBookmarkedProfiles.size();
+    },
+
+    clearBookmarks: function(){
+      oBookmarkedProfiles.clear();
+    },
+
+    getBookmarks: function(){
+      return oBookmarkedProfiles.values();
     }
 
   }

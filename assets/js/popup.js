@@ -70,10 +70,29 @@ var Popup = (function _popup() {
     }
 
     var popup = d3.select(document.createElement('div')),
-    _html = '<ul class="popup__list"></ul>';
+    _html = '<ul class="popup__list"></ul>',
 
-    popup.classed('popup popup--mini', true)
+    list = d3.select(document.createElement('div'));
+
+    list.classed('popup popup--mini', true)
       .html(_html);
+
+    // Add Header
+    // 
+    var firstFeature = aData[0],
+    header = d3.select(document.createElement('h4')),
+    sRecord = aData.length > 1 ? 'records' : 'record',
+    headerText = [aData.length, sRecord, 'in', _.startCase(firstFeature.City) + ',', firstFeature.State].join(' ');
+
+    header.text(headerText);
+
+    header.classed('popup__title', true);
+
+    // add list to popup
+    // 
+    jQuery(popup.node()).append(header.node());
+
+    jQuery(popup.node()).append(list.node());
 
     // add profiles
     // 

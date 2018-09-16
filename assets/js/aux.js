@@ -42,10 +42,10 @@
                     value: 'All'
                 }, {
                     label: 'Yes',
-                    value: true
+                    value: 'true'
                 }, {
                     label: 'No',
-                    value: false
+                    value: 'false'
                 }]
             },
 
@@ -644,8 +644,19 @@
         //
         function updateFilterPanel(obj) {
 
-          d3.select('#record-count')
-            .html(obj.recordCount ? (obj.recordCount + ' Records') : 'No matching records');
+          if (obj && obj.recordCount) {
+
+            // Update Record Count
+            // 
+            d3.select('#record-count')
+              .html(obj.recordCount ? (obj.recordCount + ' Records') : 'No matching records');
+
+          }
+
+          // Update Bookmark Count
+          // 
+          d3.select('#bookmark-count')
+            .html(DataManager.getBookmarkCount() + ' Bookmarks');
           
         }
 
@@ -696,6 +707,10 @@
           // 
           initFilters();
 
+        });
+
+        dispatch.on('toggleBookmark.ui', function(){
+          updateFilterPanel();
         });
 
         // Profile dataset has been joined with Map
@@ -963,7 +978,8 @@
               }
           });
 
-          // inspect a cluster on click
+          // When a Cluster Marker is clicked
+          // 
           map.on('click', 'clusters', function (e) {
               var features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
               var clusterId = features[0].properties.cluster_id,
@@ -989,16 +1005,9 @@
                   });
               });
 
-              // Get cluster Children at next level
-              // 
-              clusterSource.getClusterChildren(clusterId, function(err, aFeatures){
-                console.log('getClusterChildren', err, aFeatures);
-              });
-
               // Get cluster's direct children
               // 
               clusterSource.getClusterLeaves(clusterId, point_count, 0, function(err, aFeatures){
-                console.log('getClusterLeaves', err, aFeatures);
 
                 popupMini.setDOMContent(Popup.miniPopup(aFeatures.map(function(d){ return d.properties; })))
                   .setLngLat(coordinates)
@@ -1007,6 +1016,29 @@
               });
 
           });
+
+          // When an unclustered point is clicked
+          // 
+          map.on('click', 'unclustered-point', function (e) {
+            // set bbox as 5px reactangle area around clicked point
+            //var bbox = [[e.point.x - 5, e.point.y - 5], [e.point.x + 5, e.point.y + 5]];
+
+            var coordinates = e.features[0].geometry.coordinates.slice(), //[e.lngLat.lng, e.lngLat.lat],
+            aFeatures = map.queryRenderedFeatures(e.point, { layers: ['unclustered-point'] });
+
+            // Center map on the point
+            // 
+            map.flyTo({center: coordinates});
+           
+            // show Mini Popup
+            // 
+            popupMini.setDOMContent(Popup.miniPopup(aFeatures.map(function(d){ return d.properties; })))
+              .setLngLat(coordinates)
+              .addTo(map);
+
+          });
+          
+
 
           Popup.onProfileclick(function(allProfiles){
 
@@ -1024,6 +1056,12 @@
               map.getCanvas().style.cursor = 'pointer';
           });
           map.on('mouseleave', 'clusters', function () {
+              map.getCanvas().style.cursor = '';
+          });
+          map.on('mouseenter', 'unclustered-point', function () {
+              map.getCanvas().style.cursor = 'pointer';
+          });
+          map.on('mouseleave', 'unclustered-point', function () {
               map.getCanvas().style.cursor = '';
           });
 
@@ -1329,21 +1367,47 @@
       // On Bookmark Toggle
       // 
       dispatch.on('toggleBookmark.mapui', function(oPayload){
-        console.log(oPayload.ID);
-        DataManager.toggleBookmark(oPayload.ID);
+
+        if (oPayload) {
+          DataManager.toggleBookmark(oPayload.ID);
+        }
+
+      });
+
+      $('#toggle_menu').click(function() {
+        $(this).toggleClass('active');
+        $('#overlay').toggleClass('open');
+      });
+
+      $('#filterpanel_menu li').on('click', function(e){
+
+        var action = $(this).attr("data-action");
+
+        if (action == "copyurl") {
+
+          copyToClipboard(generateBookmarkURL(DataManager.getBookmarks()));
+          alert('Bookmark URL Copied');
+
+        }else if (action == "clearbookmarks") {
+          DataManager.clearBookmarks();
+
+          dispatch.apply('toggleBookmark');
+        }
+
+        $('#toggle_menu').trigger('click');
 
       });
 
 
     }
 
+    bindEvents();
+
     initMap();
 
     initData();
 
     initUI();
-
-    bindEvents();
 
 
 })(window);
