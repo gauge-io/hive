@@ -8,7 +8,7 @@
 
 (function Aux() {
 
-    var dispatch = d3.dispatch('filterUpdate', 'applyFiltersOnData', 'datasetRefreshed', 'mapLoaded', 'dataLoaded', 'updateProfileGeoJSON', 'adhocMetricUpdate', 'adhocUpdateDone', 'profile-features-joined'),
+    var dispatch = d3.dispatch('filterUpdate', 'applyFiltersOnData', 'datasetRefreshed', 'mapLoaded', 'dataLoaded', 'updateProfileGeoJSON', 'adhocMetricUpdate', 'adhocUpdateDone', 'profile-features-joined', 'toggleBookmark'),
     sUrlProfile = 'data/viz/profile-data.csv',
 
     DataManager,
@@ -35,7 +35,7 @@
                 id: '#filter_bookmarked',
                 label: 'Bookmark Status',
                 type: 'dropdown',
-                metric: '_bookmark',
+                metric: '_isBookmarked',
                 values: [{
                     label: 'All',
                     selected: true,
@@ -56,6 +56,7 @@
                 label: 'Hardware Adoption',
                 type: 'range-slider',
                 metric: 'Hardware Score',
+                isDataDriven: true,
                 range: {
                     min: 0,
                     max: 99,
@@ -67,6 +68,7 @@
                 label: 'Software Adoption',
                 type: 'range-slider',
                 metric: 'Software Score',
+                isDataDriven: true,
                 range: {
                     min: 0,
                     max: 99,
@@ -78,6 +80,7 @@
                 label: 'Technology Savviness',
                 type: 'range-slider',
                 metric: 'Savviness Index',
+                isDataDriven: true,
                 range: {
                     min: 0,
                     max: 300,
@@ -371,6 +374,7 @@
         // Enable filters that are currenlty applicable here
         // 
         aEnabledFilters = [
+          '_isBookmarked',
           '_age', 
           '_hhi', 
           'Gender', 
@@ -537,7 +541,7 @@
               delete oF._values;
 
               oF.range = {
-                min: aExtent[0],
+                min: Math.min(0, aExtent[0]),
                 max: Math.max(aExtent[1], step * 10),
                 // max 10 steps
                 step: step
@@ -729,6 +733,10 @@
 
       });
 
+      // Share dispatch with Popup
+      // 
+      Popup.setDispatch(dispatch);
+
       /**
        * Load counties Geojson
        * This features from here will be used
@@ -799,16 +807,18 @@
         var aProfileCentroids = aProfiles.map(function(p){
             // Find the GEOID via lookup
             // 
-            var oF = oGEOIDFeature.get(DataManager.getZIP2GEOID(p._zip));
+            var oF = oGEOIDFeature.get(DataManager.getZIP2GEOID(p._zip)),
+            oProfileF;
 
             // if feature is found,
             // add profile properties to the feature
             // 
             if (oF) {
-              oF.properties = Object.assign(oF.properties, p);
+              oProfileF = _.cloneDeep([oF])[0];
+              oProfileF.properties = Object.assign(oProfileF.properties, p);
             }
 
-            return oF;
+            return oProfileF;
 
             //return oGEOIDFeature.get(DataManager.getZIP2ZCTA(p._zip));
         }).filter(function(p){
@@ -998,9 +1008,17 @@
 
           });
 
-          Popup.onProfileclick(function(d){
-            popupMini.setHTML(Popup.profilePopup());
-          })
+          Popup.onProfileclick(function(allProfiles){
+
+            popupMini.setDOMContent(
+
+              Popup.profilePopup({
+                profiles: allProfiles, 
+                isActiveProfile: true
+              })
+
+            );
+          });
 
           map.on('mouseenter', 'clusters', function () {
               map.getCanvas().style.cursor = 'pointer';
@@ -1304,6 +1322,15 @@
 
 
         }, 100);
+
+      });
+
+
+      // On Bookmark Toggle
+      // 
+      dispatch.on('toggleBookmark.mapui', function(oPayload){
+        console.log(oPayload.ID);
+        DataManager.toggleBookmark(oPayload.ID);
 
       });
 

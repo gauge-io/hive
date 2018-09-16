@@ -8,7 +8,9 @@ function DataModel(sUrl) {
   // Will hold the processed master dataset.
   // No filtering is performed on this.
   // 
-  var aMasterDataset = [],
+  var oMasterDataset = {},
+
+  aMasterDataset = [],
 
   // This is a copy of master dataset
   // over which all the filtering and querying should be performed.
@@ -16,6 +18,10 @@ function DataModel(sUrl) {
   // at any given time
   // 
   aQueryDataset = [],
+
+  // Store of Bookmarked Profiles
+  // 
+  oBookmarkedProfiles,
 
   // Map of Zip to ZCTA / GEOID
   oZipMap = {},
@@ -27,6 +33,18 @@ function DataModel(sUrl) {
   // URLS
   // 
   sCodeMapUrl = 'data/viz/zip-zcta-geoid5.csv';
+
+  // do init
+  // 
+  function init() {
+
+    // Set up Bookmarked Profiles
+    // 
+    oBookmarkedProfiles = d3.set(getBookmarksFromURL());
+    
+  }
+
+  init();
 
 
   // Load the dataset
@@ -69,6 +87,14 @@ function DataModel(sUrl) {
     // ZCTA
     // 
     d._ZCTA = oZipMap[d._zip].ZCTA5 || d._zip;
+
+    // Is Bookmarked?
+    // 
+    try {
+      d._isBookmarked =  oBookmarkedProfiles.has(d.ID);
+    }catch(e){
+      console.log('[ERROR]', e.message);
+    }
 
     // Age
     // Value type isRangeValue
@@ -160,7 +186,7 @@ function DataModel(sUrl) {
       
       var metric = 'Savviness Index';
 
-      d[metric] = parseFloat(d[metric]);
+      d[metric] = parseInt(d[metric]);
 
     }catch(e){
       console.log('[ERROR]', e.message);
@@ -266,6 +292,16 @@ function DataModel(sUrl) {
       console.log('[ERROR]', e.message);
     }
 
+
+    // Choose 1 phone out of all choices
+    // 
+    try {
+      var metric = 'Phone Type';
+      d._phone_choice = d[metric].split(',').sort().reverse()[0];
+    }catch(e){
+      console.log('[ERROR]', e.message);
+    }
+
     
     return d;
     
@@ -280,6 +316,12 @@ function DataModel(sUrl) {
     // Prepare Master dataset
     // 
     aMasterDataset = _.cloneDeep(aData);
+
+    // Prepare a Map
+    // 
+    oMasterDataset = d3.map(aData, function(d, i){
+      return d.ID || (i+1);
+    });
 
     // Prepare Query dataset
     // 
@@ -321,7 +363,7 @@ function DataModel(sUrl) {
     },
 
     getMainSet: function(){
-      return _.cloneDeep(aMasterDataset);
+      return _.cloneDeep(oMasterDataset.values());
     },
 
     getZIP2ZCTA: function(sZip){
@@ -330,6 +372,29 @@ function DataModel(sUrl) {
 
     getZIP2GEOID: function(sZip){
       return oZipMap[sZip] ? oZipMap[sZip].GEOID : sZip;
+    },
+
+    toggleBookmark: function(sID){
+
+      if (!!sID) {
+
+        var oProfile = oMasterDataset.get(sID);
+
+        // if already bookmarked, remove it
+        // 
+        if (oBookmarkedProfiles.has(sID)) {
+          oBookmarkedProfiles.remove(sID);
+          
+          oProfile._isBookmarked = false;
+
+        }else{
+          oBookmarkedProfiles.add(sID);
+
+          oProfile._isBookmarked = true;
+        }
+
+      }
+
     }
 
   }

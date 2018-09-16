@@ -382,3 +382,75 @@ function applyFiltersOnData(aFilters, aData) {
   return aFilteredData;
 
 }
+
+/**
+ * Get a list of tech savviness points for a profile
+ * @param  {object} oProfile [description]
+ * @return {[type]}          [description]
+ */
+function getTechSavvinessPoints(oProfile) {
+
+  var aPoints = [];
+
+  // 1. Acts as a Tech Support person?
+  // 
+  if (oProfile['Tech Support Person'] == 'Me') {
+    aPoints.push('Acts as a Tech Support person');
+  }
+
+  if (oProfile._support_req.min > 0) {
+    aPoints.push(oProfile['Annual Support Requests'] + ' annual support requests');
+  }
+
+  aPoints.push(oProfile['# of Devices with Protection Plans'] + ' devices with protection');
+
+  aPoints.push('Perception of Protection - ' + oProfile['Perception of Protection']);
+
+  return aPoints;
+  
+}
+
+
+/**
+ * Get a list of profile IDs from URL
+ */
+function getBookmarksFromURL() {
+
+  var aBookmarkedIDs = [];
+  
+  try{
+
+    var slug = window.location.href || '',
+    // entry after bookmakrked keyword
+    aSlug = slug.split('bookmarked=');
+
+    aBookmarkedIDs = aSlug[1] ? aSlug[1].replace(/[\ ]/gi, '').split(',') : [];
+
+  }catch(e){
+    console.log('ERROR', e.message);
+  }
+
+  return aBookmarkedIDs;
+
+}
+
+/**
+ * Generate a Bookmark URL
+ * @param  {array} aBookmarkedIDs Array of Profile IDs to bookmark
+ * @return {string}                
+ */
+function generateBookmarkURL(aBookmarkedIDs) {
+  var slug = window.location.href || '',
+  // entry after bookmakrked keyword
+  aSlug = slug.split('?');
+
+  return [slug[0], '?', 'bookmarked=', (aBookmarkedIDs || []).join(',')].join();
+}
+
+
+
+
+
+
+
+

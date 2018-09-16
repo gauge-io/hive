@@ -237,9 +237,30 @@
 
 // ./ Filter Styles
 // 
+.mapboxgl-popup-content {
+  padding: 10px;
+  border-radius: 4px 0 4px
+}
+
+.mapboxgl-popup-close-button {
+  font-size: 1.5em;
+  color: #aaa;
+  font-weight: normal;
+  width: 1.4em;
+  right: -1.4em;
+  top: 0;
+  border: 0;
+  border-radius: 0 4px 4px 0;
+  background-color: #fff;
+  &:hover {
+    background-color: #eee;
+  }
+}
+
 // Pop Up Styles
 // 
 .popup {
+  $grey: rgba(220, 231, 235, 1);
 
   &--mini {
 
@@ -272,12 +293,10 @@
       }
 
       .profile-icon {
-        background: blueviolet;
         width: 2.5em;
         height: 2.5em;
         border-radius: 2.5em;
         margin-right: 5px;
-        background-size: contain;
       }
 
       .miniscore {
@@ -298,6 +317,53 @@
         }
       }
     }
+  }
+
+  &--large {
+    //background: $grey;
+    max-height: 38em;
+    overflow-y: auto;
+
+    &:not(.popup--activeprofile) {
+      .profilepanel:not(:first-child) {
+        margin-top: 1em;
+      }
+    }
+  }
+  &--listing {
+    .profilepanel {
+      >* {
+        cursor: pointer;
+      }
+    }
+
+    &:not(.popup--activeprofile) {
+      .profilepanel__body {
+        display: none;
+      }
+    }
+  }
+
+  &--activeprofile {
+    .profilepanel {
+      display: none;
+      &--active {
+        display: block;
+      }
+    }
+  }
+}
+
+.profile-icon {
+  background-size: contain;
+  background-repeat: no-repeat;
+  &--mini {
+    width: 2.5em;
+    height: 2.5em;
+  }
+  &--large {
+    width: 6em;
+    height: 6em;
   }
 }
 
@@ -322,25 +388,6 @@
   }
 }
 
-.mapboxgl-popup-content {
-  padding: 10px;
-  border-radius: 4px 0 4px
-}
-
-.mapboxgl-popup-close-button {
-  font-size: 1.5em;
-  color: #aaa;
-  font-weight: normal;
-  width: 1.4em;
-  right: -1.4em;
-  top: 0;
-  border: 0;
-  border-radius: 0 4px 4px 0;
-  background-color: #fff;
-  &:hover {
-    background-color: #eee;
-  }
-}
 
 .profilepanel {
 
@@ -350,9 +397,50 @@
   $black: rgba(48, 69, 92, 0.8);
   $blue: #e1f0f8;
   $bg-blue: #546b81;
+  $sans: "Titillium Web", sans-serif;
 
+  background-color: $white;
+  border: solid 1px $grey;
+  max-width: 600px;
 
-  width: 560px;
+  &__toolbar {
+    background: $red;
+  }
+
+  &__head {
+    /* border: 1px solid $grey; */
+    padding: 1em;
+    height: 6em;
+    /* margin: 1em; */
+  }
+  &__body {
+    margin: 0 1em;
+    /* padding: 1em; */
+    padding-bottom: 1em;
+  }
+
+  &__footer {
+    display: none !important;
+
+    .profilepanel__back {
+      font-size: 1.3em;
+    }
+  }
+
+  &--active {
+    .profilepanel__footer {
+      display: block !important;
+      display: flex !important;
+    }
+  }
+
+  &__bookmark {
+    outline: 0;
+    &--active {
+      background-color: $white !important;
+      color: $bg-blue !important;
+    }
+  }
 
   .transition {
     transition: all 0s ease-in-out;
@@ -371,6 +459,7 @@
     -ms-user-select: none;
     user-select: none;
   }
+
 
   h1,
   h2 {
@@ -402,9 +491,9 @@
 
   .aitem__body {
     color: $black;
-    font-size: 17px;
-    line-height: 26px;
-    letter-spacing: 1px;
+    //font-size: 17px;
+    //line-height: 26px;
+    //letter-spacing: 1px;
     position: relative;
     overflow: hidden;
     max-height: 800px;
@@ -423,11 +512,9 @@
     margin: 0;
 
     li {
-      position: relative; //padding: 0.5em;
-      //margin: 0;
-      //padding-bottom: 4px;
-      //padding-top: 18px;
-      border: 1px solid $grey; //background-color: $blue;
+      position: relative;
+      font-size: 1.02em;
+      border: 1px solid $grey;
       /*
     @extend .flipIn;
 
@@ -461,8 +548,8 @@
 
           position: absolute;
           background-color: $red;
-          width: 3px;
-          height: 9px;
+          width: 1px;
+          height: 7px;
         }
 
         &:before {
@@ -474,7 +561,7 @@
         }
       }
 
-      input[type=checkbox] {
+      input[type="checkbox"] {
         position: absolute;
         cursor: pointer;
         width: 100%;
@@ -540,27 +627,12 @@
     }
   }
 
-  &__toolbar {
-    background: $red;
-  }
-
-  &__head {
-    border: 1px solid $grey;
-    padding: 1em;
-    height: 6em;
-    margin: 1em;
-  }
-  &__body {
-    margin: 1em;
-  }
-
   .pbar {
     display: flex;
     align-items: center;
     background: $bg-blue;
     color: $white;
-    padding: 0.5em;
-    margin: 0 0 20px 0;
+    padding: 0.5em; //margin: 0 0 20px 0;
     box-sizing: border-box;
     >* {
       margin: 0 10px;
@@ -569,6 +641,10 @@
     &__center {
       flex: 1;
       text-align: center;
+    }
+
+    &__full {
+      flex: 1;
     }
   }
 
@@ -596,11 +672,9 @@
     &__img {
       height: 6em;
       width: 10em;
-      background: $black;
     }
 
     &__attributes {
-
       ul {
         margin: 0;
         position: relative;
@@ -609,32 +683,34 @@
         li {
           width: 49%;
           display: inline-block;
-          height: 2em;
-          line-height: 2em;
+          vertical-align: top;
+          //height: 2em;
+          //line-height: 2em;
         }
       }
     }
   }
 
   .accordion {
-
     &__item {
-      margin: 1em 0;
+      //margin: 1em 0;
+      &:not(:last-child) {
+        margin-bottom: 1em;
+      }
     }
   }
 
   .list {
     margin: 0;
-    padding: 0.5em;
+    padding: 1em;
     list-style-type: none;
 
     li {
       border: 0 !important;
-      line-height: 2;
+      //line-height: 2;
     }
 
     &--inline {
-
       li {
         border: none;
         display: inline-block;
@@ -647,11 +723,36 @@
     align-items: stretch;
 
     h4 {
-      margin: 0.5em 0.5em 0;
+      margin: 1em 1em 0;
     }
 
     >* {
       flex: 1;
+    }
+  }
+
+  button {
+    background-color: #0000;
+    border: 0;
+    box-sizing: border-box;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    height: 32px;
+    outline-width: 2px;
+    padding: 0;
+    position: relative;
+    transition-duration: 167ms;
+    transition-property: background-color, box-shadow, color;
+    transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    vertical-align: middle;
+    border-radius: 16px;
+    width: 32px;
+
+    &:hover,
+    &:focus {
+      //background-color: #cfcfcf40;
+      //color: #000000bf;
     }
   }
 }
