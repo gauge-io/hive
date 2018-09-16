@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset='utf-8' />
-    <title>Build Profile Clusters</title>
+    <title>US Census Viz - Prototype</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.48.0/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.48.0/mapbox-gl.css' rel='stylesheet' />
@@ -32,7 +32,7 @@
 
 <div id='map'></div>
 
-<div class="filter-panel">
+<div id="filter_panel" class="filter-panel">
 
     <div class="filter-panel-header">
 
@@ -296,7 +296,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiaWFzaGlzaHNpbmdoIiwiYSI6ImNqbHQ2d2JpcTA1cnEzc
             </ul>
         </div>
         <div class="profilepanel__footer pbar">
-            <button class="pbar__full profilepanel__back">Back</button>
+            <button class="pbar__full profilepanel__back">View List</button>
         </div>
     </div>
     {{/profiles}}

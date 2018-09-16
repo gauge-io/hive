@@ -3,7 +3,7 @@
 .filter-panel {
   font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
   position: absolute;
-  width: 25%;
+  width: 0;
   top: 0;
   right: 0;
   bottom: 0;
@@ -12,6 +12,11 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.20);
   border-radius: 3px;
   box-sizing: border-box;
+
+  &.open {
+    width: 25%;
+    max-width: 320px;
+  }
 
   h2 {
     line-height: 24px;
@@ -496,10 +501,10 @@ body {
   color: #aaa;
   font-weight: normal;
   width: 1.4em;
-  right: -1.4em;
+  left: -1.3em;
   top: 0;
   border: 0;
-  border-radius: 0 4px 4px 0;
+  border-radius: 4px 0 0 4px;
   background-color: #fff;
   &:hover {
     background-color: #eee;

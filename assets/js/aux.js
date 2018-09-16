@@ -408,6 +408,10 @@
         // 
         function initFilters() {
 
+          // Enable UI
+          // 
+
+
 
           // Initialize data driven filters
           // 
@@ -463,6 +467,12 @@
 
           });
 
+          toggleFilter();
+
+        }
+
+        function toggleFilter(){
+          jQuery('#filter_panel').toggleClass('open');
         }
 
         // Initialize data driven filters
