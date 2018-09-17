@@ -199,26 +199,26 @@
             // 
             {
                 id: '#filter_zip_den',
-                label: 'Density Sq. Mile',
+                label: 'People/Square mile',
                 type: 'range-slider',
                 metric: 'den',
                 isAdhoc: true,
                 isFeatureDriven: true,
+                description: true,
                 range: {
-                    //TODO - derive from data
                     min: 0,
                     max: 157000,
                     step: 1
                 }
             }, {
                 id: '#filter_zip_unemp',
-                label: 'Unemployment Rate',
+                label: '%',
                 type: 'range-slider',
                 metric: 'unemp',
                 isAdhoc: true,
                 isFeatureDriven: true,
+                description: true,
                 range: {
-                    //TODO - derive from data
                     min: 0,
                     max: 100,
                     step: 1
@@ -659,14 +659,14 @@
             // Update Record Count
             // 
             d3.select('#record-count')
-              .html(obj.recordCount ? (obj.recordCount + ' Records') : 'No matching records');
+              .html(obj.recordCount);
 
           }
 
           // Update Bookmark Count
           // 
           d3.select('#bookmark-count')
-            .html(DataManager.getBookmarkCount() + ' Bookmarks');
+            .html(DataManager.getBookmarkCount());
           
         }
 

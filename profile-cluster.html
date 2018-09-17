@@ -36,8 +36,10 @@
 
     <div class="filter-panel-header">
 
-        <div id="record-count" class="vsep ecount"></div>
-        <div id="bookmark-count" class="ecount"></div>
+        <ul class="md-tabs">
+            <li class="active"><a data-target="#filters" href="#">Records<b id="record-count"></b></a></li>
+            <li><a data-target="#bookmarked_items" href="#">Bookmarks<b id="bookmark-count"></b></a></li>
+        </ul>
 
         <div id="toggle_menu" class="button_container">
             <span class="top"></span>
@@ -58,7 +60,7 @@
         
     </div>
 
-    <div class="filter-panel-body">
+    <div id="filters" class="filter-panel-body">
 
         <div class="filters">
 
@@ -112,17 +114,14 @@
         <h2>Zip Code Association</h2>
         <div class="filters">
 
-            <div class="tabbox tabbox--horizontal">
-
-                <button data-target="#filter_zip_den" class="tabbox_tab tabbox_tab--active">Population Density</button>
-
-                <button data-target="#filter_zip_unemp" class="tabbox_tab">Unemployment Rate</button>
-                
-            </div>
+            <ul class="md-tabs md-tabs--white">
+                <li class="active"><a data-target="#filter_zip_den" href="#">Population Density</a></li>
+                <li><a data-target="#filter_zip_unemp" href="#">Unemployment Rate</a></li>
+            </ul>
             
             <div id="filter_zip_den"></div>
 
-            <div id="filter_zip_unemp"></div>
+            <div id="filter_zip_unemp" style="display: none;"></div>
         </div>
 
         <h2>Usage</h2>
@@ -155,11 +154,45 @@
         
     </div>
 
+    <div id="bookmarked_items" class="filter-panel-body filter-panel-body--bookmark">
+        
+    </div>
+
 </div>
 
 <div id="logo" class="logo logo--main"></div>
 
 <script>
+
+    $(function(){
+
+        // Bind Tab Click Events
+        // 
+        jQuery('.md-tabs > li').on('click', function(){
+            // remove active class from siblings
+            // 
+            var $this = jQuery(this),
+            siblings = $this.siblings(),
+            siblingA = siblings.find('a');
+
+            siblings.removeClass('active');
+
+            // mark clicked tab as active
+            // 
+            $this.addClass('active');
+
+            // Toggle visibility of target contents
+            // 
+            siblingA.each(function(){
+                jQuery(jQuery(this).attr('data-target')).hide();
+            });
+
+            // Show target content
+            // 
+            jQuery($this.find('a').attr('data-target')).show();
+        });
+
+    });
 
 
 /**

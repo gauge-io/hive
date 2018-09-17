@@ -286,6 +286,7 @@ Filter.prototype.createHTML = function() {
     // Add Label
     // 
     rs.select('label')
+      .classed('scale-desc', !!config.description)
       .html(config.label);
 
 
