@@ -157,6 +157,8 @@
 
 </div>
 
+<div id="logo" class="logo logo--main"></div>
+
 <script>
 
 
@@ -193,7 +195,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiaWFzaGlzaHNpbmdoIiwiYSI6ImNqbHQ2d2JpcTA1cnEzc
     <div class="profilepanel {{#isActiveProfile}}profilepanel--active{{/isActiveProfile}}">
         <div class="profilepanel__toolbar pbar profilepanel--handle">
             <h3 class="pbar__left">ID{{ID}}: {{First Name}}</h3>
-            <h3 class="pbar__center">{{Employment}} {{#Title}}, {{.}}{{/Title}}</h3>
+            <h3 class="pbar__center">{{Employment}}{{#_title}}, {{.}}{{/_title}}</h3>
             <div class="pbar__right">
                 <button class="profilepanel__bookmark {{#_isBookmarked}}profilepanel__bookmark--active{{/_isBookmarked}}" data-id="{{ID}}">
                     <svg viewBox="0 0 24 24" width="24px" height="24px" x="0" y="0" preserveAspectRatio="xMinYMin meet" class="artdeco-icon" focusable="false">
@@ -206,12 +208,14 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiaWFzaGlzaHNpbmdoIiwiYSI6ImNqbHQ2d2JpcTA1cnEzc
             <div class="phead__img profile-icon profile-icon--large" style="background-image:url('{{_avatar}}');"></div>
             <div class="phead__attributes">
                 <ul>
-                    <li>{{Gender}}, {{Age}} {{#Ethnicity}}, {{.}} {{/Ethnicity}}</li>
+                    <li>{{Gender}}, {{Age}}{{#Ethnicity}}, {{.}} {{/Ethnicity}}</li>
                     <li>{{Marital}} {{#ownType}}, {{.}} {{/ownType}}</li>
                     <li>{{Employment Status}}</li>
                     <li>{{Children in Home}} Children in Home</li>
                     <li>{{_phone_choice}}</li>
-                    <li>{{Education}} {{#HHI}}, {{.}} {{/HHI}}</li>
+                    <li>{{Education}}</li>
+                    <li>{{City}}{{#State}}, {{.}}{{/State}}</li>
+                    <li>{{HHI}}</li>
                 </ul>
             </div>
         </div>

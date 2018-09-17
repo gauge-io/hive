@@ -745,6 +745,9 @@
         zoom: 3
       });
 
+      // Add zoom and rotation controls to the map.
+      map.addControl(new mapboxgl.NavigationControl(), 'bottom-left');
+
       // Join local JSON data with vector tile geometry
       // USA unemployment rate in 2009
       // Source https://data.bls.gov/timeseries/LNS14000000

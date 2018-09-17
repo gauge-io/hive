@@ -472,8 +472,16 @@ function copyToClipboard(str) {
   }
 };
 
-
-
+/**
+ * Truncate a string over a given length and add ellipsis if necessary
+ * @param {string} str - string to be truncated
+ * @param {integer} limit - max length of the string before truncating
+ * @return {string} truncated string
+ */
+function truncate(str, limit) {
+  limit = limit || 20;
+  return (str.length < limit) ? str : str.substring(0, limit).replace(/\w{3}$/gi, '...');
+}
 
 
 

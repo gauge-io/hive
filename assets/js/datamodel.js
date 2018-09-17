@@ -156,6 +156,22 @@ function DataModel(sUrl) {
       console.log('[ERROR]', e.message);
     }
 
+    // Employment Title
+    // 
+    try{
+      
+      var metric = 'Title';
+
+      d[metric] = d[metric] || null;
+
+      // shorten it for usage in UI
+      // 
+      d['_title'] = truncate((d[metric] || ''));
+
+    }catch(e){
+      console.log('[ERROR]', e.message);
+    }
+
     // Hardware Score
     // 
     try{
