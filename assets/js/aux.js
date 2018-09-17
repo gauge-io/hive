@@ -31,7 +31,7 @@
         var aFilters = [
             // Bookmarked
             //
-            {
+            /*{
                 id: '#filter_bookmarked',
                 label: 'Bookmark Status',
                 type: 'dropdown',
@@ -48,7 +48,7 @@
                     value: 'false'
                 }]
             },
-
+            */
             // Adoption Score
             //
             {
@@ -1387,14 +1387,18 @@
 
       });
 
-      $('#toggle_menu').click(function() {
-        $(this).toggleClass('active');
-        $('#overlay').toggleClass('open');
+      // Menu Toggle
+      // 
+      jQuery('#toggle_menu').click(function() {
+        jQuery(this).toggleClass('active');
+        jQuery('#overlay').toggleClass('open');
       });
 
-      $('#filterpanel_menu li').on('click', function(e){
+      // Menu Action Items
+      // 
+      jQuery('#filterpanel_menu li').on('click', function(e){
 
-        var action = $(this).attr("data-action");
+        var action = jQuery(this).attr("data-action");
 
         if (action == "copyurl") {
 
@@ -1407,8 +1411,34 @@
           dispatch.apply('toggleBookmark');
         }
 
-        $('#toggle_menu').trigger('click');
+        jQuery('#toggle_menu').trigger('click');
 
+      });
+
+      // Tab Click Events
+      // 
+      jQuery('.md-tabs > li').on('click', function(){
+          // remove active class from siblings
+          // 
+          var $this = jQuery(this),
+          siblings = $this.siblings(),
+          siblingA = siblings.find('a');
+
+          siblings.removeClass('active');
+
+          // mark clicked tab as active
+          // 
+          $this.addClass('active');
+
+          // Toggle visibility of target contents
+          // 
+          siblingA.each(function(){
+              jQuery(jQuery(this).attr('data-target')).hide();
+          });
+
+          // Show target content
+          // 
+          jQuery($this.find('a').attr('data-target')).show();
       });
 
 

@@ -69,87 +69,114 @@
             
         </div>
 
-        <h2>Adoption Score</h2>
         <div class="filters">
 
-            <!-- Hardware -->
-            <div id="filter_hardware"></div>
-            
-            <!-- Software -->
-            <div id="filter_software"></div>
+            <ul class="accordion">
+                
+                <!-- Scales -->
+                <li class="accordion__item">
+                    <input type="checkbox">
+                    <i></i>
+                    <div class="aitem__head ahbar">
+                        <h2 class="ahbar__left">Scales</h2>
+                    </div>
+                    <div class="aitem__body">
+                        <!-- Hardware -->
+                        <div id="filter_hardware"></div>
+                        
+                        <!-- Software -->
+                        <div id="filter_software"></div>
 
-            <!-- Savviness -->
-            <div id="filter_savviness"></div>
+                        <!-- Savviness -->
+                        <div id="filter_savviness"></div>
+                    </div>
+                </li>
 
-        </div>
+                <!-- Demographics -->
+                <li class="accordion__item">
+                    <input type="checkbox">
+                    <i></i>
+                    <div class="aitem__head ahbar">
+                        <h2 class="ahbar__left">Demographics</h2>
+                    </div>
+                    <div class="aitem__body">
+                        <!-- Gender -->
+                        <div id="filter_gender"></div>
 
-        <h2>Demographics</h2>
-        <div class="filters">
+                        <!-- Age -->
+                        <div id="filter_age"></div>
 
-            <!-- Gender -->
-            <div id="filter_gender"></div>
+                        <div id="filter_ethnicity"></div>
 
-            <!-- Age -->
-            <div id="filter_age"></div>
+                        <!-- Children in Home -->
+                        <div id="filter_children"></div>
 
-            <div id="filter_ethnicity"></div>
 
-            <!-- Employment Status -->
-            <div id="filter_employment"></div>
+                        <!-- Employment Status -->
+                        <div id="filter_employment"></div>
 
-            <!-- Own / Rent -->
-            <div id="filter_ownrent"></div>
+                        <!-- Own / Rent -->
+                        <div id="filter_ownrent"></div>
 
-            <!-- Tech Support -->
-            <div id="filter_techsupport"></div>
 
-            <!-- Annual HHI -->
-            <div id="filter_hhi"></div>
+                        <!-- Annual HHI -->
+                        <div id="filter_hhi"></div>
 
-            <!-- Children in Home -->
-            <div id="filter_children"></div>
-            
-        </div>
+                        
+                    </div>
+                </li>
 
-        <h2>Zip Code Association</h2>
-        <div class="filters">
+                <!-- Support & Protection -->
+                <li class="accordion__item">
+                    <input type="checkbox" checked>
+                    <i></i>
+                    <div class="aitem__head ahbar">
+                        <h2 class="ahbar__left">Support & Protection</h2>
+                    </div>
+                    <div class="aitem__body">
 
-            <ul class="md-tabs md-tabs--white">
-                <li class="active"><a data-target="#filter_zip_den" href="#">Population Density</a></li>
-                <li><a data-target="#filter_zip_unemp" href="#">Unemployment Rate</a></li>
+                        <!-- Tech Support -->
+                        <div id="filter_techsupport"></div>
+
+                        <!-- Annual Support Requests -->
+                        <div id="filter_annual_support"></div>
+
+                        <!-- Purchased Protection -->
+                        <div id="filter_purchased_protection"></div>
+
+                        <div id="filter_num_device_protection"></div>
+
+                        <!-- Perception of Protection -->
+                        <div id="filter_perception_protection"></div>
+
+                    </div>
+
+                </li>
+
+                <!-- Zip Code Association -->
+                <li class="accordion__item">
+                    <input type="checkbox" checked>
+                    <i></i>
+                    <div class="aitem__head ahbar">
+                        <h2 class="ahbar__left">Zip Code Association</h2>
+                    </div>
+                    <div class="aitem__body">
+
+                        <ul class="md-tabs md-tabs--white">
+                            <li class="active"><a data-target="#filter_zip_den" href="#">Population Density</a></li>
+                            <li><a data-target="#filter_zip_unemp" href="#">Unemployment Rate</a></li>
+                        </ul>
+                        
+                        <div id="filter_zip_den"></div>
+
+                        <div id="filter_zip_unemp" style="display: none;"></div>
+
+                    </div>
+                    
+                </li>
+
             </ul>
-            
-            <div id="filter_zip_den"></div>
 
-            <div id="filter_zip_unemp" style="display: none;"></div>
-        </div>
-
-        <h2>Usage</h2>
-        <div class="filters">
-
-            <!-- Device Adoption Score -->
-            <div id="filter_adop_device"></div>
-
-            <!-- Software Adoption Score -->
-            <div id="filter_adop_software"></div>
-
-            <!-- Device Usage -->
-            <div id="filter_device_usage"></div>
-
-            <!-- Purchase Habits -->
-            <div id="filter_habit_purchase"></div>
-
-            <!-- Annual Support Requests -->
-            <div id="filter_annual_support"></div>
-
-            <!-- Purchased Protection -->
-            <div id="filter_purchased_protection"></div>
-
-            <div id="filter_num_device_protection"></div>
-
-            <!-- Perception of Protection -->
-            <div id="filter_perception_protection"></div>
-            
         </div>
         
     </div>
@@ -163,37 +190,6 @@
 <div id="logo" class="logo logo--main"></div>
 
 <script>
-
-    $(function(){
-
-        // Bind Tab Click Events
-        // 
-        jQuery('.md-tabs > li').on('click', function(){
-            // remove active class from siblings
-            // 
-            var $this = jQuery(this),
-            siblings = $this.siblings(),
-            siblingA = siblings.find('a');
-
-            siblings.removeClass('active');
-
-            // mark clicked tab as active
-            // 
-            $this.addClass('active');
-
-            // Toggle visibility of target contents
-            // 
-            siblingA.each(function(){
-                jQuery(jQuery(this).attr('data-target')).hide();
-            });
-
-            // Show target content
-            // 
-            jQuery($this.find('a').attr('data-target')).show();
-        });
-
-    });
-
 
 /**
  * ZCTA wise metric details
