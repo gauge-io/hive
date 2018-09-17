@@ -72,7 +72,7 @@ body {
   position: absolute;
   width: 0;
   top: 0;
-  right: 0;
+  right: -10px;
   bottom: 0;
   padding: 0;
   background-color: rgba(255, 255, 255, 0.9);
@@ -87,7 +87,8 @@ body {
   }
   */ }
   .filter-panel.open {
-    width: 320px; }
+    width: 320px;
+    right: 0; }
   .filter-panel .filter-panel-header {
     text-align: center;
     background-color: #546b81; }

@@ -76,17 +76,27 @@ function DataModel(sUrl) {
   // 
   function parseRow(d) {
 
-    // Zip
-    // 
-    d._zip = getSanitizedZip(d.Zip);
+    var oG;
 
-    // GEOID
-    // 
-    d._GEOID = oZipMap[d._zip].GEOID || d._zip;
+    try {
 
-    // ZCTA
-    // 
-    d._ZCTA = oZipMap[d._zip].ZCTA5 || d._zip;
+      // Zip
+      // 
+      d._zip = getSanitizedZip(d.Zip);
+
+      oG = oZipMap[d._zip];
+
+      // GEOID
+      // 
+      d._GEOID = oG ? oG.GEOID : d._zip;
+
+      // ZCTA
+      // 
+      d._ZCTA = oG ? oG.ZCTA5 : d._zip;
+
+    }catch(e){
+      console.log('[ERROR]', e.message);
+    }
 
     // Is Bookmarked?
     // 
@@ -318,7 +328,6 @@ function DataModel(sUrl) {
       console.log('[ERROR]', e.message);
     }
 
-    
     return d;
     
   }
@@ -328,6 +337,10 @@ function DataModel(sUrl) {
    * @param  {Array} aData 
    */
   function processData(aData) {
+
+    aData = aData.filter(function(d){
+      return !!d.ID;
+    });
 
     // Prepare Master dataset
     // 

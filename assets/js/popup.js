@@ -83,6 +83,29 @@ var Popup = (function _popup() {
 
   function profilePopup(oData) {
 
+    // Parse some fields
+    // 
+    oData.profiles = oData.profiles.map(function(d){
+      // Software Score - Usage
+      // 
+      try {
+        var metric = 'Hourly-Daily';
+        d._daily = (d[metric] || '').split(',');
+
+        metric = 'Weekly';
+        d._weekly = (d[metric] || '').split(',');
+
+        metric = 'Monthly-Yearly';
+        d._yearly = (d[metric] || '').split(',');
+
+      }catch(e){
+        console.log('[ERROR]', e.message);
+      }
+
+      return d;
+
+    });
+
     // creat a wrapper div and add popup html
     // 
     var el = d3.select(document.createElement('div'))
