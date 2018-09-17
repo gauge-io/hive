@@ -30,7 +30,7 @@
 <body>
 
 
-<div id='map'></div>
+<div id="map"></div>
 
 <div id="filter_panel" class="filter-panel">
 
@@ -202,27 +202,9 @@
 
 <script>
 
-/**
- * ZCTA wise metric details
- * @type {Object}
- */
-var zcta_metrics = {};
-
-/**
- * ZCTA to GEO ID Mapping
- * @type {Object}
- */
-var zcta_geoid = {};
-
-/**
- * COUNTY to GEO ID Mapping
- * @type {Object}
- */
-var county_geoid = {};
-
-var oProfiles = {};
-
-mapboxgl.accessToken = 'pk.eyJ1IjoiaWFzaGlzaHNpbmdoIiwiYSI6ImNqbHQ2d2JpcTA1cnEzcG9idGl2aTN5MTMifQ.yGUYoyQ4IyAfzl3E2D0ecA';
+    // Mapbox access token
+    // 
+    mapboxgl.accessToken = 'pk.eyJ1IjoiaWFzaGlzaHNpbmdoIiwiYSI6ImNqbHQ2d2JpcTA1cnEzcG9idGl2aTN5MTMifQ.yGUYoyQ4IyAfzl3E2D0ecA';
 
 
 </script>
@@ -264,122 +246,122 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiaWFzaGlzaHNpbmdoIiwiYSI6ImNqbHQ2d2JpcTA1cnEzc
 <!-- Popup Template - Large -->
 <script id="popup_large_profile_tpl" type="text/html"> <!-- x-tmpl-mustache -->
 
-<div class="popup popup--large popup--listing {{#isActiveProfile}}popup--activeprofile{{/isActiveProfile}}">
-    {{#profiles}}
-    <div class="profilepanel {{#isActiveProfile}}profilepanel--active{{/isActiveProfile}}">
-        <div class="profilepanel__toolbar pbar profilepanel--handle">
-            <h3 class="pbar__left">ID{{ID}}: {{First Name}}</h3>
-            <h3 class="pbar__center">{{Employment}}{{#_title}}, {{.}}{{/_title}}</h3>
-            <div class="pbar__right">
-                <button class="profilepanel__bookmark {{#_isBookmarked}}profilepanel__bookmark--active{{/_isBookmarked}}" data-id="{{ID}}">
-                    <svg viewBox="0 0 24 24" width="24px" height="24px" x="0" y="0" preserveAspectRatio="xMinYMin meet" class="artdeco-icon" focusable="false">
-                        <path d="M18,2H6A1,1,0,0,0,5,3V23l7-4.72L19,23V3A1,1,0,0,0,18,2ZM7,19.36V4H17V19.34L12,16Z" class="large-icon" style="fill: currentColor"></path>
-                    </svg>
-                </button>
+    <div class="popup popup--large popup--listing {{#isActiveProfile}}popup--activeprofile{{/isActiveProfile}}">
+        {{#profiles}}
+        <div class="profilepanel {{#isActiveProfile}}profilepanel--active{{/isActiveProfile}}">
+            <div class="profilepanel__toolbar pbar profilepanel--handle">
+                <h3 class="pbar__left">ID{{ID}}: {{First Name}}</h3>
+                <h3 class="pbar__center">{{Employment}}{{#_title}}, {{.}}{{/_title}}</h3>
+                <div class="pbar__right">
+                    <button class="profilepanel__bookmark {{#_isBookmarked}}profilepanel__bookmark--active{{/_isBookmarked}}" data-id="{{ID}}">
+                        <svg viewBox="0 0 24 24" width="24px" height="24px" x="0" y="0" preserveAspectRatio="xMinYMin meet" class="artdeco-icon" focusable="false">
+                            <path d="M18,2H6A1,1,0,0,0,5,3V23l7-4.72L19,23V3A1,1,0,0,0,18,2ZM7,19.36V4H17V19.34L12,16Z" class="large-icon" style="fill: currentColor"></path>
+                        </svg>
+                    </button>
+                </div>
             </div>
-        </div>
-        <div class="profilepanel__head phead profilepanel--handle">
-            <div class="phead__img profile-icon profile-icon--large" style="background-image:url('{{avatar}}');"></div>
-            <div class="phead__attributes">
-                <ul>
-                    <li>{{Gender}}, {{Age}}{{#Ethnicity}}, {{.}} {{/Ethnicity}}</li>
-                    <li>{{Marital}} {{#ownType}}, {{.}} {{/ownType}}</li>
-                    <li>{{Employment Status}}</li>
-                    <li>{{Children in Home}} Children in Home</li>
-                    <li>{{_phone_choice}}</li>
-                    <li>{{Education}}</li>
-                    <li>{{City}}{{#State}}, {{.}}{{/State}}</li>
-                    <li>{{HHI}}</li>
-                </ul>
+            <div class="profilepanel__head phead profilepanel--handle">
+                <div class="phead__img profile-icon profile-icon--large" style="background-image:url('{{avatar}}');"></div>
+                <div class="phead__attributes">
+                    <ul>
+                        <li>{{Gender}}, {{Age}}{{#Ethnicity}}, {{.}} {{/Ethnicity}}</li>
+                        <li>{{Marital}} {{#ownType}}, {{.}} {{/ownType}}</li>
+                        <li>{{Employment Status}}</li>
+                        <li>{{Children in Home}} Children in Home</li>
+                        <li>{{_phone_choice}}</li>
+                        <li>{{Education}}</li>
+                        <li>{{City}}{{#State}}, {{.}}{{/State}}</li>
+                        <li>{{HHI}}</li>
+                    </ul>
+                </div>
             </div>
-        </div>
-        <div class="profilepanel__body pbody">
-            <ul class="accordion">
-                <li class="accordion__item">
-                    <input type="checkbox" checked>
-                    <i></i>
-                    <div class="aitem__head ahbar">
-                        <h2 class="ahbar__left">Hardware Adoption</h2>
-                        <h2 class="ahbar__right">{{Hardware Score}}</h2>
-                    </div>
-                    <div class="aitem__body">
-                        <ul class="list list--inline">
-                            <li>TVs ({{TVs}})</li>
-                            <li>DVRs ({{DVRs}})</li>
-                            <li>Game Console ({{Game Console}})</li>
-                            <li>Desktops ({{Desktops}})</li>
-                            <li>Laptops ({{Laptops}})</li>
-                            <li>Tablets ({{Tablets}})</li>
-                            <li>Network Router ({{Network Router}})</li>
-                            <li>Printer ({{Printer}})</li>
-                            <li>Wearables ({{Wearables}})</li>
-                            <li>Smartphones ({{Smartphones}})</li>
-                            <li>Handhelds ({{Handhelds}})</li>
-                            <li>Home Automation ({{Home Automation}})</li>
-                            <li>Home Hub ({{Home Hub}})</li>
-                            <li>Home Appliances ({{Home Appliances}})</li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="accordion__item">
-                    <input type="checkbox" checked>
-                    <i></i>
-                    <div class="aitem__head ahbar">
-                        <h2 class="ahbar__left">Software Score</h2>
-                        <h2 class="ahbar__right">{{Software Score}}</h2>
-                    </div>
-                    <div class="aitem__body">
-                        <div class="colflex">
-                            <div>
-                                <h4>Hourly/Daily</h4>
-                                <ul class="list">
-                                    {{#_daily}}
-                                    <li>{{.}}</li>
-                                    {{/_daily}}
-                                </ul>
-                            </div>
-                            <div>
-                                <h4>Weekly</h4>
-                                <ul class="list">
-                                    {{#_weekly}}
-                                    <li>{{.}}</li>
-                                    {{/_weekly}}
-                                </ul>
-                            </div>
-                            <div>
-                                <h4>Monthly/Yearly</h4>
-                                <ul class="list">
-                                    {{#_yearly}}
-                                    <li>{{.}}</li>
-                                    {{/_yearly}}
-                                </ul>
+            <div class="profilepanel__body pbody">
+                <ul class="accordion">
+                    <li class="accordion__item">
+                        <input type="checkbox" checked>
+                        <i></i>
+                        <div class="aitem__head ahbar">
+                            <h2 class="ahbar__left">Hardware Adoption</h2>
+                            <h2 class="ahbar__right">{{Hardware Score}}</h2>
+                        </div>
+                        <div class="aitem__body">
+                            <ul class="list list--inline">
+                                <li>TVs ({{TVs}})</li>
+                                <li>DVRs ({{DVRs}})</li>
+                                <li>Game Console ({{Game Console}})</li>
+                                <li>Desktops ({{Desktops}})</li>
+                                <li>Laptops ({{Laptops}})</li>
+                                <li>Tablets ({{Tablets}})</li>
+                                <li>Network Router ({{Network Router}})</li>
+                                <li>Printer ({{Printer}})</li>
+                                <li>Wearables ({{Wearables}})</li>
+                                <li>Smartphones ({{Smartphones}})</li>
+                                <li>Handhelds ({{Handhelds}})</li>
+                                <li>Home Automation ({{Home Automation}})</li>
+                                <li>Home Hub ({{Home Hub}})</li>
+                                <li>Home Appliances ({{Home Appliances}})</li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="accordion__item">
+                        <input type="checkbox" checked>
+                        <i></i>
+                        <div class="aitem__head ahbar">
+                            <h2 class="ahbar__left">Software Score</h2>
+                            <h2 class="ahbar__right">{{Software Score}}</h2>
+                        </div>
+                        <div class="aitem__body">
+                            <div class="colflex">
+                                <div>
+                                    <h4>Hourly/Daily</h4>
+                                    <ul class="list">
+                                        {{#_daily}}
+                                        <li>{{.}}</li>
+                                        {{/_daily}}
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4>Weekly</h4>
+                                    <ul class="list">
+                                        {{#_weekly}}
+                                        <li>{{.}}</li>
+                                        {{/_weekly}}
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4>Monthly/Yearly</h4>
+                                    <ul class="list">
+                                        {{#_yearly}}
+                                        <li>{{.}}</li>
+                                        {{/_yearly}}
+                                    </ul>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </li>
-                <li class="accordion__item">
-                    <input type="checkbox" checked>
-                    <i></i>
-                    <div class="aitem__head ahbar">
-                        <h2 class="ahbar__left">Tech Savviness</h2>
-                        <h2 class="ahbar__right">{{Savviness Index}}</h2>
-                    </div>
-                    <div class="aitem__body">
-                        <ul class="list list--block">
-                            {{#tsp}}
-                            <li>{{.}}</li>
-                            {{/tsp}}
-                        </ul>
-                    </div>
-                </li>
-            </ul>
+                    </li>
+                    <li class="accordion__item">
+                        <input type="checkbox" checked>
+                        <i></i>
+                        <div class="aitem__head ahbar">
+                            <h2 class="ahbar__left">Tech Savviness</h2>
+                            <h2 class="ahbar__right">{{Savviness Index}}</h2>
+                        </div>
+                        <div class="aitem__body">
+                            <ul class="list list--block">
+                                {{#tsp}}
+                                <li>{{.}}</li>
+                                {{/tsp}}
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="profilepanel__footer pbar">
+                <button class="pbar__full profilepanel__back">View List</button>
+            </div>
         </div>
-        <div class="profilepanel__footer pbar">
-            <button class="pbar__full profilepanel__back">View List</button>
-        </div>
+        {{/profiles}}
     </div>
-    {{/profiles}}
-</div>
 
 </script>
 
