@@ -6,76 +6,25 @@
 var Popup = (function _popup() {
 
   var _mini_popup_wrapper = '',
-  imagePath = 'images/avatars/',
   onProfileclick = function (){},
 
   oDispatch,
 
   // HTML Template
   // 
-  profileHTML = d3.select('#popup_large_profile_tpl').html();
+  profileHTML = d3.select('#popup_large_profile_tpl').html(),
+  profileScoreHTML = d3.select('#profile_miniscore_tpl').html();
 
   Mustache.parse(profileHTML);
-
-  // Ethinicty to Image mapping
-  // Values are for images based in images/avatars
-  // 
-  var oEthinicityImageMap = {
-    "African American": "african-american",
-    "Asian": "asian",
-    "Caucasian": "caucasian",
-    "Hispanic/Latino": "hispanic",
-    "Mid-Eastern": "mid-eastern",
-    "Pacific Islander": "pacific-islander",
-    "Native American": "other",
-    "Other": "other"
-  };
-
-  function getProfileAvatar(sGender, sEthinicty) {
-
-    var img = oEthinicityImageMap[sEthinicty] || oEthinicityImageMap['Other'];
-    // Add gender version
-    // 
-    return imagePath + img + '-' + (sGender == 'Male' ? 'male.png' : 'female.png');
-    
-  }
-
-  function round(v) {
-    return Math.round(v);
-  }
-
+  Mustache.parse(profileScoreHTML);
 
   function miniPopup(aData) {
 
-    function getItem(d) {
-      return '<div class="profile-icon profile-icon--mini" style="background-image:url('+ getProfileAvatar(d['Gender'], d['Ethnicity']) + ');"></div>\
-      <div class="miniscore miniscore--h">\
-        <label class="miniscore__label">\
-          H\
-          <label class="miniscore__value">'+ round(d['Hardware Score']) + '</label>\
-        </label>\
-      </div>\
-      <div class="miniscore miniscore--s">\
-        <label class="miniscore__label">\
-          S\
-          <label class="miniscore__value">' + round(d['Software Score']) + '</label>\
-        </label>\
-      </div>\
-      <div class="miniscore miniscore--t">\
-        <label class="miniscore__label">\
-          T\
-          <label class="miniscore__value">' + round(d['Savviness Index']) + '</label>\
-        </label>\
-      </div>';
-    }
-
     var popup = d3.select(document.createElement('div')),
-    _html = '<ul class="popup__list"></ul>',
+    list = d3.select(document.createElement('div')),
+    oData = {};
 
-    list = d3.select(document.createElement('div'));
-
-    list.classed('popup popup--mini', true)
-      .html(_html);
+    list.classed('popup popup--mini', true);
 
     // Add Header
     // 
@@ -88,35 +37,45 @@ var Popup = (function _popup() {
 
     header.classed('popup__title', true);
 
+    // add profiles
+    // 
+    aData = aData.map(function(d){
+      return getProfileWithMetaProperties(d);
+    });
+
+    // Profile Map
+    // 
+    oData = d3.map(aData, function(d){
+      return d.ID;
+    });
+
+    list.html(Mustache.render(profileScoreHTML, {
+      profiles: aData
+    }));
+    
+    list.selectAll('li')
+    .on('click', function(d, i){
+      
+      var sID = this.getAttribute('data-id'),
+      d = oData.get(sID);
+      
+      console.log('clicked profile', d);
+
+      // Update property;
+      // 
+      d.isActiveProfile = true;
+
+      oData.set(sID, d);
+
+      onProfileclick(oData.values(), i);
+    });
+
     // add list to popup
     // 
     jQuery(popup.node()).append(header.node());
 
     jQuery(popup.node()).append(list.node());
 
-    // add profiles
-    // 
-    
-    popup.select('.popup__list')
-      .selectAll('li')
-      .data(aData)
-    .enter()
-      .append('li')
-      .on('click', function(d, i){
-        console.log('clicked profile', d);
-        // Update property;
-        // 
-        pData = aData.map(function(p, j){
-          p.isActiveProfile = j == i;
-          p.tsp = getTechSavvinessPoints(p);
-          p._avatar = getProfileAvatar(p['Gender'], p['Ethnicity']);
-          return p;
-        });
-        onProfileclick(pData, i);
-      })
-      .html(function(d){
-        return getItem(d);
-      });
 
     return popup.node();
     

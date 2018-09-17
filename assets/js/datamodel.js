@@ -413,6 +413,16 @@ function DataModel(sUrl) {
 
     },
 
+    getProfileByID: function(sID){
+
+      if (sID && oBookmarkedProfiles.has(sID)) {
+        return _.cloneDeep([oBookmarkedProfiles.get(sID)])[0];
+      }
+
+      return {};
+
+    },
+
     getBookmarkCount: function(){
       return oBookmarkedProfiles.size();
     },

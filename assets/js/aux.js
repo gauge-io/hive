@@ -8,7 +8,7 @@
 
 (function Aux() {
 
-    var dispatch = d3.dispatch('filterUpdate', 'applyFiltersOnData', 'datasetRefreshed', 'mapLoaded', 'dataLoaded', 'updateProfileGeoJSON', 'adhocMetricUpdate', 'adhocUpdateDone', 'profile-features-joined', 'toggleBookmark'),
+    var dispatch = d3.dispatch('filterUpdate', 'applyFiltersOnData', 'datasetRefreshed', 'mapLoaded', 'dataLoaded', 'updateProfileGeoJSON', 'adhocMetricUpdate', 'adhocUpdateDone', 'profile-features-joined', 'toggleBookmark', 'showProfileOnMap'),
     sUrlProfile = 'data/viz/profile-data.csv',
 
     DataManager,
@@ -400,7 +400,15 @@
 
         aFeatureDrivenFilters = aFilters.filter(function(oF){
           return oF.isFeatureDriven;
-        });
+        }),
+
+        // Store reference to features of all profiles
+        // 
+        oProfileFeatures = {},
+
+        bookmarkListTpl = d3.select('#profile_miniscore_tpl').html();
+        
+        Mustache.parse(bookmarkListTpl);
 
         // Update
 
@@ -650,6 +658,50 @@
           
         }
 
+        // Show a list of Bookmarked Profiles
+        // 
+        function showBookmarkList(aBookmarkIds) {
+
+          var target = jQuery('#bookmarked_items .bookmarked-profiles'),
+          aData;
+
+          // reset
+          // 
+          target.html('');
+
+          // Get Profiles with features
+          // 
+          
+          aData = oProfileFeatures.values().filter(function(f){
+            return aBookmarkIds.indexOf(f.properties.ID) > -1;
+          }).map(function(d){
+            return getProfileWithMetaProperties(d.properties);
+          });
+
+          target.html(Mustache.render(bookmarkListTpl, {
+            profiles: aData
+          }));
+
+          // Bind Events
+          // 
+
+          target.find('li').off('click').on('click', function(){
+            // Show Large profile on the Map
+            // 
+            var id = this.getAttribute('data-id'),
+            oData = oProfileFeatures.get(id);
+
+            oData.isActiveProfile = true;
+
+            // dispatch
+            // 
+            dispatch.apply('showProfileOnMap', null, [oData]);
+
+          });
+
+
+        }
+
         // Update Filter Panel UI
         //
         function updateFilterPanel(obj) {
@@ -717,16 +769,30 @@
           // 
           initFilters();
 
+          // Show currently bookmarked profiles
+          // 
+          showBookmarkList( DataManager.getBookmarks() );
+
         });
 
         dispatch.on('toggleBookmark.ui', function(){
           updateFilterPanel();
+
+          // Show currently bookmarked profiles
+          // 
+          showBookmarkList( DataManager.getBookmarks() );
         });
 
         // Profile dataset has been joined with Map
         // Called only once
         // 
         dispatch.on('profile-features-joined.ui', function(aGeoJSON){
+
+          // prepare a ProfileID - feature map
+          // 
+          oProfileFeatures = d3.map(aGeoJSON.features, function(d){
+            return d.properties.ID;
+          });
 
           initFeatureBasedMetrics(aGeoJSON);
 
@@ -890,7 +956,7 @@
 
         // 5. Add the data source to map with clustering
         // 
-        var aGeoJSON = buildProfileFeatureData(true);
+        var aGeoJSON = aProfileFeatures = buildProfileFeatureData(true);
         
         setupProfileClusterLayer(aGeoJSON);
 
@@ -1022,9 +1088,13 @@
               // 
               clusterSource.getClusterLeaves(clusterId, point_count, 0, function(err, aFeatures){
 
+                /*
                 popupMini.setDOMContent(Popup.miniPopup(aFeatures.map(function(d){ return d.properties; })))
                   .setLngLat(coordinates)
                   .addTo(map);
+                */
+
+                showPopupOnMap(coordinates, Popup.miniPopup(aFeatures.map(function(d){ return d.properties; })));
 
               });
 
@@ -1039,6 +1109,8 @@
             var coordinates = e.features[0].geometry.coordinates.slice(), //[e.lngLat.lng, e.lngLat.lat],
             aFeatures = map.queryRenderedFeatures(e.point, { layers: ['unclustered-point'] });
 
+            /*
+
             // Center map on the point
             // 
             map.flyTo({center: coordinates});
@@ -1048,6 +1120,10 @@
             popupMini.setDOMContent(Popup.miniPopup(aFeatures.map(function(d){ return d.properties; })))
               .setLngLat(coordinates)
               .addTo(map);
+
+            */
+
+            showPopupOnMap(coordinates, Popup.miniPopup(aFeatures.map(function(d){ return d.properties; })), true);
 
           });
           
@@ -1135,7 +1211,6 @@
               .setData(aProfilesGeoJSON);
 
           });
-
 
       }
 
@@ -1289,6 +1364,22 @@
         
       }
 
+      // Show Popup on the map
+          // 
+          function showPopupOnMap(coordinates, domContent, bFlyMap) {
+            
+            popupMini
+              .setLngLat(coordinates)
+              .setDOMContent(domContent)
+              .addTo(map);
+
+            if (bFlyMap) {
+              // Center map on the point
+              // 
+              map.flyTo({center: coordinates});
+            }
+          }
+
 
       // Event Binding
       // 
@@ -1306,6 +1397,22 @@
       dispatch.on('datasetRefreshed.cluster-layer', function(aProfiles){
 
         buildProfileFeatureData(/*aProfiles*/);
+
+      });
+
+      // Show a Profile Popup on Map
+      // 
+      dispatch.on('showProfileOnMap.map', function(oProfile){
+        console.log('Profile', oProfile);
+
+        showPopupOnMap(
+          oProfile.geometry.coordinates.slice(), 
+          Popup.profilePopup({
+            profiles: [oProfile.properties], 
+            isActiveProfile: true
+          }),
+          true
+        );
 
       });
 

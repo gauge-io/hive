@@ -182,7 +182,9 @@
     </div>
 
     <div id="bookmarked_items" class="filter-panel-body filter-panel-body--bookmark">
-        
+        <div class="bookmarked-profiles">
+            
+        </div>
     </div>
 
 </div>
@@ -216,7 +218,41 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiaWFzaGlzaHNpbmdoIiwiYSI6ImNqbHQ2d2JpcTA1cnEzc
 
 </script>
 
-<!-- Popup Template -->
+<!-- MiniScore Template -->
+<script id="profile_miniscore_tpl" type="text/html"> <!-- x-tmpl-mustache -->
+
+    <ul class="popup__list">
+        {{#profiles}}
+        <li data-id="{{ID}}">
+
+            <div class="profile-icon profile-icon--mini" style="background-image:url('{{avatar}}');"></div>
+              <div class="miniscore miniscore--h">
+                <label class="miniscore__label">
+                  H
+                  <label class="miniscore__value">{{hs}}{{^hs}}0{{/hs}}</label>
+                </label>
+              </div>
+              <div class="miniscore miniscore--s">
+                <label class="miniscore__label">
+                  S
+                  <label class="miniscore__value">{{ss}}{{^ss}}0{{/ss}}</label>
+                </label>
+              </div>
+              <div class="miniscore miniscore--t">
+                <label class="miniscore__label">
+                  T
+                  <label class="miniscore__value">{{ts}}{{^ts}}0{{/ts}}</label>
+                </label>
+              </div>
+
+        </li>
+        {{/profiles}}
+
+    </ul>
+
+</script>
+
+<!-- Popup Template - Large -->
 <script id="popup_large_profile_tpl" type="text/html"> <!-- x-tmpl-mustache -->
 
 <div class="popup popup--large popup--listing {{#isActiveProfile}}popup--activeprofile{{/isActiveProfile}}">

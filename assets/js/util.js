@@ -424,7 +424,7 @@ function getBookmarksFromURL() {
     // entry after bookmakrked keyword
     aSlug = slug.split('bookmarked=');
 
-    aBookmarkedIDs = aSlug[1] ? aSlug[1].replace(/[\ ]/gi, '').split(',') : [];
+    aBookmarkedIDs = aSlug[1] ? aSlug[1].replace(/[\ \#]/gi, '').split(',') : [];
 
   }catch(e){
     console.log('ERROR', e.message);
@@ -484,5 +484,43 @@ function truncate(str, limit) {
 }
 
 
+function getProfileAvatar(sGender, sEthinicty) {
+  // Ethinicty to Image mapping
+  // Values are for images based in images/avatars
+  // 
+  var oEthinicityImageMap = {
+    "African American": "african-american",
+    "Asian": "asian",
+    "Caucasian": "caucasian",
+    "Hispanic/Latino": "hispanic",
+    "Mid-Eastern": "mid-eastern",
+    "Pacific Islander": "pacific-islander",
+    "Native American": "other",
+    "Other": "other"
+  },
+  imagePath = 'images/avatars/';
 
+  var img = oEthinicityImageMap[sEthinicty] || oEthinicityImageMap['Other'];
+  // Add gender version
+  // 
+  return imagePath + img + '-' + (sGender == 'Male' ? 'male.png' : 'female.png');
+  
+}
 
+// Add meta properties to a profile data
+// required for presentation in Large Profile Popup 
+// 
+function getProfileWithMetaProperties(d, isActiveProfile) {
+  return Object.assign(d, {
+    // small profile meta
+    // 
+    avatar: getProfileAvatar(d['Gender'], d['Ethnicity']),
+    hs: Math.round(d['Hardware Score']),
+    ss: Math.round(d['Software Score']),
+    ts: Math.round(d['Savviness Index']),
+    // Large profile meta
+    // 
+    isActiveProfile: !!isActiveProfile,
+    tsp: getTechSavvinessPoints(d)
+  });
+}
