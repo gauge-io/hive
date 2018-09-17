@@ -189,6 +189,10 @@
 
 </div>
 
+<div id="menu_btn" class="menu-icon">
+  <span></span>
+</div>
+
 <div id="logo" class="logo logo--main"></div>
 
 <script>
@@ -226,19 +230,19 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiaWFzaGlzaHNpbmdoIiwiYSI6ImNqbHQ2d2JpcTA1cnEzc
         <li data-id="{{ID}}">
 
             <div class="profile-icon profile-icon--mini" style="background-image:url('{{avatar}}');"></div>
-              <div class="miniscore miniscore--h">
+              <div class="miniscore miniscore--h" title="Hardware Adoption">
                 <label class="miniscore__label">
                   H
                   <label class="miniscore__value">{{hs}}{{^hs}}0{{/hs}}</label>
                 </label>
               </div>
-              <div class="miniscore miniscore--s">
+              <div class="miniscore miniscore--s" title="Software Adoption">
                 <label class="miniscore__label">
                   S
                   <label class="miniscore__value">{{ss}}{{^ss}}0{{/ss}}</label>
                 </label>
               </div>
-              <div class="miniscore miniscore--t">
+              <div class="miniscore miniscore--t" title="Technology Savviness">
                 <label class="miniscore__label">
                   T
                   <label class="miniscore__value">{{ts}}{{^ts}}0{{/ts}}</label>
@@ -270,7 +274,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiaWFzaGlzaHNpbmdoIiwiYSI6ImNqbHQ2d2JpcTA1cnEzc
             </div>
         </div>
         <div class="profilepanel__head phead profilepanel--handle">
-            <div class="phead__img profile-icon profile-icon--large" style="background-image:url('{{_avatar}}');"></div>
+            <div class="phead__img profile-icon profile-icon--large" style="background-image:url('{{avatar}}');"></div>
             <div class="phead__attributes">
                 <ul>
                     <li>{{Gender}}, {{Age}}{{#Ethnicity}}, {{.}} {{/Ethnicity}}</li>

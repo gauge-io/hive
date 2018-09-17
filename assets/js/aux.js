@@ -199,7 +199,7 @@
             // 
             {
                 id: '#filter_zip_den',
-                label: 'People/Square mile',
+                label: 'People per square mile',
                 type: 'range-slider',
                 metric: 'den',
                 isAdhoc: true,
@@ -212,7 +212,7 @@
                 }
             }, {
                 id: '#filter_zip_unemp',
-                label: '%',
+                label: 'Percentage',
                 type: 'range-slider',
                 metric: 'unemp',
                 isAdhoc: true,
@@ -475,12 +475,6 @@
 
           });
 
-          toggleFilter();
-
-        }
-
-        function toggleFilter(){
-          jQuery('#filter_panel').toggleClass('open');
         }
 
         // Initialize data driven filters
@@ -691,7 +685,7 @@
             var id = this.getAttribute('data-id'),
             oData = oProfileFeatures.get(id);
 
-            oData.isActiveProfile = true;
+            oData.properties.isActiveProfile = true;
 
             // dispatch
             // 
@@ -812,7 +806,12 @@
       });
 
       // Add zoom and rotation controls to the map.
+      // 
       map.addControl(new mapboxgl.NavigationControl(), 'bottom-left');
+
+      // Create Popup control
+      // 
+      var mapPopup = new mapboxgl.Popup({closeOnClick: false});
 
       // Join local JSON data with vector tile geometry
       // USA unemployment rate in 2009
@@ -971,8 +970,6 @@
       }
 
       function setupProfileClusterLayer(aGeoJSON) {
-
-        var popupMini = new mapboxgl.Popup({closeOnClick: false});
           
           // Add a new source from our GeoJSON data and set the
           // 'cluster' option to true. GL-JS will add the point_count property to your source data.
@@ -1089,7 +1086,7 @@
               clusterSource.getClusterLeaves(clusterId, point_count, 0, function(err, aFeatures){
 
                 /*
-                popupMini.setDOMContent(Popup.miniPopup(aFeatures.map(function(d){ return d.properties; })))
+                mapPopup.setDOMContent(Popup.miniPopup(aFeatures.map(function(d){ return d.properties; })))
                   .setLngLat(coordinates)
                   .addTo(map);
                 */
@@ -1117,7 +1114,7 @@
            
             // show Mini Popup
             // 
-            popupMini.setDOMContent(Popup.miniPopup(aFeatures.map(function(d){ return d.properties; })))
+            mapPopup.setDOMContent(Popup.miniPopup(aFeatures.map(function(d){ return d.properties; })))
               .setLngLat(coordinates)
               .addTo(map);
 
@@ -1131,7 +1128,7 @@
 
           Popup.onProfileclick(function(allProfiles){
 
-            popupMini.setDOMContent(
+            mapPopup.setDOMContent(
 
               Popup.profilePopup({
                 profiles: allProfiles, 
@@ -1368,7 +1365,7 @@
           // 
           function showPopupOnMap(coordinates, domContent, bFlyMap) {
             
-            popupMini
+            mapPopup
               .setLngLat(coordinates)
               .setDOMContent(domContent)
               .addTo(map);
@@ -1404,6 +1401,8 @@
       // 
       dispatch.on('showProfileOnMap.map', function(oProfile){
         console.log('Profile', oProfile);
+
+        // Mark as active
 
         showPopupOnMap(
           oProfile.geometry.coordinates.slice(), 
@@ -1546,6 +1545,16 @@
           // Show target content
           // 
           jQuery($this.find('a').attr('data-target')).show();
+      });
+
+      // Menu Button
+      var menuBtn = jQuery('#menu_btn');
+      menuBtn.on('click', function (){
+        
+        menuBtn.toggleClass('open');
+
+        jQuery('#filter_panel').toggleClass('open');
+
       });
 
 

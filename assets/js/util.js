@@ -480,7 +480,7 @@ function copyToClipboard(str) {
  */
 function truncate(str, limit) {
   limit = limit || 20;
-  return (str.length < limit) ? str : str.substring(0, limit).replace(/\w{3}$/gi, '...');
+  return (str.length > limit) ? str.substr(0, limit-1) + '...' : str;
 }
 
 
