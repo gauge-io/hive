@@ -135,17 +135,6 @@ function getFeaturesFromGeoID(aFeatures, aGeoID) {
   });
 }
 
-/**
- * Get a ZCTA for a Zip
- * @param  {array} aZipUnique Zip
- * @return {array}            ZCTA
- */
-function getZCTAFromZip(aZipUnique) {
-  // TODO
-  // 1. Build a map from file uszipsv1.2-zip-to-zcta.csv
-  // 2. Use results from this mapping to find ZCTA of a Zip
-}
-
 
 /**
  * Convert topolgies to GeoJSON features

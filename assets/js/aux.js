@@ -205,6 +205,8 @@
                 isAdhoc: true,
                 isFeatureDriven: true,
                 description: true,
+                hasLegend: '#legend_den',
+                step: 10,
                 range: {
                     min: 0,
                     max: 157000,
@@ -218,6 +220,7 @@
                 isAdhoc: true,
                 isFeatureDriven: true,
                 description: true,
+                hasLegend: '#legend_unemp',
                 range: {
                     min: 0,
                     max: 100,
@@ -473,6 +476,24 @@
 
               }
 
+              oFilter.onselect = function(values) {
+
+                // Don't trigger for adhoc filters
+                // They handle their change via dispatches
+                // 
+                if (oF.isAdhoc) {
+
+                  dispatch.apply('adhocMetricUpdate', null, [{
+                    metric: oF.metric,
+                    isAdhoc: true,
+                    type: oF.type,
+                    value: values
+                  }])
+
+                }
+
+              }
+
           });
 
         }
@@ -644,7 +665,7 @@
           // 
           DataManager.setQuerySet( applyFiltersOnData(_aFilters, DataManager.getMainSet()) );
 
-          console.log('Filtered Data', DataManager.getQuerySet());
+          //console.log('Filtered Data', DataManager.getQuerySet());
 
           // Dispatch info and new dataset
           // 
@@ -723,7 +744,7 @@
         // 
         dispatch.on('applyFiltersOnData.aux', function(){
 
-          console.log('Filtering Dataset');
+          //console.log('Filtering Dataset');
 
           setTimeout(function(){
             
@@ -802,7 +823,8 @@
         container: 'map',
         style: 'mapbox://styles/mapbox/light-v9',
         center: [-99.9, 41.5],
-        zoom: 3
+        zoom: 3,
+        maxZoom: 10
       });
 
       // Add zoom and rotation controls to the map.
@@ -880,13 +902,13 @@
         //var aFeatureGeo = getFeaturesFromZip(oCountiesGeoJSON.features, aZipUnique);
         //var aFeatureGeo = getFeaturesFromZCTA(oCountiesGeoJSON.features, aZCTA);
 
-        console.log("Found features", aFeatureGeo, 'aMissingZCTA' , aGeoID/*, aZipUnique*/);
+        //console.log("Found features", aFeatureGeo, 'aMissingZCTA' , aGeoID/*, aZipUnique*/);
 
         // 3. Get centroid of GeoJSON features
         // 
         var aFeatureCentroids = getGeoCentroid(aFeatureGeo);
 
-        console.log('Centroid Geo Features', aFeatureCentroids);
+        //console.log('Centroid Geo Features', aFeatureCentroids);
 
         // 4. Build a Map of properties.GEOID to feature
         // 
@@ -922,7 +944,7 @@
         // 
         var aGeoJSON = getFeatureCollectionFromFeatures(aProfileCentroids);
 
-        console.log('GeoJSON', aGeoJSON);
+        //console.log('GeoJSON', aGeoJSON);
 
         // 5. Add the data source to map with clustering
         // 
@@ -990,37 +1012,25 @@
               //maxzoom: iCountyZoomThreshold,
               filter: ["has", "point_count"],
               paint: {
-                  // Use step expressions (https://www.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
-                  // with three steps to implement three types of circles:
-                  //   * Blue, 20px circles when point count is less than 100
-                  //   * Yellow, 30px circles when point count is between 100 and 750
-                  //   * Pink, 40px circles when point count is greater than or equal to 750
+                  /*
                   "circle-color": [
                       "step",
                       ["get", "point_count"],
-                      "#666",
+                      "red",
                       10,
-                      "#666",
+                      "blue",
                       75,
-                      "#666"
+                      "pink"
                   ],
+                  */
+                  "circle-color": "#666",
                   "circle-radius": [
-                    // TODO - Linear scale?
                     'interpolate',
                     ['linear'],
                     ['get', 'point_count'],
                     5, 10,
                     100, 40,
                     1000, 50
-                    /*
-                      "step",
-                      ["get", "point_count"],
-                      10,
-                      10, // count
-                      20, // size
-                      30, // count
-                      30 // size
-                    */
                   ]
               }
           });
@@ -1218,28 +1228,29 @@
                   'interpolate',
                   ['linear'],
                   ['get', 'unemp'],
-                  2, '#eff3ff',
-                  4, '#c6dbef',
-                  6, '#9ecae1',
+                  0, '#f7fbff',
+                  1, '#deebf7',
+                  2, '#c6dbef',
+                  4, '#9ecae1',
                   8, '#6baed6',
-                  10, '#4292c6',
-                  12, '#2171b5',
-                  14, '#084594'
+                  16, '#4292c6', 
+                  32, '#2171b5',
+                  64, '#08519c'
               ],
 
           'den': [
                   'interpolate',
                   ['linear'],
                   ['get', 'den'],
-                  0, '#F2F12D',
-                  1000, '#EED322',
-                  5000, '#E6B71E',
-                  15000, '#DA9C20',
-                  25000, '#CA8323',
-                  50000, '#B86B25',
-                  100000, '#A25626',
-                  150000, '#8B4225',
-                  250000, '#723122'
+                  1, "#fff7ec", 
+                  10, "#fee8c8", 
+                  50, "#fdd49e", 
+                  200, "#fdbb84", 
+                  500, "#fc8d59", 
+                  1000, "#ef6548", 
+                  2000, "#d7301f", 
+                  4000, "#b30000", 
+                  250000, "#7f0000"
               ]
         };
 
@@ -1261,12 +1272,11 @@
         map.addLayer({
           'id': 'county-metric',
           'source': 'counties',
-          //'source-layer': 'state_county_population_2014_cen',
           'minzoom': iCountyZoomThreshold,
           'type': 'fill',
           //'filter': ['==', 'isCounty', true],
           'paint': {
-              'fill-color': oFilters['unemp'],
+              'fill-color': oFilters['den'],
               'fill-opacity': 0.75
           }
         }, 'waterway-label');
@@ -1337,7 +1347,7 @@
             map.setFilter("county-metric", null);
             map.setFilter("county-metric", ['all', ['>=', oPayload.metric, oPayload.value.min], ['<=', oPayload.metric, oPayload.value.max]]);
 
-            // Update Profiles based on matchinf features
+            // Update Profiles based on matching features
             // 
             var aJson = buildProfileFeatureData(true);
             if (aJson && aJson.features) {
@@ -1400,7 +1410,7 @@
       // Show a Profile Popup on Map
       // 
       dispatch.on('showProfileOnMap.map', function(oProfile){
-        console.log('Profile', oProfile);
+        //console.log('Profile', oProfile);
 
         // Mark as active
 
@@ -1425,7 +1435,7 @@
       
       DataManager.then(function(aQueryDataset){
 
-        console.log('Aux - data loaded', aQueryDataset);
+        //console.log('Aux - data loaded', aQueryDataset);
 
       });
 
@@ -1443,7 +1453,7 @@
 
       dispatch.on('filterUpdate', function(oPayload) {
 
-          console.log('dispatch filterUpdate', oPayload);
+          //console.log('dispatch filterUpdate', oPayload);
 
           clearTimeout(iFilterUpdateTimer);
           iFilterUpdateTimer = setTimeout(function(){
@@ -1528,7 +1538,9 @@
           // 
           var $this = jQuery(this),
           siblings = $this.siblings(),
-          siblingA = siblings.find('a');
+          siblingA = siblings.find('a'),
+          targetId = $this.find('a').attr('data-target')
+          $target = jQuery(targetId);
 
           siblings.removeClass('active');
 
@@ -1544,7 +1556,22 @@
 
           // Show target content
           // 
-          jQuery($this.find('a').attr('data-target')).show();
+          jQuery(targetId).show();
+
+          // For Zip Code Association Metrics, trigger events
+          // 
+          if ($this.hasClass('adhoc-metric')) {
+
+
+            dispatch.apply('adhocMetricUpdate', null, [{
+              metric: $this.attr('data-metric'),
+              value: {
+                min: parseInt($target.find('input[readonly][data-min]').val()),
+                max: parseInt($target.find('input[readonly][data-max]').val())
+              }
+            }]);
+
+          }
       });
 
       // Menu Button

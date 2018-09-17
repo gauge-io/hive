@@ -176,6 +176,8 @@ body {
       margin: 0;
       padding-left: 1.25em;
       cursor: pointer; }
+  .filter-panel .accordion .aitem__body > .svg-legend {
+    display: none; }
 @keyframes md-tab-ripple {
   0% {
     background: transparent; }
@@ -330,6 +332,9 @@ body {
   .filter .dropdown,
   .filter .checkbox {
     margin-top: 0.5em; }
+  .filter svg.svg-legend {
+    display: block;
+    margin: 0.5em auto; }
 
 .range-slider {
   margin: auto;

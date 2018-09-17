@@ -254,11 +254,18 @@ Filter.prototype.createHTML = function() {
       .html(html);
 
     rs.select('div')
-      .classed('range-slider', true)
+      .classed('range-slider', true);
+
+    // Does it have any legend?
+    // 
+    if (config.hasLegend) {
+      jQuery(rs.node())
+        .append(d3.select(config.hasLegend).node());
+    }
 
     // Set Min and Max values
     // 
-    var step = config.range.step || (config.range.max/config.range.min);
+    var step = config.step || config.range.step || (config.range.max/config.range.min);
 
     // init default values
     config.value = {
@@ -369,5 +376,9 @@ Filter.prototype.getState = function() {
 };
 
 Filter.prototype.onchange = function(oValue) {
-  console.log('onchange', oValue);
+  //console.log('onchange', oValue);
+};
+
+Filter.prototype.onselect = function(oValue) {
+  
 };

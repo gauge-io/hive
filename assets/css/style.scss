@@ -282,6 +282,12 @@ $md-tabs-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.26);
       }
 
     }
+
+    .aitem__body {
+      > .svg-legend {
+        display: none;
+      }
+    }
   }
 
   @keyframes md-tab-ripple {
@@ -500,6 +506,11 @@ $md-tabs-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.26);
   .dropdown,
   .checkbox {
     margin-top: 0.5em;
+  }
+
+  svg.svg-legend {
+    display: block;
+    margin: 0.5em auto;
   }
 }
 

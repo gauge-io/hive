@@ -59,7 +59,7 @@ var Popup = (function _popup() {
       var sID = this.getAttribute('data-id'),
       d = oData.get(sID);
       
-      console.log('clicked profile', d);
+      //console.log('clicked profile', d);
 
       // Update property;
       // 
@@ -99,7 +99,7 @@ var Popup = (function _popup() {
         // 
         var btn = jQuery(this);
 
-        console.log('Toggle Bookmark on Profile', this.getAttribute('data-id'));
+        //console.log('Toggle Bookmark on Profile', this.getAttribute('data-id'));
 
         // trigger bookmark event
         // 

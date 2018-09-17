@@ -214,7 +214,7 @@ function DataModel(sUrl) {
       
       var metric = 'Purchased Protection';
 
-      d[metric] = !!parseInt(d[metric]);
+      d[metric] = parseInt(d[metric]);
 
     }catch(e){
       console.log('[ERROR]', e.message);
