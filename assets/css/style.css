@@ -2,7 +2,59 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto);
 body {
   font: 12px/20px 'Roboto', Arial, Helvetica, sans-serif;
-  color: #333; }
+  color: #333;
+  margin: 0;
+  padding: 0; }
+  body.loading .loader {
+    display: block;
+    display: flex; }
+  body.loading #map,
+  body.loading .filter-panel {
+    opacity: 0; }
+  body.loading .logo--main {
+    top: 50%;
+    left: 50%;
+    margin-top: -3em;
+    margin-left: -8em;
+    width: 16em;
+    height: 6em; }
+
+.loader {
+  align-items: center;
+  display: none;
+  height: 100%;
+  height: 100vh;
+  justify-content: center;
+  width: 100%;
+  margin-top: 3em;
+  margin-left: -1em; }
+  .loader__dots span {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
+    background-color: #868686;
+    margin: 35px 5px; }
+    .loader__dots span:nth-child(1) {
+      animation: loader-bounce 1s ease-in-out infinite; }
+    .loader__dots span:nth-child(2) {
+      animation: loader-bounce 1s ease-in-out 0.33s infinite; }
+    .loader__dots span:nth-child(3) {
+      animation: loader-bounce 1s ease-in-out 0.66s infinite; }
+@keyframes loader-bounce {
+  0%, 75%, 100% {
+    opacity: .5;
+    transform: translateY(0); }
+  25% {
+    opacity: 1;
+    transform: translateY(-10px); } }
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  opacity: 1;
+  transition: opacity 0.25s ease-in-out; }
 
 .logo {
   background-image: url(../../images/logo.png);
@@ -15,59 +67,6 @@ body {
     width: 8em;
     height: 3em; }
 
-/*
-  menu icon css3
-*/
-.menu-icon {
-  position: absolute;
-  top: 0.25em;
-  right: 1em;
-  display: block;
-  width: 3em;
-  height: 4em;
-  cursor: pointer;
-  /* to center */
-  margin: 0 auto;
-  float: none;
-  -webkit-transition: all 0.3s;
-  transition: all 0.3s;
-  /* OPENED */ }
-  .menu-icon span {
-    position: absolute;
-    top: 50%;
-    display: block;
-    width: 100%;
-    height: 0.5em;
-    margin-top: -0.5em;
-    background-color: #546b81;
-    border-radius: 3px; }
-  .menu-icon > span:before,
-  .menu-icon > span:after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: #546b81;
-    border-radius: 3px;
-    -webkit-transition: all 0.3s;
-    transition: all 0.3s; }
-  .menu-icon > span:before {
-    -webkit-transform: translateY(-1em);
-    transform: translateY(-1em); }
-  .menu-icon > span:after {
-    -webkit-transform: translateY(1em);
-    transform: translateY(1em); }
-  .menu-icon.open {
-    right: 325px;
-    -webkit-transform: rotate(45deg);
-    transform: rotate(45deg); }
-    .menu-icon.open > span:before {
-      -webkit-transform: rotate(90deg);
-      transform: rotate(90deg); }
-    .menu-icon.open > span:after {
-      -webkit-transform: rotate(90deg);
-      transform: rotate(90deg); }
-
 .filter-panel {
   position: absolute;
   width: 0;
@@ -77,9 +76,11 @@ body {
   padding: 0;
   background-color: rgba(255, 255, 255, 0.9);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  border-radius: 3px;
+  border-radius: 0;
   box-sizing: border-box;
   overflow: hidden;
+  opacity: 1;
+  transition: opacity 0.25s ease-in-out;
   /*
   h2 {
     line-height: 24px;
@@ -189,7 +190,7 @@ body {
     background: transparent; } }
   .filter-panel.open {
     /*Styles for Dot Menu*/
-  /*
+    /*
 .button_container.active .top,
 .button_container.active .bottom {
   transform: translateX(-10px);
@@ -451,6 +452,8 @@ body {
 .mapboxgl-popup-content {
   padding: 10px;
   border-radius: 4px 0 4px; }
+  .mapboxgl-popup-content:hover > div {
+    overflow: hidden; }
 
 .mapboxgl-popup-close-button {
   font-size: 1.5em;
@@ -468,7 +471,7 @@ body {
 .popup--mini {
   background: #fff;
   max-height: 10.35em;
-  max-width: 250px;
+  max-width: 260px;
   overflow-y: auto; }
 .popup__list {
   list-style: none;
@@ -480,6 +483,8 @@ body {
     cursor: pointer; }
     .popup__list li:not(:last-child) {
       border-bottom: solid 1px #eee; }
+    .popup__list li.active, .popup__list li:hover, .popup__list li:active, .popup__list li:focus {
+      outline: solid 1px #546b81; }
     .popup__list li > * {
       display: inline-block;
       vertical-align: middle;
@@ -492,22 +497,24 @@ body {
       margin-right: 5px; }
     .popup__list li .miniscore {
       width: 60px; }
-      .popup__list li .miniscore > * {
-        cursor: pointer; }
       .popup__list li .miniscore__label {
         padding: 5px;
         color: #fff;
-        border-radius: 4px; }
+        border-radius: 4px;
+        cursor: pointer; }
       .popup__list li .miniscore__value {
         color: #444;
         background: white;
         padding: 0 5px;
-        border-radius: 3px; }
+        border-radius: 3px;
+        cursor: pointer; }
 .popup--large {
   max-height: 38em;
   overflow-y: auto; }
   .popup--large:not(.popup--activeprofile) .profilepanel:not(:first-child) {
     margin-top: 1em; }
+  .popup--large:not(.popup--activeprofile) .profilepanel:hover {
+    border: solid 1px #546b81; }
 .popup--listing .profilepanel > * {
   cursor: pointer; }
 .popup--listing:not(.popup--activeprofile) .profilepanel__body {
@@ -547,7 +554,7 @@ body {
     position: relative;
     font-size: 1.02em;
     border: 1px solid #dce7eb;
-      /*
+    /*
       @extend .flipIn;
 
       &:nth-of-type(1) {

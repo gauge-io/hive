@@ -16,23 +16,37 @@
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js"></script>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
 
     <!-- Custom Scripts -->
     <script src="assets/js/lib/mustache.min.js"></script>
+
+    <script>
+
+        // Mapbox access token
+        // 
+        mapboxgl.accessToken = 'pk.eyJ1IjoiaWFzaGlzaHNpbmdoIiwiYSI6ImNqbHQ2d2JpcTA1cnEzcG9idGl2aTN5MTMifQ.yGUYoyQ4IyAfzl3E2D0ecA';
+
+    </script>
     
-    <style>
-        body { margin:0; padding:0; }
-        #map { position:absolute; top:0; bottom:0; width:100%; }
-    </style>
 </head>
-<body>
+
+<body class="loading">
+
+    <div class="loader">
+  
+        <div class="loader__dots">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>  
+      
+    </div>
 
 
 <div id="map"></div>
 
-<div id="filter_panel" class="filter-panel">
+<div id="filter_panel" class="filter-panel open">
 
     <div class="filter-panel-header">
 
@@ -53,6 +67,7 @@
             <div id="filterpanel_menu" class="overlay-menu">
               <ul>
                 <li data-action="copyurl">Copy URL</li>
+                <li data-action="resetFilters">Reset All Filters</li>
                 <li data-action="clearbookmarks">Clear Bookmarks</li>
               </ul>
             </div>
@@ -162,9 +177,9 @@
                     </div>
                     <div class="aitem__body">
 
-                        <ul class="md-tabs md-tabs--white">
-                            <li class="active adhoc-metric" data-metric="den"><a data-target="#filter_zip_den" href="#">Population Density</a></li>
-                            <li class="adhoc-metric" data-metric="unemp"><a data-target="#filter_zip_unemp" href="#">Unemployment Rate</a></li>
+                        <ul id="filter_zip" class="md-tabs md-tabs--white">
+                            <li class="active adhoc-metric" default data-metric="den"><a data-target="#filter_zip_den" href="#">Population Density</a></li>
+                            <li class="adhoc-metric" data-metric="unemp"><a data-target="#filter_zip_unemp" href="#">Unemployment</a></li>
                         </ul>
                         
                         <div id="filter_zip_den"></div>
@@ -172,7 +187,7 @@
                         <div id="filter_zip_unemp" style="display: none;"></div>
 
                         <!-- Legend -->
-                        <svg id="legend_den" class="svg-legend" viewBox="0,0,280,30" width="280" height="30"><g fill="none" font-size="10" font-family="sans-serif" text-anchor="middle"><rect height="8" x="0" width="0.05" fill="#fff7ec"></rect><rect height="8" x="0.05" width="0.45" fill="#fee8c8"></rect><rect height="8" x="0.5" width="2" fill="#fdd49e"></rect><rect height="8" x="2.5" width="7.5" fill="#fdbb84"></rect><rect height="8" x="10" width="15" fill="#fc8d59"></rect><rect height="8" x="25" width="25" fill="#ef6548"></rect><rect height="8" x="50" width="50" fill="#d7301f"></rect><rect height="8" x="100" width="100" fill="#b30000"></rect><rect height="8" x="200" width="12300" fill="#7f0000"></rect><g class="tick" opacity="1" transform="translate(25.5,0)"><line stroke="currentColor" y2="13"></line><text fill="currentColor" y="16" dy="0.71em">500</text></g><g class="tick" opacity="1" transform="translate(50.5,0)"><line stroke="currentColor" y2="13"></line><text fill="currentColor" y="16" dy="0.71em">1000</text></g><g class="tick" opacity="1" transform="translate(100.5,0)"><line stroke="currentColor" y2="13"></line><text fill="currentColor" y="16" dy="0.71em">2000</text></g><g class="tick" opacity="1" transform="translate(200.5,0)"><line stroke="currentColor" y2="13"></line><text fill="currentColor" y="16" dy="0.71em">4000</text></g><g class="tick" opacity="1" transform="translate(12500.5,0)"><line stroke="currentColor" y2="13"></line><text fill="currentColor" y="16" dy="0.71em">250000</text></g><text fill="#000" font-weight="bold" text-anchor="start" y="-6"></text></g></svg>
+                        <svg id="legend_den" class="svg-legend" viewBox="0,0,280,30" width="280" height="30"><g fill="none" font-size="10" font-family="sans-serif" text-anchor="middle"><rect height="8" x="0" width="0.05" fill="#f7fcfd"></rect><rect height="8" x="0.05" width="0.45" fill="#e5f5f9"></rect><rect height="8" x="0.5" width="2" fill="#ccece6"></rect><rect height="8" x="2.5" width="7.5" fill="#99d8c9"></rect><rect height="8" x="10" width="15" fill="#66c2a4"></rect><rect height="8" x="25" width="25" fill="#41ae76"></rect><rect height="8" x="50" width="50" fill="#238b45"></rect><rect height="8" x="100" width="100" fill="#006d2c"></rect><rect height="8" x="200" width="12300" fill="#00441b"></rect><g class="tick" opacity="1" transform="translate(25.5,0)"><line stroke="currentColor" y2="13"></line><text fill="currentColor" y="16" dy="0.71em">500</text></g><g class="tick" opacity="1" transform="translate(50.5,0)"><line stroke="currentColor" y2="13"></line><text fill="currentColor" y="16" dy="0.71em">1000</text></g><g class="tick" opacity="1" transform="translate(100.5,0)"><line stroke="currentColor" y2="13"></line><text fill="currentColor" y="16" dy="0.71em">2000</text></g><g class="tick" opacity="1" transform="translate(200.5,0)"><line stroke="currentColor" y2="13"></line><text fill="currentColor" y="16" dy="0.71em">4000</text></g><g class="tick" opacity="1" transform="translate(12500.5,0)"><line stroke="currentColor" y2="13"></line><text fill="currentColor" y="16" dy="0.71em">250000</text></g><text fill="#000" font-weight="bold" text-anchor="start" y="-6"></text></g></svg>
 
                         <svg id="legend_unemp" class="svg-legend" viewBox="0,0,280,30" width="280" height="30"><g fill="none" font-size="10" font-family="sans-serif" text-anchor="middle"><rect height="8" x="0" width="0" fill="#deebf7"></rect><rect height="8" x="0" width="8.125" fill="#deebf7"></rect><rect height="8" x="8.125" width="8.125" fill="#c6dbef"></rect><rect height="8" x="16.25" width="16.25" fill="#9ecae1"></rect><rect height="8" x="32.5" width="32.5" fill="#6baed6"></rect><rect height="8" x="65" width="65" fill="#4292c6"></rect><rect height="8" x="130" width="130" fill="#2171b5"></rect><rect height="8" x="260" width="260" fill="#08519c"></rect><g class="tick" opacity="1" transform="translate(8.625,0)"><line stroke="currentColor" y2="13"></line><text fill="currentColor" y="16" dy="0.71em">1</text></g><g class="tick" opacity="1" transform="translate(16.75,0)"><line stroke="currentColor" y2="13"></line><text fill="currentColor" y="16" dy="0.71em">2</text></g><g class="tick" opacity="1" transform="translate(33,0)"><line stroke="currentColor" y2="13"></line><text fill="currentColor" y="16" dy="0.71em">4</text></g><g class="tick" opacity="1" transform="translate(65.5,0)"><line stroke="currentColor" y2="13"></line><text fill="currentColor" y="16" dy="0.71em">8</text></g><g class="tick" opacity="1" transform="translate(130.5,0)"><line stroke="currentColor" y2="13"></line><text fill="currentColor" y="16" dy="0.71em">16</text></g><g class="tick" opacity="1" transform="translate(260.5,0)"><line stroke="currentColor" y2="13"></line><text fill="currentColor" y="16" dy="0.71em">32</text></g><g class="tick" opacity="1" transform="translate(520.5,0)"><line stroke="currentColor" y2="13"></line><text fill="currentColor" y="16" dy="0.71em">64</text></g><text fill="#000" font-weight="bold" text-anchor="start" y="-6"></text></g></svg>
 
@@ -194,23 +209,10 @@
 
 </div>
 
-<div id="menu_btn" class="menu-icon">
-  <span></span>
-</div>
-
 <div id="logo" class="logo logo--main"></div>
 
-<script>
-
-    // Mapbox access token
-    // 
-    mapboxgl.accessToken = 'pk.eyJ1IjoiaWFzaGlzaHNpbmdoIiwiYSI6ImNqbHQ2d2JpcTA1cnEzcG9idGl2aTN5MTMifQ.yGUYoyQ4IyAfzl3E2D0ecA';
-
-
-</script>
-
 <!-- MiniScore Template -->
-<script id="profile_miniscore_tpl" type="text/html"> <!-- x-tmpl-mustache -->
+<script id="profile_miniscore_tpl" type="text/html"> 
 
     <ul class="popup__list">
         {{#profiles}}
@@ -244,7 +246,7 @@
 </script>
 
 <!-- Popup Template - Large -->
-<script id="popup_large_profile_tpl" type="text/html"> <!-- x-tmpl-mustache -->
+<script id="popup_large_profile_tpl" type="text/html">
 
     <div class="popup popup--large popup--listing {{#isActiveProfile}}popup--activeprofile{{/isActiveProfile}}">
         {{#profiles}}
