@@ -471,7 +471,7 @@ body {
 .popup--mini {
   background: #fff;
   max-height: 10.35em;
-  max-width: 250px;
+  max-width: 260px;
   overflow-y: auto; }
 .popup__list {
   list-style: none;
