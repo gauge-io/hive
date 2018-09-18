@@ -866,7 +866,9 @@
       // Create Popup control
       // 
       var mapPopup = new mapboxgl.Popup({closeOnClick: false}),
-      iCountyZoomThreshold = 10;
+      iCountyZoomThreshold = 4,
+      // Lets not show the dots
+      iClusterZoomThreshold = 13;
 
       map.on('load', function() {
 
@@ -1018,7 +1020,7 @@
               data: aGeoJSON || [],
               cluster: true,
               // Max zoom to cluster points on
-              clusterMaxZoom: iCountyZoomThreshold,
+              clusterMaxZoom: iClusterZoomThreshold,
               // Radius of each cluster when clustering points (defaults to 50)
               clusterRadius: 50
           });
@@ -1027,20 +1029,8 @@
               id: "clusters",
               type: "circle",
               source: "profiles",
-              //maxzoom: iCountyZoomThreshold,
               filter: ["has", "point_count"],
               paint: {
-                  /*
-                  "circle-color": [
-                      "step",
-                      ["get", "point_count"],
-                      "red",
-                      10,
-                      "blue",
-                      75,
-                      "pink"
-                  ],
-                  */
                   "circle-color": "#ef6548", //"#666",
                   "circle-radius": [
                     'interpolate',
@@ -1057,7 +1047,6 @@
               id: "cluster-count",
               type: "symbol",
               source: "profiles",
-              //maxzoom: iCountyZoomThreshold,
               filter: ["has", "point_count"],
               layout: {
                   "text-field": "{point_count_abbreviated}",
@@ -1343,20 +1332,20 @@
       }
 
       // Show Popup on the map
-          // 
-          function showPopupOnMap(coordinates, domContent, bFlyMap) {
-            
-            mapPopup
-              .setLngLat(coordinates)
-              .setDOMContent(domContent)
-              .addTo(map);
+      // 
+      function showPopupOnMap(coordinates, domContent, bFlyMap) {
+        
+        mapPopup
+          .setLngLat(coordinates)
+          .setDOMContent(domContent)
+          .addTo(map);
 
-            if (bFlyMap) {
-              // Center map on the point
-              // 
-              map.flyTo({center: coordinates});
-            }
-          }
+        if (bFlyMap) {
+          // Center map on the point
+          // 
+          map.flyTo({center: coordinates});
+        }
+      }
 
 
       // Event Binding
@@ -1395,6 +1384,19 @@
         );
 
       });
+
+      // Remove Popup on Esc
+      // 
+      document.addEventListener('keydown', onKeyDown);
+
+      function onKeyDown(e) {
+        // If the ESC key is pressed
+        if (e.keyCode === 27) {
+          // remove Popup from the map
+          // 
+          mapPopup.remove();
+        }
+      }
 
     }
 
