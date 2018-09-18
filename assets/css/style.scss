@@ -740,19 +740,19 @@ body {
 
       .miniscore {
         width: 60px;
-        >* {
-          cursor: pointer;
-        }
+        
         &__label {
           padding: 5px;
           color: #fff;
           border-radius: 4px;
+          cursor: pointer;
         }
         &__value {
           color: #444;
           background: white;
           padding: 0 5px;
           border-radius: 3px;
+          cursor: pointer;
         }
       }
     }

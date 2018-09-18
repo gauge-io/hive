@@ -1,7 +1,5 @@
 /**
  * Popup Code
- * @param  {[type]} ) {             })( [description]
- * @return {[type]}   [description]
  */
 var Popup = (function _popup() {
 
