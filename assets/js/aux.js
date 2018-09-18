@@ -730,8 +730,12 @@
             // 
             dispatch.apply('showProfileOnMap', null, [oData]);
 
-          });
+            // Add an active class on the li
+            // 
+            jQuery(this).siblings().removeClass('active');
+            jQuery(this).addClass('active');
 
+          });
 
         }
 
@@ -840,6 +844,49 @@
           // Enable the Vis
           // 
           jQuery('body').removeClass('loading');
+
+        });
+
+        // Add Keyboard navigation support to the Bookmarked list items
+        // 
+        jQuery('body').off('keydown').on('keydown', function(e){
+
+          var target = jQuery('#bookmarked_items .bookmarked-profiles'),
+          selected = target.find('li.active'),
+          li,
+          isVisible = !!target.parent(':visible').length;
+
+          // only process further if Bookmared tabs is open
+          // 
+          if (!isVisible) {
+            return;
+          }
+
+          selected = selected.length ? selected : target.find('li:first-child');
+
+          if (selected.length) {
+            if ([37,38].indexOf(e.keyCode) > -1) { // up / left
+              
+              selected.removeClass("active");
+              if (selected.prev().length == 0) {
+                  li = selected.siblings().last();
+              } else {
+                  li = selected.prev();
+              }
+            }
+            if ([39, 40].indexOf(e.keyCode) > -1) { // down / right
+                selected.removeClass("active");
+                if (selected.next().length == 0) {
+                    li = selected.siblings().first();
+                } else {
+                    li = selected.next();
+                }
+            }
+
+            if (li.length) {
+              li.trigger('click');
+            }
+          }
 
         });
 

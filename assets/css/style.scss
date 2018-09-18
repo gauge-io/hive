@@ -31,6 +31,11 @@ body {
 
   &.loading {
 
+    .loader {
+      display: block;
+      display: flex;
+    }
+
 
     // hide all elements
     #map,
@@ -57,7 +62,7 @@ body {
 
 .loader {
   align-items: center;
-  display: flex;
+  display: none;
   height: 100%;
   height: 100vh;
   justify-content: center;
@@ -660,7 +665,12 @@ body {
 // 
 .mapboxgl-popup-content {
   padding: 10px;
-  border-radius: 4px 0 4px
+  border-radius: 4px 0 4px;
+
+  &:hover > div {
+    overflow: hidden;
+  }
+
 }
 
 .mapboxgl-popup-close-button {
@@ -706,6 +716,14 @@ body {
       &:not(:last-child) {
         border-bottom: solid 1px #eee;
       }
+
+      &.active,
+      &:hover,
+      &:active,
+      &:focus {
+        outline: solid 1px $bg-blue;
+      }
+
       >* {
         display: inline-block; //display: inline-flex;
         vertical-align: middle;
@@ -748,6 +766,9 @@ body {
     &:not(.popup--activeprofile) {
       .profilepanel:not(:first-child) {
         margin-top: 1em;
+      }
+      .profilepanel:hover {
+        border: solid 1px $bg-blue;
       }
     }
   }
@@ -957,8 +978,6 @@ body {
     }
   }
 }
-
-
 
 .profilepanel {
 
