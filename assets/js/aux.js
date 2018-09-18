@@ -8,7 +8,7 @@
 
 (function Aux() {
 
-    var dispatch = d3.dispatch('filterUpdate', 'applyFiltersOnData', 'datasetRefreshed', 'mapLoaded', 'dataLoaded', 'updateProfileGeoJSON', 'adhocMetricUpdate', 'adhocUpdateDone', 'profile-features-joined', 'toggleBookmark', 'showProfileOnMap'),
+    var dispatch = d3.dispatch('filterUpdate', 'applyFiltersOnData', 'datasetRefreshed', 'mapLoaded', 'dataLoaded', 'updateProfileGeoJSON', 'adhocMetricUpdate', 'adhocUpdateDone', 'profile-features-joined', 'toggleBookmark', 'showProfileOnMap', 'resetFilters'),
     sUrlProfile = 'data/viz/profile-data.csv',
 
     DataManager,
@@ -673,6 +673,24 @@
           
         }
 
+        // Reset all defined filers
+        // 
+        function resetFilters() {
+
+          // Reset every active filter
+          aActiveFilters.forEach(function(oF){
+            oF.reset();
+          });
+          
+          // Update results
+          // 
+          dispatch.apply('applyFiltersOnData');
+
+          // Reset Zip Filter
+          // 
+          jQuery('#filter_zip li[default]').trigger('click');
+        }
+
         // Show a list of Bookmarked Profiles
         // 
         function showBookmarkList(aBookmarkIds) {
@@ -798,6 +816,14 @@
           showBookmarkList( DataManager.getBookmarks() );
         });
 
+        // Reset all filters to their init positions
+        // 
+        dispatch.on('resetFilters.ui', function(){
+
+          resetFilters();
+
+        });
+
         // Profile dataset has been joined with Map
         // Called only once
         // 
@@ -811,6 +837,10 @@
 
           initFeatureBasedMetrics(aGeoJSON);
 
+          // Enable the Vis
+          // 
+          jQuery('body').removeClass('loading');
+
         });
 
     }
@@ -819,12 +849,14 @@
     // 
     function initMap() {
 
+      // Create Map
+      // 
       map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/light-v9',
         center: [-99.9, 41.5],
         zoom: 3,
-        maxZoom: 10
+        maxZoom: 12
       });
 
       // Add zoom and rotation controls to the map.
@@ -833,13 +865,8 @@
 
       // Create Popup control
       // 
-      var mapPopup = new mapboxgl.Popup({closeOnClick: false});
-
-      // Join local JSON data with vector tile geometry
-      // USA unemployment rate in 2009
-      // Source https://data.bls.gov/timeseries/LNS14000000
-      var maxValue = 13,
-      iCountyZoomThreshold = 4;
+      var mapPopup = new mapboxgl.Popup({closeOnClick: false}),
+      iCountyZoomThreshold = 10;
 
       map.on('load', function() {
 
@@ -867,8 +894,6 @@
 
         // Work with GeoJSON
         // 
-        // data/TopoJSON/mapshaper/us_counties_final-geo.json
-        
         d3.json("data/GeoJSON/counties/counties-metrics-geo-3220.json").then(function(oGeoJSON){
             
             oCountiesGeoJSON = oGeoJSON;
@@ -893,15 +918,11 @@
         var aProfiles = DataManager.getQuerySet(),
         aZipUnique = getUniqueZipFromProfile(aProfiles),
         aGeoID = getUniqueGEOIDFromProfile(aProfiles);
-        //aGeoID = getGeoIDFromZip(aZipUnique, DataManager.getZIP2GEOID),
-        //aZCTA = getZCTAFromZip(aZipUnique, DataManager.getZIP2ZCTA);
 
         // 1. Filter features where our profiles are situated.
         // 
         var aFeatureGeo = getFeaturesFromGeoID(oCountiesGeoJSON.features, aGeoID);
-        //var aFeatureGeo = getFeaturesFromZip(oCountiesGeoJSON.features, aZipUnique);
-        //var aFeatureGeo = getFeaturesFromZCTA(oCountiesGeoJSON.features, aZCTA);
-
+        
         //console.log("Found features", aFeatureGeo, 'aMissingZCTA' , aGeoID/*, aZipUnique*/);
 
         // 3. Get centroid of GeoJSON features
@@ -914,7 +935,6 @@
         // 
         var oGEOIDFeature = d3.map(aFeatureCentroids, function(f){
             return f.properties.GEOID;
-            //return f.properties.ZCTA;
         });
 
         // 5. Add a Point feature for every profile
@@ -934,8 +954,6 @@
             }
 
             return oProfileF;
-
-            //return oGEOIDFeature.get(DataManager.getZIP2ZCTA(p._zip));
         }).filter(function(p){
             return !!p;
         });
@@ -1023,7 +1041,7 @@
                       "pink"
                   ],
                   */
-                  "circle-color": "#666",
+                  "circle-color": "#ef6548", //"#666",
                   "circle-radius": [
                     'interpolate',
                     ['linear'],
@@ -1116,26 +1134,12 @@
             var coordinates = e.features[0].geometry.coordinates.slice(), //[e.lngLat.lng, e.lngLat.lat],
             aFeatures = map.queryRenderedFeatures(e.point, { layers: ['unclustered-point'] });
 
-            /*
-
-            // Center map on the point
-            // 
-            map.flyTo({center: coordinates});
-           
-            // show Mini Popup
-            // 
-            mapPopup.setDOMContent(Popup.miniPopup(aFeatures.map(function(d){ return d.properties; })))
-              .setLngLat(coordinates)
-              .addTo(map);
-
-            */
-
             showPopupOnMap(coordinates, Popup.miniPopup(aFeatures.map(function(d){ return d.properties; })), true);
 
           });
           
-
-
+          // Set on Profile click function
+          // 
           Popup.onProfileclick(function(allProfiles){
 
             mapPopup.setDOMContent(
@@ -1160,52 +1164,6 @@
           map.on('mouseleave', 'unclustered-point', function () {
               map.getCanvas().style.cursor = '';
           });
-
-          
-            //.setLngLat([-96, 37.8])
-            //.setHTML('<h1>Hello World!</h1>')
-            //.addTo(map);
-          
-          /* // TODO Later - Points are image based icon
-          // Ethinicty to Image mapping
-        // Values are for images based in images/avatars
-        // 
-        var oEthinicityImageMap = {
-          "African American": "african-american",
-          "Asian": "asian",
-          "Caucasian": "caucasian",
-          "Hispanic/Latino": "hispanic",
-          "Mid-Eastern": "mid-eastern",
-          "Pacific Islander": "pacific-islander",
-          "Native American": "other",
-          "Other": "other"
-        };
-
-        function getProfileAvatar(sGender, sEthinicty) {
-
-          var img = oEthinicityImageMap[sEthinicty] || oEthinicityImageMap['Other'];
-          // Add gender version
-          // 
-          return img + '-' + sGender == 'Male' ? 'male.png' : 'female.png';
-          
-        }
-          map.addLayer({
-              id: "unclustered-point",
-              type: "symbol",
-              source: "profiles",
-              filter: ["!", ["has", "point_count"]],
-              layout: {
-                "icon-image": [
-                  "match",
-                  ["get","Gender"],
-                  "Male", ""
-                ],
-                "icon-padding": 0,
-                "icon-allow-overlap": true
-              }
-          });
-          */
-
 
           // Event Binding
           // 
@@ -1242,17 +1200,30 @@
                   'interpolate',
                   ['linear'],
                   ['get', 'den'],
-                  1, "#fff7ec", 
-                  10, "#fee8c8", 
-                  50, "#fdd49e", 
-                  200, "#fdbb84", 
-                  500, "#fc8d59", 
-                  1000, "#ef6548", 
-                  2000, "#d7301f", 
-                  4000, "#b30000", 
-                  250000, "#7f0000"
+                  1,'#f7fcf5',
+                  10,'#e5f5e0',
+                  50,'#c7e9c0',
+                  200,'#a1d99b',
+                  500,'#74c476',
+                  1000,'#41ab5d',
+                  2000,'#238b45',
+                  4000,'#006d2c',
+                  250000,'#00441b'
               ]
         };
+
+        /*
+        // 
+        1, "#fff7ec", 
+        10, "#fee8c8", 
+        50, "#fdd49e", 
+        200, "#fdbb84", 
+        500, "#fc8d59", 
+        1000, "#ef6548", 
+        2000, "#d7301f", 
+        4000, "#b30000", 
+        250000, "#7f0000"
+         */
 
         // Add a new source from our Counties GeoJSON data
         // NOTE - Source needs data at the time of creation
@@ -1522,11 +1493,17 @@
           alert('Bookmark URL Copied');
 
         }else if (action == "clearbookmarks") {
+          
           DataManager.clearBookmarks();
-
           dispatch.apply('toggleBookmark');
+
+        }else if (action == "resetFilters") {
+
+          dispatch.apply('resetFilters');
+
         }
 
+        // Close the menu
         jQuery('#toggle_menu').trigger('click');
 
       });

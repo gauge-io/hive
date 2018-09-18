@@ -32,6 +32,8 @@ Filter.prototype.createHTML = function() {
   // 
   function _checkbox() {
 
+    _this.setDefaultValue(config.values);
+
     var html = '\
       <label></label>\
       <div>\
@@ -68,7 +70,9 @@ Filter.prototype.createHTML = function() {
 
     // Insert DOM
     // 
-    d3.select(config.id).node()
+    d3.select(config.id)
+      .html('')
+      .node()
       .appendChild(dd.node());
 
     dd.select('input')
@@ -83,6 +87,8 @@ Filter.prototype.createHTML = function() {
   // Dropdown control
   // 
   function _dropdown() {
+
+    _this.setDefaultValue(config.values);
 
     var html = '\
       <label></label>\
@@ -128,7 +134,9 @@ Filter.prototype.createHTML = function() {
 
     // Insert DOM
     // 
-    d3.select(config.id).node()
+    d3.select(config.id)
+      .html('')
+      .node()
       .appendChild(dd.node());
 
     // Trigger Chosen
@@ -151,6 +159,7 @@ Filter.prototype.createHTML = function() {
   // 
   function _multidropdown() {
     
+    _this.setDefaultValue(config.values);
 
     var html = '\
       <label></label>\
@@ -196,7 +205,9 @@ Filter.prototype.createHTML = function() {
 
     // Insert DOM
     // 
-    d3.select(config.id).node()
+    d3.select(config.id)
+      .html('')
+      .node()
       .appendChild(dd.node());
 
     // Trigger Chosen
@@ -235,6 +246,8 @@ Filter.prototype.createHTML = function() {
   // Range Slider
   // 
   function _rangeslider() {
+
+    _this.setDefaultValue(config.range);
 
     var html = '\
       <label></label>\
@@ -333,7 +346,9 @@ Filter.prototype.createHTML = function() {
 
     // Insert DOM
     // 
-    d3.select(config.id).node()
+    d3.select(config.id)
+      .html('')
+      .node()
       .appendChild(rs.node());
     
   }
@@ -368,6 +383,60 @@ Filter.prototype.createHTML = function() {
   return _node;
   
 };
+
+// Reset a filter
+// range-slider to their min/max positions
+// Dropdown/Multi-dropdown to only select 'All'
+// 
+Filter.prototype.reset = function() {
+  
+  var sType = this.config.type,
+  value = this.getDefaultValue(),
+  $node = jQuery(this.config.id),
+  _this = this;
+
+  switch(sType){
+
+    case 'range-slider':
+
+      var minS = $node.find("input[data-min]"),
+      maxS = $node.find("input[data-max]");
+
+      minS.val(value.min);
+      maxS.val(value.max);
+
+      // Update value
+      // 
+      _this.config.value = value;
+
+      break;
+
+    case 'dropdown':
+    case 'multi-dropdown':
+      // For dropdowns, it is as good as re-building the chosen
+      // 
+      _this.createHTML();
+
+      var aVal = value.filter(function(_v){
+        return _v.selected;
+      });
+
+      _this.config.value = aVal.length ? aVal[0].value : 'All';
+
+      break;
+
+  }
+
+};
+
+Filter.prototype.getDefaultValue = function() {
+  return this._defaultValue;
+}
+
+Filter.prototype.setDefaultValue = function(oValue) {
+  this._defaultValue = oValue;
+  return this;
+}
 
 // Return Config with active values
 // 

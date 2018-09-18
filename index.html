@@ -16,23 +16,37 @@
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js"></script>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
 
     <!-- Custom Scripts -->
     <script src="assets/js/lib/mustache.min.js"></script>
+
+    <script>
+
+        // Mapbox access token
+        // 
+        mapboxgl.accessToken = 'pk.eyJ1IjoiaWFzaGlzaHNpbmdoIiwiYSI6ImNqbHQ2d2JpcTA1cnEzcG9idGl2aTN5MTMifQ.yGUYoyQ4IyAfzl3E2D0ecA';
+
+    </script>
     
-    <style>
-        body { margin:0; padding:0; }
-        #map { position:absolute; top:0; bottom:0; width:100%; }
-    </style>
 </head>
-<body>
+
+<body class="loading">
+
+    <div class="loader">
+  
+        <div class="loader__dots">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>  
+      
+    </div>
 
 
 <div id="map"></div>
 
-<div id="filter_panel" class="filter-panel">
+<div id="filter_panel" class="filter-panel open">
 
     <div class="filter-panel-header">
 
@@ -53,6 +67,7 @@
             <div id="filterpanel_menu" class="overlay-menu">
               <ul>
                 <li data-action="copyurl">Copy URL</li>
+                <li data-action="resetFilters">Reset All Filters</li>
                 <li data-action="clearbookmarks">Clear Bookmarks</li>
               </ul>
             </div>
@@ -162,9 +177,9 @@
                     </div>
                     <div class="aitem__body">
 
-                        <ul class="md-tabs md-tabs--white">
-                            <li class="active adhoc-metric" data-metric="den"><a data-target="#filter_zip_den" href="#">Population Density</a></li>
-                            <li class="adhoc-metric" data-metric="unemp"><a data-target="#filter_zip_unemp" href="#">Unemployment Rate</a></li>
+                        <ul id="filter_zip" class="md-tabs md-tabs--white">
+                            <li class="active adhoc-metric" default data-metric="den"><a data-target="#filter_zip_den" href="#">Population Density</a></li>
+                            <li class="adhoc-metric" data-metric="unemp"><a data-target="#filter_zip_unemp" href="#">Unemployment</a></li>
                         </ul>
                         
                         <div id="filter_zip_den"></div>
@@ -194,23 +209,10 @@
 
 </div>
 
-<div id="menu_btn" class="menu-icon">
-  <span></span>
-</div>
-
 <div id="logo" class="logo logo--main"></div>
 
-<script>
-
-    // Mapbox access token
-    // 
-    mapboxgl.accessToken = 'pk.eyJ1IjoiaWFzaGlzaHNpbmdoIiwiYSI6ImNqbHQ2d2JpcTA1cnEzcG9idGl2aTN5MTMifQ.yGUYoyQ4IyAfzl3E2D0ecA';
-
-
-</script>
-
 <!-- MiniScore Template -->
-<script id="profile_miniscore_tpl" type="text/html"> <!-- x-tmpl-mustache -->
+<script id="profile_miniscore_tpl" type="text/html"> 
 
     <ul class="popup__list">
         {{#profiles}}
@@ -244,7 +246,7 @@
 </script>
 
 <!-- Popup Template - Large -->
-<script id="popup_large_profile_tpl" type="text/html"> <!-- x-tmpl-mustache -->
+<script id="popup_large_profile_tpl" type="text/html">
 
     <div class="popup popup--large popup--listing {{#isActiveProfile}}popup--activeprofile{{/isActiveProfile}}">
         {{#profiles}}
