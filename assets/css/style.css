@@ -774,4 +774,62 @@ body {
     border-radius: 16px;
     width: 32px; }
 
+#ui_container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0; }
+
+.wordtree {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  height: 100%; }
+  .wordtree__search {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap; }
+    .wordtree__search input {
+      width: 100%;
+      line-height: 2rem;
+      font-size: 1.5rem;
+      margin-bottom: .5rem;
+      text-align: center; }
+  .wordtree__searchsetting {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: space-between; }
+    .wordtree__searchsetting--left, .wordtree__searchsetting--right {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline; }
+    .wordtree__searchsetting--right {
+      box-sizing: border-box;
+      padding: 0.25rem 0; }
+    .wordtree__searchsetting label {
+      font-style: italic; }
+    .wordtree__searchsetting select {
+      margin-left: .5rem; }
+  .wordtree__body {
+    flex-grow: 1;
+    padding: 0.5rem;
+    box-sizing: border-box; }
+
+.wttags {
+  list-style: none;
+  margin: 0 .25rem;
+  padding: 0; }
+  .wttags li {
+    display: inline-block;
+    padding: .25rem .45rem;
+    margin: 0 .25rem;
+    background-color: lightblue;
+    border-radius: 4px;
+    cursor: pointer; }
+
 /*# sourceMappingURL=style.css.map */
