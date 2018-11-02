@@ -1294,6 +1294,11 @@ body {
     background-color: lightblue;
     border-radius: 4px;
     cursor: pointer;
+
+    &.active {
+      border: solid 1px lightblue;
+      background-color: #ffffff;
+    }
   }
 }
 /////////////////////////////////////////////////////////////////////////////////

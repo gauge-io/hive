@@ -31,7 +31,8 @@ function WordTree(elSelectorTree, oConfig) {
   // Tree object reference
   oTree,
   oTreeData,
-  oTreeOptions
+  oTreeOptions,
+  sTreeText
   ;
 
   // Do one time initialization
@@ -39,6 +40,8 @@ function WordTree(elSelectorTree, oConfig) {
   function init() {
 
     loadChartLibrary();
+
+    sTreeText = oConfig.text;
 
     // Instantiate and draw the Tree
     drawToDOM(elSelectorTree);
@@ -151,6 +154,10 @@ function WordTree(elSelectorTree, oConfig) {
    */
   function updateTree(oParams) {
 
+    oParams = Object.assign(oParams, {
+      text: sTreeText
+    });
+
     prepareConfig(oParams);
 
     drawTree();
@@ -171,7 +178,68 @@ function WordTree(elSelectorTree, oConfig) {
     
   }
 
+  function bindEvents() {
+
+    // Listen to changes for the root word of the graph
+    // ID wordtree_root for element
+    // 
+
+    var wordInput = d3.select('#wordtree_root'),
+    wordLayout = d3.select('#wordtree_layout_switch'),
+    wordTags = d3.selectAll('#wordtree_tags [data-tag]');
+    
+    // Root word
+    wordInput.on('change', function(){
+
+      updateTree({
+        type: wordLayout.node().value,
+        rootWord: wordInput.node().value
+      });
+
+    });
+
+    // Layout    
+    wordLayout.on('change', function(){
+
+      updateTree({
+        type: wordLayout.node().value,
+        rootWord: wordInput.node().value
+      });
+
+    });
+
+    // Tags
+    wordTags.on('click', function(){
+
+      // remove any other active tag
+      var n = this,
+      aSiblings = this.parentNode.children,
+      iLength = aSiblings.length;
+
+      for (var i = iLength - 1; i >= 0; i--) {
+        d3.select(aSiblings[i])
+          .classed('active', false);
+      }
+
+      // Add active class
+      d3.select(n)
+        .classed('active', true);
+
+      // Update tree
+      updateTree({
+        type: wordLayout.node().value,
+        rootWord: wordInput.node().value = this.getAttribute('data-tag')
+      });
+
+    });
+    
+  }
+
   init();
+
+  bindEvents();
+
+
 
   return {
 
