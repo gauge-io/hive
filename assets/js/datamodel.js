@@ -400,7 +400,7 @@ function DataModel(sUrl) {
         d._transcript = oProfileTranscripts[d.ID].aTranscript.join('.');
 
         // Tasks
-        d._aTaskID = oProfileTranscripts[d.ID].aTaskIDs;
+        d._aTaskID = _.uniq(oProfileTranscripts[d.ID].aTaskIDs);
 
       }else{
         

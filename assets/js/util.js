@@ -3,6 +3,14 @@
  * 
  */
 
+// Polyfills
+// 
+if (!Array.isArray) {
+  Array.isArray = function(arg) {
+    return Object.prototype.toString.call(arg) === '[object Array]';
+  };
+}
+
 /**
  * Sanitize a USPS ZIP Code
  *
@@ -312,7 +320,15 @@ function applyFiltersOnData(aFilters, aData) {
 
           try {
 
-            b = oF.value.indexOf(d[oF.metric]) > -1;
+            // Two possibilities -
+            // 1. When the metric value is not an array
+            // 2. When the metric value is an array
+            // 
+            if (Array.isArray(d[oF.metric]) && d[oF.metric].length) {  // 2.
+              b = _.difference(d[oF.metric], oF.value).length < d[oF.metric].length;
+            }else{  // 1.
+              b = oF.value.indexOf(d[oF.metric]) > -1;
+            }
 
           } catch (e) {
             console.log('ERROR', e.message);
@@ -370,6 +386,19 @@ function applyFiltersOnData(aFilters, aData) {
 
   return aFilteredData;
 
+}
+
+/**
+ * Using profile data, create a text from their transcript info
+ * @param  {array}  aProfiles Profiles
+ * @return {string}           Transcript text
+ */
+function buildProfileTranscriptText(aProfiles) {
+
+  return aProfiles.map(function(d){
+    return d._transcript;
+  }).join('\n');
+  
 }
 
 /**
@@ -439,23 +468,23 @@ function generateBookmarkURL(aBookmarkedIDs) {
 
 function copyToClipboard(str) {
   try {
-  var el = document.createElement('textarea');  // Create a <textarea> element
-  el.value = str;                                 // Set its value to the string that you want copied
-  el.setAttribute('readonly', '');                // Make it readonly to be tamper-proof
-  el.style.position = 'absolute';                 
-  el.style.left = '-9999px';                      // Move outside the screen to make it invisible
-  document.body.appendChild(el);                  // Append the <textarea> element to the HTML document
-  var selected =            
-    document.getSelection().rangeCount > 0        // Check if there is any content selected previously
-      ? document.getSelection().getRangeAt(0)     // Store selection if found
-      : false;                                    // Mark as false to know no selection existed before
-  el.select();                                    // Select the <textarea> content
-  document.execCommand('copy');                   // Copy - only works as a result of a user action (e.g. click events)
-  document.body.removeChild(el);                  // Remove the <textarea> element
-  if (selected) {                                 // If a selection existed before copying
-    document.getSelection().removeAllRanges();    // Unselect everything on the HTML document
-    document.getSelection().addRange(selected);   // Restore the original selection
-  }
+    var el = document.createElement('textarea');  // Create a <textarea> element
+    el.value = str;                                 // Set its value to the string that you want copied
+    el.setAttribute('readonly', '');                // Make it readonly to be tamper-proof
+    el.style.position = 'absolute';                 
+    el.style.left = '-9999px';                      // Move outside the screen to make it invisible
+    document.body.appendChild(el);                  // Append the <textarea> element to the HTML document
+    var selected =            
+      document.getSelection().rangeCount > 0        // Check if there is any content selected previously
+        ? document.getSelection().getRangeAt(0)     // Store selection if found
+        : false;                                    // Mark as false to know no selection existed before
+    el.select();                                    // Select the <textarea> content
+    document.execCommand('copy');                   // Copy - only works as a result of a user action (e.g. click events)
+    document.body.removeChild(el);                  // Remove the <textarea> element
+    if (selected) {                                 // If a selection existed before copying
+      document.getSelection().removeAllRanges();    // Unselect everything on the HTML document
+      document.getSelection().addRange(selected);   // Restore the original selection
+    }
   }catch(e){
     console.log('ERROR', e.message);
   }

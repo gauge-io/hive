@@ -32,7 +32,9 @@ function WordTree(elSelectorTree, oConfig) {
   oTree,
   oTreeData,
   oTreeOptions,
-  sTreeText
+  sTreeText,
+  sTreeType,
+  sRootWord
   ;
 
   // Do one time initialization
@@ -42,6 +44,13 @@ function WordTree(elSelectorTree, oConfig) {
     loadChartLibrary();
 
     sTreeText = oConfig.text;
+
+    // default tree type
+    sTreeType = 'suffix';
+
+    // default Root word
+    // first word of text
+    sRootWord = (sTreeText || ' ').split(' ')[0];
 
     // Instantiate and draw the Tree
     drawToDOM(elSelectorTree);
@@ -107,36 +116,23 @@ function WordTree(elSelectorTree, oConfig) {
 
   /**
    * Prepare the configuration and dataset for Tree
-   * @param  {object} oParams Settings for word tree
-   * 
-   * Properties of oParams: {
-   *   type: [string] prefix, suffix, double
-   *   text: [string] Full text of the Tree
-   *   rootWord: [string] A word to be set as the Tree's root
-   * }
    */
-  function prepareConfig(oParams) {
-
-    oParams = Object.assign({
-      type: 'suffix',
-      rootWord: null,
-      text: ''
-    }, oParams || {});
+  function prepareConfig() {
     
     // prepare default Tree config
     oTreeOptions = {
       wordtree: {
         // We are only using implicit
         format: 'implicit',
-        type: oParams.type,
-        word: oParams.rootWord
+        type: sTreeType,
+        word: sRootWord
       }
     };
 
     // prepare dataset
     oTreeData = google.visualization.arrayToDataTable([ 
       ['Phrases'],
-      [oParams.text]
+      [sTreeText]
     ]);
     
   }
@@ -144,21 +140,18 @@ function WordTree(elSelectorTree, oConfig) {
   /**
    * Update the Word Tree using oConfig parameters
    * 
-   * @param  {object} oParams Settings for word tree
+   * @param  {string} sNewTreeText Full text of the Tree
    * 
-   * Properties of oParams: {
-   *   type: [string] prefix, suffix, double
-   *   text: [string] Full text of the Tree
-   *   rootWord: [string] A word to be set as the Tree's root
-   * }
    */
-  function updateTree(oParams) {
+  function updateTree(sNewTreeText) {
 
-    oParams = Object.assign(oParams, {
-      text: sTreeText
-    });
+    
+    // Update Tree text
+    if (sNewTreeText) {
+      sTreeText = sNewTreeText;
+    }
 
-    prepareConfig(oParams);
+    prepareConfig();
 
     drawTree();
     
@@ -191,20 +184,20 @@ function WordTree(elSelectorTree, oConfig) {
     // Root word
     wordInput.on('change', function(){
 
-      updateTree({
-        type: wordLayout.node().value,
-        rootWord: wordInput.node().value
-      });
+      sTreeType = wordLayout.node().value;
+      sRootWord = wordInput.node().value;
+
+      updateTree();
 
     });
 
     // Layout    
     wordLayout.on('change', function(){
 
-      updateTree({
-        type: wordLayout.node().value,
-        rootWord: wordInput.node().value
-      });
+      sTreeType = wordLayout.node().value;
+      sRootWord = wordInput.node().value;
+
+      updateTree();
 
     });
 
@@ -226,10 +219,17 @@ function WordTree(elSelectorTree, oConfig) {
         .classed('active', true);
 
       // Update tree
+      /*
       updateTree({
         type: wordLayout.node().value,
         rootWord: wordInput.node().value = this.getAttribute('data-tag')
       });
+      */
+
+      sTreeType = wordLayout.node().value;
+      sRootWord = wordInput.node().value = this.getAttribute('data-tag');
+
+      updateTree();
 
     });
     
