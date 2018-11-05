@@ -32,7 +32,7 @@
         var aFilters = [
             // Bookmarked
             //
-            /*{
+            {
                 id: '#filter_bookmarked',
                 label: 'Bookmark Status',
                 type: 'dropdown',
@@ -49,7 +49,68 @@
                     value: 'false'
                 }]
             },
-            */
+
+            // Tasks
+            // 
+            {
+              id: '#filter_tasks',
+              label: '', //Tasks
+              type: 'multi-dropdown',
+              metric: '_aTaskID',
+              values: [{
+                label: 'All',
+                selected: true,
+                value: 'All'
+              },{
+                label: "Intro Selfie",
+                value: "1"
+              },
+              {
+                label: "What is Home?",
+                value: "2"
+              },
+              {
+                label: "The Highs and Lows",
+                value: "3"
+              },
+              {
+                label: "To-Do List",
+                value: "4"
+              },
+              {
+                label: "Meet and Greet",
+                value: "5"
+              },
+              {
+                label: "Unlikely Best Friends",
+                value: "6"
+              },
+              {
+                label: "Boxes and Brochures",
+                value: "7"
+              },
+              {
+                label: "Technology Love and Technology Frustration",
+                value: "8"
+              },
+              {
+                label: "Log your Activities",
+                value: "9"
+              },
+              {
+                label: "Upgrading Versions",
+                value: "10"
+              },
+              {
+                label: "Warranties",
+                value: "11"
+              },
+              {
+                label: "In-Home Visit",
+                value: "12"
+              }]
+            }
+            
             // Adoption Score
             //
             {

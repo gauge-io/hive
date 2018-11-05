@@ -23,6 +23,10 @@ function DataModel(sUrl) {
   // 
   oBookmarkedProfiles,
 
+  // Store transcript/interview data, Profile ID wise
+  // 
+  oProfileTranscripts = {},
+
   // Map of Zip to ZCTA / GEOID
   oZipMap = {},
 
@@ -51,7 +55,14 @@ function DataModel(sUrl) {
   function load() {
 
     load_zip_zcta_geoid_map(function(){
-      d3.csv(sUrl, parseRow).then(processData);
+      
+      loadTranscripts(function(){
+
+        // Load profiles
+        d3.csv(sUrl, parseRow).then(processData);
+
+      });
+      
     });
     
   }
@@ -64,6 +75,59 @@ function DataModel(sUrl) {
       oZipMap[getSanitizedZip(d.ZIP)] = d;
     }).then(callback);
     
+  }
+
+  // Load Profile Transcripts data
+  // 
+  function loadTranscripts(callback) {
+    
+    var sFileUrl = 'data/viz/transcripts.csv';
+
+    d3.csv(sFileUrl).then(function(aTranscripts){
+
+      aTranscripts.forEach(function(d){
+
+        // Profile exists?
+        // TODO - rename column to ID
+        var id = d['User ID'],
+        obj = oProfileTranscripts[id] = oProfileTranscripts[id] || {};
+
+        // add Tasks as a property
+        obj.aTaskIDs = obj.aTaskIDs || [];
+        obj.aTaskIDs.push(d['Task ID']);
+
+        // add Media files
+        obj.aMedia = obj.aMedia || [];
+        obj.aMedia.push({
+          url: d['Media URL'],
+          type: d['Type']
+        });
+
+        // add transcript
+        obj.aTranscript = obj.aTranscript || [];
+        obj.aTranscript.push(d['Transcript']);
+
+        // add Response
+        obj.aResponse = obj.aResponse || [];
+        obj.aResponse.push(d['Response']);
+
+        // add Comments
+        obj.aComments = obj.aComments || [];
+        d3.range(1, 7).forEach(function(i){
+          
+          var sComment = d['Comment '+ i];
+          if (sComment) {
+            obj.aComments.push(sComment);
+          }
+
+        });
+
+      });
+
+      callback();
+
+    });
+
   }
 
   // Parse a row of data.
@@ -324,6 +388,28 @@ function DataModel(sUrl) {
     try {
       var metric = 'Phone Type';
       d._phone_choice = d[metric].split(',').sort().reverse()[0];
+    }catch(e){
+      console.log('[ERROR]', e.message);
+    }
+
+    // Get Profile Content/Transcript information
+    // 
+    try {
+      
+      if (oProfileTranscripts[d.ID]) {
+        d._transcript = oProfileTranscripts[d.ID].aTranscript.join('.');
+
+        // Tasks
+        d._aTaskID = oProfileTranscripts[d.ID].aTaskIDs;
+
+      }else{
+        
+        d._aTaskID = [];
+
+      }
+
+      // TODO - also get response, comments
+
     }catch(e){
       console.log('[ERROR]', e.message);
     }
