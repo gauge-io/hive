@@ -19,13 +19,18 @@ body {
     margin-left: -8em;
     width: 16em;
     height: 6em; }
-  body[data-view="qualitative"] #map {
+  body[data-view="qualitative"] #map,
+  body[data-view="qualitative"] .md-tabs--rc {
     display: none; }
-  body[data-view="qualitative"] #wordtree {
+  body[data-view="qualitative"] #wordtree,
+  body[data-view="qualitative"] .md-tabs--qa {
     display: block; }
   body[data-view="recruitment"] #map {
     display: block; }
-  body[data-view="recruitment"] #wordtree {
+  body[data-view="recruitment"] .md-tabs--rc {
+    display: flex; }
+  body[data-view="recruitment"] #wordtree,
+  body[data-view="recruitment"] .md-tabs--qa {
     display: none; }
 
 .loader {
@@ -139,6 +144,8 @@ body {
     box-sizing: border-box; }
     .filter-panel .filter-panel-body--bookmark {
       display: none; }
+    .filter-panel .filter-panel-body .filters--adhoc {
+      margin-bottom: 1em; }
   .filter-panel .md-tabs {
     font-size: 16px;
     list-style: none;

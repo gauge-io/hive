@@ -395,9 +395,21 @@ function applyFiltersOnData(aFilters, aData) {
  */
 function buildProfileTranscriptText(aProfiles) {
 
-  return aProfiles.map(function(d){
+  var sText = aProfiles.map(function(d){
     return d._transcript;
-  }).join('\n');
+  }).filter(function(d){
+    return !!d;
+  }).join('\n'),
+  wordCount,
+  words,
+  wordSeparator = /([!?,;:.&"-]+|\S*[A-Z]\.|\S*(?:[^!?,;:.\s&-]))/g;  ///\w\w+/g
+
+  wordCount = (words = sText.match(wordSeparator)) == null ? 0 : words.length;
+
+  return {
+    text: sText,
+    wordCount: wordCount
+  }
   
 }
 

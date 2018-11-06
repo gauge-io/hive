@@ -108,9 +108,15 @@
 
         <div class="filter-panel-header">
 
-            <ul class="md-tabs">
+            <!-- Recruitment -->
+            <ul class="md-tabs md-tabs--rc">
                 <li class="active"><a data-target="#filters" href="#">Records<b id="record-count"></b></a></li>
                 <li><a data-target="#bookmarked_items" href="#">Bookmarks<b id="bookmark-count"></b></a></li>
+            </ul>
+
+            <!-- Qualitative Analysis -->
+            <ul class="md-tabs md-tabs--qa">
+                <li class="active"><a data-target="#" href="#">Word Count<b id="word-count"></b></a></li>
             </ul>
 
             <div id="toggle_menu" class="button_container">
@@ -125,7 +131,7 @@
 
         <div id="filters" class="filter-panel-body">
 
-            <div class="filters">
+            <div class="filters filters--adhoc">
 
                 <!-- Display -->
                 <div id="filter_bookmarked"></div>

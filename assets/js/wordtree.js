@@ -93,10 +93,21 @@ function WordTree(elSelectorTree, oConfig) {
       // create instance of the word tree
       oTree = new google.visualization.WordTree(elSelectorTree);
 
+      // Bind select/click event handler
+      google.visualization.events.addListener(oTree, 'select', selectHandler);
+
       drawTree();
         
     }
 
+    // When a word is clicked
+    // update the rootWord
+    function selectHandler() {
+      var selectedItem = oTree.getSelection();
+      if (selectedItem && selectedItem.word) {
+        sRootWord = selectedItem.word;
+      }
+    }
 
     if (bIsLibraryLoaded) {
       
@@ -124,10 +135,13 @@ function WordTree(elSelectorTree, oConfig) {
       wordtree: {
         // We are only using implicit
         format: 'implicit',
+        //sentenceSeparator: '\s*(.+?(?:[?!]+|$|\.(?=\s?[A-Z]|$)))\s*',
         type: sTreeType,
-        word: sRootWord
+        word: sRootWord = (sRootWord||'').replace(/[\ ,.!]/gi, '')
       }
     };
+
+    console.log('rootWord', sRootWord);
 
     // prepare dataset
     oTreeData = google.visualization.arrayToDataTable([ 

@@ -64,12 +64,14 @@ body {
   &[data-view="qualitative"] {
 
     // hide map view
-    #map {
+    #map,
+    .md-tabs--rc {
       display: none;
     }
 
     // show Word Tree
-    #wordtree {
+    #wordtree,
+    .md-tabs--qa {
       display: block;
     }
 
@@ -81,9 +83,13 @@ body {
     #map {
       display: block;
     }
+    .md-tabs--rc {
+      display: flex;
+    }
 
     // hide Word Tree
-    #wordtree {
+    #wordtree,
+    .md-tabs--qa {
       display: none;
     }
 
@@ -249,6 +255,10 @@ body {
 
     &--bookmark {
       display: none;
+    }
+
+    .filters--adhoc {
+      margin-bottom: 1em;
     }
   }
 
