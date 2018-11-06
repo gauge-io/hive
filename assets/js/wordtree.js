@@ -34,9 +34,15 @@ function WordTree(elSelectorTree, oConfig) {
   oTreeOptions,
   sTreeText,
   sTreeType,
-  sRootWord
-  ;
+  sRootWord,
 
+  // DOM elements
+  // 
+  wordInput = d3.select('#wordtree_root'),
+  wordLayout = d3.select('#wordtree_layout_switch'),
+  wordTagsContainer = d3.select('#wordtree_tags'),
+  wordTags = d3.selectAll('#wordtree_tags [data-tag]');
+  
   // Do one time initialization
   // 
   function init() {
@@ -96,6 +102,12 @@ function WordTree(elSelectorTree, oConfig) {
       // Bind select/click event handler
       google.visualization.events.addListener(oTree, 'select', selectHandler);
 
+      // Bind on ready event
+      google.visualization.events.addListener(oTree, 'ready', readyHandler);
+
+      // display root word
+      wordInput.node().value = sRootWord;
+
       drawTree();
         
     }
@@ -125,6 +137,16 @@ function WordTree(elSelectorTree, oConfig) {
     
   }
 
+  // on tree ready
+  function readyHandler() {
+    
+  }
+
+  // Before tree update
+  function updateHandler() {
+    
+  }
+
   /**
    * Prepare the configuration and dataset for Tree
    */
@@ -135,13 +157,12 @@ function WordTree(elSelectorTree, oConfig) {
       wordtree: {
         // We are only using implicit
         format: 'implicit',
+        maxFontSize: 14,
         //sentenceSeparator: '\s*(.+?(?:[?!]+|$|\.(?=\s?[A-Z]|$)))\s*',
         type: sTreeType,
         word: sRootWord = (sRootWord||'').replace(/[\ ,.!]/gi, '')
       }
     };
-
-    console.log('rootWord', sRootWord);
 
     // prepare dataset
     oTreeData = google.visualization.arrayToDataTable([ 
@@ -181,7 +202,55 @@ function WordTree(elSelectorTree, oConfig) {
 
     // draw tree using prepared data and config variables
     // 
-    oTree.draw(oTreeData, oTreeOptions);
+    var t1 = new Date();
+    //oTree.clearChart();
+    
+    updateHandler();
+
+    setTimeout(function(){
+      oTree.draw(oTreeData, oTreeOptions);
+
+      setPopularWords();
+    }, 1);
+    
+  }
+
+  // Select TOP 5 words with most weight
+  // from the current text
+  function setPopularWords() {
+
+    try {
+
+      var aWords = oTree.tree.Me,
+      aTags;
+
+      aWords.sort(function(a, b){
+        return d3.descending(a.weight, b.weight);
+      });
+
+      aTags = aWords.slice(0, 5).map(function(d){
+        return d.label;
+      });
+
+      var tags = wordTagsContainer.selectAll('.wttags__tag')
+        .data(aTags);
+
+      tags.enter()
+        .append('li')
+      .merge(tags)
+        .classed('wttags__tag', true)
+        .attr('data-tag', function(d){
+          return d;
+        })
+        .text(function(d){
+          return d;
+        });
+
+      bindEvents();
+
+    }catch(e){
+
+    }
     
   }
 
@@ -191,10 +260,6 @@ function WordTree(elSelectorTree, oConfig) {
     // ID wordtree_root for element
     // 
 
-    var wordInput = d3.select('#wordtree_root'),
-    wordLayout = d3.select('#wordtree_layout_switch'),
-    wordTags = d3.selectAll('#wordtree_tags [data-tag]');
-    
     // Root word
     wordInput.on('change', function(){
 
@@ -233,12 +298,6 @@ function WordTree(elSelectorTree, oConfig) {
         .classed('active', true);
 
       // Update tree
-      /*
-      updateTree({
-        type: wordLayout.node().value,
-        rootWord: wordInput.node().value = this.getAttribute('data-tag')
-      });
-      */
 
       sTreeType = wordLayout.node().value;
       sRootWord = wordInput.node().value = this.getAttribute('data-tag');
@@ -257,7 +316,23 @@ function WordTree(elSelectorTree, oConfig) {
 
   return {
 
-    update: updateTree
+    update: updateTree,
+
+    onready: function(callback){
+      if (typeof callback === "function") {
+        readyHandler = callback;
+      }
+    },
+
+    onupdate: function(callback){
+      if (typeof callback === "function") {
+        updateHandler = callback;
+      }
+    },
+
+    getData: function(){
+      return oTree;
+    }
 
   }
 

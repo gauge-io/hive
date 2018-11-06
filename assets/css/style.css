@@ -32,6 +32,13 @@ body {
   body[data-view="recruitment"] #wordtree,
   body[data-view="recruitment"] .md-tabs--qa {
     display: none; }
+  body[data-loading] #wordtree {
+    opacity: 0.3;
+    cursor: wait; }
+    body[data-loading] #wordtree > * {
+      cursor: wait; }
+    body[data-loading] #wordtree .wordtree__body {
+      pointer-events: none; }
 
 .loader {
   align-items: center;
@@ -76,8 +83,8 @@ body {
   background-size: contain; }
   .logo--main {
     position: fixed;
-    top: 0.25em;
-    left: .5em;
+    top: 1.25em;
+    left: 1.5em;
     width: 8em;
     height: 3em; }
 
@@ -821,7 +828,8 @@ body {
   .wordtree__search {
     display: flex;
     flex-direction: column;
-    flex-wrap: nowrap; }
+    flex-wrap: nowrap;
+    flex-shrink: 0; }
     .wordtree__search input {
       width: 100%;
       line-height: 2rem;

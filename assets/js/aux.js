@@ -8,7 +8,7 @@
 
 (function Aux() {
 
-    var dispatch = d3.dispatch('filterUpdate', 'applyFiltersOnData', 'datasetRefreshed', 'mapLoaded', 'dataLoaded', 'updateProfileGeoJSON', 'adhocMetricUpdate', 'adhocUpdateDone', 'profile-features-joined', 'toggleBookmark', 'showProfileOnMap', 'resetFilters', 'switchView'),
+    var dispatch = d3.dispatch('filterUpdate', 'applyFiltersOnData', 'datasetRefreshed', 'mapLoaded', 'dataLoaded', 'updateProfileGeoJSON', 'adhocMetricUpdate', 'adhocUpdateDone', 'profile-features-joined', 'toggleBookmark', 'showProfileOnMap', 'resetFilters', 'switchView', 'wordtreeBeginUpdate', 'wordtreeLoaded'),
     sUrlProfile = 'data/viz/profile-data.csv',
 
     DataManager,
@@ -24,7 +24,8 @@
 
         // Define DOM elements/objects
         // 
-        var oWordTree;
+        var oWordTree,
+        elWordTree = document.getElementById('wordtree_graph');
 
         // Define UI Filters
         // 
@@ -42,10 +43,10 @@
                     selected: true,
                     value: 'All'
                 }, {
-                    label: 'Yes',
+                    label: 'Bookmarked',
                     value: 'true'
                 }, {
-                    label: 'No',
+                    label: 'Not Bookmarked',
                     value: 'false'
                 }]
             },
@@ -843,8 +844,17 @@
           if(!oWordTree){
 
             // init word tree
-            oWordTree = WordTree(document.getElementById('wordtree_graph'), {
+            oWordTree = WordTree(elWordTree, {
               text: oText.text
+            });
+
+            // attach onready
+            oWordTree.onready(function(){
+              dispatch.apply('wordtreeLoaded');
+            });
+
+            oWordTree.onupdate(function(){
+              dispatch.apply('wordtreeBeginUpdate');
             });
 
           }else{
@@ -857,9 +867,7 @@
         // 
         function updateWordTree(sText) {
           if (oWordTree) {
-            console.log('WordTree update start', new Date())
             oWordTree.update(sText);
-            console.log('WordTree update end', new Date())
           }
         }
 
@@ -882,6 +890,18 @@
 
           }
           
+        }
+
+        // Toggle loading state of the UI
+        // 
+        function toggleLoading(bLoading) {
+          
+          if (bLoading) {
+            jQuery('body').attr('data-loading', true);
+          }else{
+            jQuery('body').removeAttr('data-loading');
+          }
+
         }
 
 
@@ -968,6 +988,16 @@
 
           resetFilters();
 
+        });
+
+        // Word Tree is ready for interaction
+        dispatch.on('wordtreeLoaded.ui', function(){
+          toggleLoading(false);
+        });
+
+        // Word Tree is being updated
+        dispatch.on('wordtreeBeginUpdate.ui', function(){
+          toggleLoading(true);
         });
 
         // Handle switch view

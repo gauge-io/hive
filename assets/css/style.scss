@@ -95,6 +95,23 @@ body {
 
   }
 
+  &[data-loading] {
+
+    #wordtree {
+      opacity: 0.3;
+      cursor: wait;
+
+      > * {
+        cursor: wait;
+      }
+
+      .wordtree__body {
+        pointer-events: none;
+      }
+    }
+
+  }
+
 }
 
 .loader {
@@ -162,8 +179,8 @@ body {
   &--main {
 
     position: fixed;
-    top: 0.25em;
-    left: .5em;
+    top: 1.25em;
+    left: 1.5em;
     width: 8em;
     height: 3em;
   }
@@ -1305,6 +1322,7 @@ body {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
+    flex-shrink: 0;
     
     input {
       width: 100%;
