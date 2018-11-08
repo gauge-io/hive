@@ -382,7 +382,7 @@ function DataModel(sUrl) {
     try {
       
       if (oProfileTranscripts[d.ID]) {
-        d._transcript = _.trim(oProfileTranscripts[d.ID].aTranscript.join('. '));
+        d._transcript = _.trim(oProfileTranscripts[d.ID].aTranscript.join('\n'));
 
         // Tasks
         d._aTaskID = _.uniq(oProfileTranscripts[d.ID].aTaskIDs);

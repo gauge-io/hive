@@ -594,7 +594,7 @@
           // Exclude any Filters based on the default View
           // Currently based on Recruitment view 
           aExcludeFromActiveFilters = [
-            'Segment',
+            '_aTaskID',
             '_isParticipant'
           ];
 
@@ -853,7 +853,7 @@
 
           // Update Record Count
           // 
-          if (obj && obj.recordCount) {
+          if (obj && obj.recordCount != undefined) {
 
             d3.select('#record-count')
               .html(obj.recordCount);
@@ -866,7 +866,7 @@
 
           // Update Word Count
           // 
-          if (obj && obj.wordCount) {
+          if (obj && obj.wordCount != undefined) {
 
             d3.select('#word-count')
               .html(obj.wordCount);
@@ -885,7 +885,7 @@
         function initWordTree() {
 
           var oText = buildProfileTranscriptText(DataManager.getQuerySet());
-          console.log(oText.text)
+          console.log(oText.text.length)
           updateFilterPanel({
             wordCount: oText.wordCount
           });
@@ -916,7 +916,7 @@
         // 
         function updateWordTree(sText) {
           if (oWordTree && getActiveView() == 'qualitative') {
-            console.log(sText)
+            console.log(sText.length)
             oWordTree.update(sText);
           }
         }

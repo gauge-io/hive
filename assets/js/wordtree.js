@@ -249,6 +249,9 @@ function WordTree(elSelectorTree, oConfig) {
           return d;
         });
 
+      // update tags
+      wordTags = d3.selectAll('#wordtree_tags [data-tag]');
+
       bindEvents();
 
     }catch(e){
