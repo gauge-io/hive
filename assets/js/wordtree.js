@@ -179,11 +179,14 @@ function WordTree(elSelectorTree, oConfig) {
    * 
    */
   function updateTree(sNewTreeText) {
-
     
     // Update Tree text
     if (sNewTreeText) {
       sTreeText = sNewTreeText;
+    }
+
+    if (!bIsLibraryLoaded) {
+      return false;
     }
 
     prepareConfig();

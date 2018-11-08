@@ -20,31 +20,33 @@ body {
     width: 16em;
     height: 6em; }
   body[data-view="qualitative"] #map,
-  body[data-view="qualitative"] .md-tabs--rc {
+  body[data-view="qualitative"] .md-tabs--rc,
+  body[data-view="qualitative"] .md-tabs--pc {
     display: none; }
   body[data-view="qualitative"] #wordtree,
   body[data-view="qualitative"] .md-tabs--qa {
     display: block; }
-  body[data-view="qualitative"] .accordion__item:not([data-view~="qa"]) {
+  body[data-view="qualitative"] [data-view-context]:not([data-view-context~="qa"]) {
     display: none; }
   body[data-view="recruitment"] #map {
     display: block; }
   body[data-view="recruitment"] .md-tabs--rc {
     display: flex; }
   body[data-view="recruitment"] #wordtree,
-  body[data-view="recruitment"] .md-tabs--qa {
+  body[data-view="recruitment"] .md-tabs--qa,
+  body[data-view="recruitment"] .md-tabs--pc {
     display: none; }
-  body[data-view="recruitment"] .accordion__item:not([data-view~="rc"]) {
+  body[data-view="recruitment"] [data-view-context]:not([data-view-context~="rc"]) {
     display: none; }
   body[data-view="participants"] #map {
     display: block; }
   body[data-view="participants"] .md-tabs--pc {
-    display: flex; }
+    display: block; }
   body[data-view="participants"] #wordtree,
   body[data-view="participants"] .md-tabs--qa,
   body[data-view="participants"] .md-tabs--rc {
     display: none; }
-  body[data-view="participants"] .accordion__item:not([data-view~="pc"]) {
+  body[data-view="participants"] [data-view-context]:not([data-view-context~="pc"]) {
     display: none; }
   body[data-loading] #wordtree {
     opacity: 0.3;

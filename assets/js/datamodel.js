@@ -387,9 +387,12 @@ function DataModel(sUrl) {
         // Tasks
         d._aTaskID = _.uniq(oProfileTranscripts[d.ID].aTaskIDs);
 
+        d._isParticipant = true;
+
       }else{
         
         d._aTaskID = [];
+        d._isParticipant = false;
 
       }
 

@@ -51,6 +51,26 @@
                 }]
             },
 
+            // Is a Participant
+            // 
+            {
+                id: '#filter_is_participant',
+                label: 'Participant',
+                type: 'dropdown',
+                metric: '_isParticipant',
+                values: [{
+                    label: 'All',
+                    value: 'All'
+                }, {
+                    label: 'Yes',
+                    value: 'true',
+                    selected: true
+                }, {
+                    label: 'No',
+                    value: 'false'
+                }]
+            },
+
             // Tasks
             // 
             {
@@ -475,6 +495,7 @@
           'den',
           'Ethnicity',
           'Segment',
+          '_isParticipant',
           '# of Devices with Protection Plans'
         ],
 
@@ -569,6 +590,13 @@
               }
 
           });
+
+          // Exclude any Filters based on the default View
+          // Currently based on Recruitment view 
+          aExcludeFromActiveFilters = [
+            'Segment',
+            '_isParticipant'
+          ];
 
         }
 
@@ -731,7 +759,11 @@
           var _aFilters = aActiveFilters.filter(function(oF){
             // Also exclude any explicitly excluded filters
             // 
-            return !oF.getState().isAdhoc || aExcludeFromActiveFilters.indexOf(oF.metric) > -1;
+            
+            var s = oF.getState();
+            
+            return !s.isAdhoc && aExcludeFromActiveFilters.indexOf(s.metric) == -1;
+
           }).map(function(oF){
             return oF.getState();
           });
@@ -826,6 +858,10 @@
             d3.select('#record-count')
               .html(obj.recordCount);
 
+            // Update Participant Count
+            d3.select('#participant-count')
+              .html(obj.recordCount);
+
           }
 
           // Update Word Count
@@ -879,7 +915,7 @@
         // Update the text of the Word Tree
         // 
         function updateWordTree(sText) {
-          if (oWordTree) {
+          if (oWordTree && getActiveView() == 'qualitative') {
             console.log(sText)
             oWordTree.update(sText);
           }
@@ -917,17 +953,19 @@
           if (sView == 'recruitment') {
 
             aExcludeFromActiveFilters = [
-              'Segment'
+              '_aTaskID',
+              '_isParticipant'
             ];
 
           }else if (sView == 'qualitative') {
 
-            aExcludeFromActiveFilters = [];
+            aExcludeFromActiveFilters = ['_isParticipant', '_isBookmarked'];
 
           }else if (sView == 'participants') {
 
             aExcludeFromActiveFilters = aEnabledFilters.filter(function(f){
-              return ['Segment', '_aTaskID'].indexOf(f) > -1; 
+              // exclude all except these
+              return ['Segment', '_aTaskID', '_isParticipant'].indexOf(f) == -1; 
             });
 
           }
@@ -940,6 +978,13 @@
           // 
           dispatch.apply('applyFiltersOnData');
           
+        }
+
+        // Get currently active view
+        // 
+        function getActiveView() {
+          return d3.select('body')
+            .attr('data-view') || 'recruitment';
         }
 
         // Toggle loading state of the UI

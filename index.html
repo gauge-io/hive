@@ -31,7 +31,7 @@
     </script>
     
 </head>
-
+<!-- Default view is recruitment -->
 <body class="loading" data-view="recruitment">
 
     <!-- App loader -->
@@ -65,7 +65,6 @@
                       <ul id="wordtree_tags" class="wttags">
                         <li class="wttags__tag" data-tag="warranties">warranties</li>
                         <li class="wttags__tag" data-tag="protection">protection</li>
-                        <li class="wttags__tag" data-tag="I">I</li>
                         <li class="wttags__tag" data-tag="support">support</li>
                         <li class="wttags__tag" data-tag="device">device</li>
                     </ul>
@@ -119,6 +118,11 @@
                 <li class="active"><a data-target="#filters" href="#">Word Count<b id="word-count"></b></a></li>
             </ul>
 
+            <!-- Participants View -->
+            <ul class="md-tabs md-tabs--pc">
+                <li class="active"><a data-target="#filters" href="#">Participants<b id="participant-count"></b></a></li>
+            </ul>
+
             <div id="toggle_menu" class="button_container">
                 <span class="top"></span>
                 <span class="top2"></span>
@@ -134,7 +138,7 @@
             <div class="filters filters--adhoc">
 
                 <!-- Display -->
-                <div id="filter_bookmarked"></div>
+                <div id="filter_bookmarked" data-view-context="rc"></div>
                 
             </div>
 
@@ -143,7 +147,7 @@
                 <ul class="accordion">
 
                     <!-- Tasks -->
-                    <li class="accordion__item" data-view="qa pc">
+                    <li class="accordion__item" data-view-context="qa pc">
                         <input type="checkbox">
                         <i></i>
                         <div class="aitem__head ahbar">
@@ -152,11 +156,14 @@
                         <div class="aitem__body">
                             <!-- Tasks -->
                             <div id="filter_tasks"></div>
+
+                            <!-- Is a Participant -->
+                            <div id="filter_is_participant" style="display: none;"></div>
                         </div>
                     </li>
 
                     <!-- Segments -->
-                    <li class="accordion__item" data-view="rc qa pc">
+                    <li class="accordion__item" data-view-context="rc qa pc">
                         <input type="checkbox">
                         <i></i>
                         <div class="aitem__head ahbar">
@@ -169,7 +176,7 @@
                     </li>
                     
                     <!-- Scales -->
-                    <li class="accordion__item" data-view="rc qa">
+                    <li class="accordion__item" data-view-context="rc qa">
                         <input type="checkbox">
                         <i></i>
                         <div class="aitem__head ahbar">
@@ -188,7 +195,7 @@
                     </li>
 
                     <!-- Demographics -->
-                    <li class="accordion__item" data-view="rc qa">
+                    <li class="accordion__item" data-view-context="rc qa">
                         <input type="checkbox">
                         <i></i>
                         <div class="aitem__head ahbar">
@@ -222,7 +229,7 @@
                     </li>
 
                     <!-- Support & Protection -->
-                    <li class="accordion__item" data-view="rc qa">
+                    <li class="accordion__item" data-view-context="rc qa">
                         <input type="checkbox">
                         <i></i>
                         <div class="aitem__head ahbar">
@@ -249,7 +256,7 @@
                     </li>
 
                     <!-- Zip Code Association -->
-                    <li class="accordion__item" data-view="rc qa">
+                    <li class="accordion__item" data-view-context="rc qa">
                         <input type="checkbox">
                         <i></i>
                         <div class="aitem__head ahbar">
