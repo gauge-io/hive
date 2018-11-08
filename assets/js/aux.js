@@ -425,6 +425,17 @@
                         value: "Native American"
                     }
                 ]
+            }, { 
+                id: '#filter_segments',
+                label: 'Segments',
+                type: 'multi-dropdown',
+                metric: 'Segment',
+                isDataDriven: true,
+                values: [{
+                  label: "All",
+                  value: "All",
+                  selected: true
+                }]
             }
 
         ],
@@ -436,6 +447,10 @@
         // Array of Filter instances
         // 
         aActiveFilters = [],
+
+        // List of controls which need to be excluded
+        // temporarily
+        aExcludeFromActiveFilters = [],
 
         // Enable filters that are currenlty applicable here
         // by metric value
@@ -459,6 +474,7 @@
           'unemp',
           'den',
           'Ethnicity',
+          'Segment',
           '# of Devices with Protection Plans'
         ],
 
@@ -481,11 +497,6 @@
         // Create controls
         // 
         function initFilters() {
-
-          // Enable UI
-          // 
-
-
 
           // Initialize data driven filters
           // 
@@ -718,7 +729,9 @@
           // property isAdhoc = true
           // 
           var _aFilters = aActiveFilters.filter(function(oF){
-            return !oF.getState().isAdhoc;
+            // Also exclude any explicitly excluded filters
+            // 
+            return !oF.getState().isAdhoc || aExcludeFromActiveFilters.indexOf(oF.metric) > -1;
           }).map(function(oF){
             return oF.getState();
           });
@@ -836,7 +849,7 @@
         function initWordTree() {
 
           var oText = buildProfileTranscriptText(DataManager.getQuerySet());
-
+          console.log(oText.text)
           updateFilterPanel({
             wordCount: oText.wordCount
           });
@@ -867,6 +880,7 @@
         // 
         function updateWordTree(sText) {
           if (oWordTree) {
+            console.log(sText)
             oWordTree.update(sText);
           }
         }
@@ -889,6 +903,42 @@
             break;
 
           }
+
+          // Toggle Filters
+          toggleFiltersBasedOnView(sView);
+          
+        }
+
+        // Some filters need to be disabled
+        // for certain view
+        // 
+        function toggleFiltersBasedOnView(sView) {
+
+          if (sView == 'recruitment') {
+
+            aExcludeFromActiveFilters = [
+              'Segment'
+            ];
+
+          }else if (sView == 'qualitative') {
+
+            aExcludeFromActiveFilters = [];
+
+          }else if (sView == 'participants') {
+
+            aExcludeFromActiveFilters = aEnabledFilters.filter(function(f){
+              return ['Segment', '_aTaskID'].indexOf(f) > -1; 
+            });
+
+          }
+
+          // Reset filters which have been excluded
+          // such that there full range of values are considered
+          // 
+          
+          // Update results
+          // 
+          dispatch.apply('applyFiltersOnData');
           
         }
 

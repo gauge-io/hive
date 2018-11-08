@@ -105,22 +105,7 @@ function DataModel(sUrl) {
 
         // add transcript
         obj.aTranscript = obj.aTranscript || [];
-        obj.aTranscript.push(d['Transcript']);
-
-        // add Response
-        obj.aResponse = obj.aResponse || [];
-        obj.aResponse.push(d['Response']);
-
-        // add Comments
-        obj.aComments = obj.aComments || [];
-        d3.range(1, 7).forEach(function(i){
-          
-          var sComment = d['Comment '+ i];
-          if (sComment) {
-            obj.aComments.push(sComment);
-          }
-
-        });
+        obj.aTranscript.push(d['Processed Text']);
 
       });
 
@@ -397,7 +382,7 @@ function DataModel(sUrl) {
     try {
       
       if (oProfileTranscripts[d.ID]) {
-        d._transcript = _.trim(oProfileTranscripts[d.ID].aTranscript.join('\n'));
+        d._transcript = _.trim(oProfileTranscripts[d.ID].aTranscript.join('. '));
 
         // Tasks
         d._aTaskID = _.uniq(oProfileTranscripts[d.ID].aTaskIDs);

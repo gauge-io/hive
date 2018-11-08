@@ -75,6 +75,11 @@ body {
       display: block;
     }
 
+    // Disable Filters
+    .accordion__item:not([data-view~="qa"]) {
+      display: none;
+    }
+
   }
 
   &[data-view="recruitment"] {
@@ -93,7 +98,37 @@ body {
       display: none;
     }
 
+    // Disable Filters
+    .accordion__item:not([data-view~="rc"]) {
+      display: none;
+    }
+
   }
+
+  &[data-view="participants"] {
+
+    // show map view
+    #map {
+      display: block;
+    }
+    .md-tabs--pc {
+      display: flex;
+    }
+
+    // hide Word Tree
+    #wordtree,
+    .md-tabs--qa,
+    .md-tabs--rc {
+      display: none;
+    }
+
+    // Disable Filters
+    .accordion__item:not([data-view~="pc"]) {
+      display: none;
+    }
+
+  }
+
 
   &[data-loading] {
 
