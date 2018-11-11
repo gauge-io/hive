@@ -931,6 +931,14 @@ body {
   }
 }
 
+// Profile marker
+// 
+.profile-marker.mapboxgl-marker {
+  .popup__title {
+    display: none;
+  }
+}
+
 .miniscore {
 
   &--h {

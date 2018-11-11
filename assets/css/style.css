@@ -729,6 +729,10 @@ body[data-loading] #wordtree .wordtree__body {
   height: 6em;
 }
 
+.profile-marker.mapboxgl-marker .popup__title {
+  display: none;
+}
+
 .miniscore--h .miniscore__label {
   background: #f38381;
 }

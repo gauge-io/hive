@@ -554,3 +554,11 @@ function getProfileWithMetaProperties(d, isActiveProfile) {
     tsp: getTechSavvinessPoints(d)
   });
 }
+
+
+// Get currently active view
+// 
+function getActiveView() {
+  return d3.select('body')
+    .attr('data-view') || 'recruitment';
+}

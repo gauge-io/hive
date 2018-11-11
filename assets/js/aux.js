@@ -980,13 +980,6 @@
           
         }
 
-        // Get currently active view
-        // 
-        function getActiveView() {
-          return d3.select('body')
-            .attr('data-view') || 'recruitment';
-        }
-
         // Toggle loading state of the UI
         // 
         function toggleLoading(bLoading) {
@@ -1199,7 +1192,9 @@
       var mapPopup = new mapboxgl.Popup({closeOnClick: false}),
       iCountyZoomThreshold = 4,
       // Lets not show the dots
-      iClusterZoomThreshold = 13;
+      iClusterZoomThreshold = 13,
+      // store all profile markers currently added to the map
+      aProfileMarkersOnMap = [];
 
       map.on('load', function() {
 
@@ -1498,8 +1493,64 @@
             map.getSource("profiles")
               .setData(aProfilesGeoJSON);
 
+
+            // only add when active view is Participants
+            if (getActiveView() == 'participants') {
+              addProfileMarkersToMap(aProfilesGeoJSON);
+            }
+
           });
 
+      }
+
+      /**
+       * Draw a marker for each profile on the map
+       * 
+       * @param {array} profile features array
+       */
+      function addProfileMarkersToMap(oFeatureGeo) {
+
+        removeProfileMarkers();
+
+        // add markers to map
+        oFeatureGeo.features.forEach(function(marker) {
+          
+          // create a DOM element for the marker
+          var el = Popup.miniPopup([marker.properties]);
+
+          // add marker class
+          // 
+          d3.select(el)
+            .classed('profile-marker', true);
+          
+          el.addEventListener('click', function() {
+
+            // content is already set via profile's row element
+            // inside popup.js
+            // 
+            mapPopup
+              .setLngLat(this.geometry.coordinates)
+              .addTo(map);
+
+          }.bind(marker));
+
+          // add marker to map
+          aProfileMarkersOnMap.push(
+            new mapboxgl.Marker(el)
+              .setLngLat(marker.geometry.coordinates)
+              .addTo(map)
+          );
+          
+        });
+      }
+
+      /**
+       * Remove any existing markers from the map
+       */
+      function removeProfileMarkers() {
+        aProfileMarkersOnMap.forEach(function(marker){
+          marker.remove();
+        });
       }
 
       function setupCountyLayer(aGeoJSON) {
@@ -1720,6 +1771,19 @@
         );
 
         dispatch.apply('profilePopupShown', null, [el]);
+
+      });
+
+      // Handle switch view
+      // 
+      dispatch.on('switchView.map', function(sView){
+
+        // Switch the UI View
+        // Remove markers for views except Participants
+        // 
+        if (sView != 'participants') {
+          removeProfileMarkers();
+        }
 
       });
 
