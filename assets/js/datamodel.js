@@ -100,7 +100,10 @@ function DataModel(sUrl) {
         obj.aMedia = obj.aMedia || [];
         obj.aMedia.push({
           url: d['Media URL'],
-          type: d['Type']
+          //https://drive.google.com/file/d/0B5KDlmkoE-LVUWd4RHQ1cTdVRlE/view?usp=sharing
+          type: d['Type'],
+          isImage: d['Type'] == 'photo',
+          isVideo: d['Type'] == 'video'
         });
 
         // add transcript
@@ -380,19 +383,27 @@ function DataModel(sUrl) {
     // Get Profile Content/Transcript information
     // 
     try {
+
+      var oProfileObj = oProfileTranscripts[d.ID];
       
-      if (oProfileTranscripts[d.ID]) {
-        d._transcript = _.trim(oProfileTranscripts[d.ID].aTranscript.join('\n'));
+      if (oProfileObj) {
+        d._transcript = _.trim(oProfileObj.aTranscript.join('\n'));
 
         // Tasks
-        d._aTaskID = _.uniq(oProfileTranscripts[d.ID].aTaskIDs);
+        d._aTaskID = _.uniq(oProfileObj.aTaskIDs);
 
         d._isParticipant = true;
+
+        // Media files
+        d._aMedia = oProfileObj.aMedia;
+        d._hasMedia = !!oProfileObj.aMedia.length;
+        d._mediaCount = oProfileObj.aMedia.length;
 
       }else{
         
         d._aTaskID = [];
         d._isParticipant = false;
+        d._hasMedia = false;
 
       }
 

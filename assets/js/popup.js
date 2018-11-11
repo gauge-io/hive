@@ -168,14 +168,51 @@ var Popup = (function _popup() {
           $panel
             .addClass('profilepanel--active');
         }
+
+        // init media carousel
+        initMediaCarousel($panel[0]);
         
       });
 
+    // Listen init media carousel event
+    //
+    oDispatch.on('profilePopupShown.carousel', function(elDom){
+      initMediaCarousel(elDom);
+    });
 
 
-
-      return el.node();
+    return el.node();
    
+  }
+
+  function initMediaCarousel(domContent) {
+
+    var panel = d3.select(domContent),
+    mySwiper = panel.select('.swiper-container').node().swiper;
+
+    // check if already initialized
+    // if so, destroy it
+    // 
+    if (mySwiper) {
+      mySwiper.destroy(true, true);
+    }
+
+    mySwiper = new Swiper( panel.select('.swiper-container').node(), {
+      
+      // If we need pagination
+      pagination: {
+        el: panel.select('.swiper-pagination').node(),
+        type: 'fraction'
+      },
+
+      // Navigation arrows
+      navigation: {
+        nextEl: panel.select('.swiper-button-next').node(),
+        prevEl: panel.select('.swiper-button-prev').node(),
+      }
+      
+    });
+    
   }
 
   return {

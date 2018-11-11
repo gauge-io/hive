@@ -8,7 +8,7 @@
 
 (function Aux() {
 
-    var dispatch = d3.dispatch('filterUpdate', 'applyFiltersOnData', 'datasetRefreshed', 'mapLoaded', 'dataLoaded', 'updateProfileGeoJSON', 'adhocMetricUpdate', 'adhocUpdateDone', 'profile-features-joined', 'toggleBookmark', 'showProfileOnMap', 'resetFilters', 'switchView', 'wordtreeBeginUpdate', 'wordtreeLoaded'),
+    var dispatch = d3.dispatch('filterUpdate', 'applyFiltersOnData', 'datasetRefreshed', 'mapLoaded', 'dataLoaded', 'updateProfileGeoJSON', 'adhocMetricUpdate', 'adhocUpdateDone', 'profile-features-joined', 'toggleBookmark', 'showProfileOnMap', 'resetFilters', 'switchView', 'wordtreeBeginUpdate', 'wordtreeLoaded', 'profilePopupShown'),
     sUrlProfile = 'data/viz/profile-data.csv',
 
     DataManager,
@@ -1462,14 +1462,17 @@
           // 
           Popup.onProfileclick(function(allProfiles){
 
-            mapPopup.setDOMContent(
+            var el = Popup.profilePopup({
+              profiles: allProfiles, 
+              isActiveProfile: true
+            });
 
-              Popup.profilePopup({
-                profiles: allProfiles, 
-                isActiveProfile: true
-              })
+            mapPopup.setDOMContent(el);
 
-            );
+            // dispatch event
+            // 
+            dispatch.apply('profilePopupShown', null, [el]);
+
           });
 
           map.on('mouseenter', 'clusters', function () {
@@ -1612,7 +1615,7 @@
           }, ['in', 'GEOID']);
 
           map.setFilter("county-highlighted", filter);
-      });
+        });
 
         */
 
@@ -1704,15 +1707,19 @@
         //console.log('Profile', oProfile);
 
         // Mark as active
+        // 
+        var el = Popup.profilePopup({
+          profiles: [oProfile.properties], 
+          isActiveProfile: true
+        });
 
         showPopupOnMap(
           oProfile.geometry.coordinates.slice(), 
-          Popup.profilePopup({
-            profiles: [oProfile.properties], 
-            isActiveProfile: true
-          }),
+          el,
           true
         );
+
+        dispatch.apply('profilePopupShown', null, [el]);
 
       });
 
