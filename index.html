@@ -13,6 +13,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.4.2/css/swiper.min.css">
 
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.48.0/mapbox-gl.js'></script>
+    <script type="text/javascript" src="assets/js/lib/wordtree/d3.min.js"></script>
+    <script type="text/javascript">
+        // Move d3 v3 to variable d3v3
+        // 
+        window.d3v3 = d3;
+        delete d3;
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
@@ -31,7 +38,7 @@
         mapboxgl.accessToken = 'pk.eyJ1IjoiaWFzaGlzaHNpbmdoIiwiYSI6ImNqbHQ2d2JpcTA1cnEzcG9idGl2aTN5MTMifQ.yGUYoyQ4IyAfzl3E2D0ecA';
 
     </script>
-    
+
 </head>
 <!-- Default view is recruitment -->
 <body class="loading" data-view="recruitment">
@@ -71,7 +78,7 @@
                         <select id="wordtree_layout_switch">
                             <option value="suffix">Left</option>
                             <option value="prefix">Right</option>
-                            <option value="double">Double</option>
+                            <!--<option value="double">Double</option>-->
                         </select>
                     </div>
                 </div>
@@ -80,6 +87,10 @@
             
             <!-- Tree Layout -->
             <div class="wordtree__body" id="wordtree_graph">
+                <div id="wt_vis" class="wt-graph">
+                    <div id="wt_text" class="wt-textviewer"></div>
+                    <div id="wt_help">Shift-click to make that word the root.</div>
+                </div>
             </div>
         </div>
 
@@ -505,6 +516,9 @@
 
     </script>
 
+    <script src="assets/js/lib/wordtree/longscroll.js"></script>
+    <script src="assets/js/lib/wordtree/wordtree.js"></script>
+    
     <script src="assets/js/util.js"></script>
     <script src="assets/js/datamodel.js"></script>
     <script src="assets/js/filter.js"></script>

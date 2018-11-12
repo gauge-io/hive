@@ -399,7 +399,7 @@ function buildProfileTranscriptText(aProfiles) {
     return d._transcript;
   }).filter(function(d){
     return !!d;
-  }).join('\n'),
+  }).join('. '),
   wordCount,
   words,
   wordSeparator = /([!?,;:.&"-]+|\S*[A-Z]\.|\S*(?:[^!?,;:.\s&-]))/g;  ///\w\w+/g
@@ -558,7 +558,9 @@ function getProfileWithMetaProperties(d, isActiveProfile) {
 
 // Get currently active view
 // 
-function getActiveView() {
-  return d3.select('body')
+function getActiveView(sThisView) {
+  var sActive = d3.select('body')
     .attr('data-view') || 'recruitment';
+
+  return !!sThisView ? sActive == sThisView : sActive;
 }

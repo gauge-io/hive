@@ -108,7 +108,9 @@ function DataModel(sUrl) {
 
         // add transcript
         obj.aTranscript = obj.aTranscript || [];
-        obj.aTranscript.push(d['Processed Text']);
+        if (!!d['Processed Text']) {
+          obj.aTranscript.push(_.capitalize(_.trim(d['Processed Text'])));
+        }
 
       });
 
@@ -387,7 +389,7 @@ function DataModel(sUrl) {
       var oProfileObj = oProfileTranscripts[d.ID];
       
       if (oProfileObj) {
-        d._transcript = _.trim(oProfileObj.aTranscript.join('\n'));
+        d._transcript = oProfileObj.aTranscript.join('. ');
 
         // Tasks
         d._aTaskID = _.uniq(oProfileObj.aTaskIDs);

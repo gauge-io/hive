@@ -885,7 +885,7 @@
         function initWordTree() {
 
           var oText = buildProfileTranscriptText(DataManager.getQuerySet());
-          console.log(oText.text.length)
+
           updateFilterPanel({
             wordCount: oText.wordCount
           });
@@ -908,6 +908,7 @@
 
           }else{
             updateWordTree(oText.text);
+            oWordTree.resize();
           }
 
         }
@@ -916,7 +917,6 @@
         // 
         function updateWordTree(sText) {
           if (oWordTree && getActiveView() == 'qualitative') {
-            console.log(sText.length)
             oWordTree.update(sText);
           }
         }
@@ -1783,6 +1783,20 @@
         // 
         if (sView != 'participants') {
           removeProfileMarkers();
+        }
+
+        if (sView != 'qualitative') {
+            // trigger resize to allow map to attain its size
+            // 
+            setTimeout(function(){
+                try {
+                    window.dispatchEvent(new Event('resize'));
+                }catch(e){
+                    var resizeEvent = window.document.createEvent('UIEvents'); 
+                    resizeEvent.initUIEvent('resize', true, false, window, 0); 
+                    window.dispatchEvent(resizeEvent);
+                }
+            }, 1);
         }
 
       });

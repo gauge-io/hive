@@ -11,6 +11,7 @@ $black: rgba(48, 69, 92, 0.8);
 $blue: #e1f0f8;
 $bg-blue: #546b81;
 $blue-dark: #3f5163;
+$color: #333;
 
 $range-slider-color: $bg-blue; //#2497e3 //#5897fb
 $md-tab-border-color: #FFFFFF;
@@ -1434,7 +1435,103 @@ body {
     flex-grow: 1;
     padding: 0.5rem;
     box-sizing: border-box;
+    position: relative;
   }
+}
+
+// Word Tree Text Viewer
+// 
+.wt-textviewer {
+
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  overflow-y: auto;
+  font-family: "Andale Mono", "Courier New", "Courier", monospace;
+  text-align: justify;
+
+  a { 
+    text-decoration: none;
+    color: $color;
+
+    &.highlight { 
+      background: #c6e4ed; 
+    }
+
+    &:hover { 
+      text-decoration: underline; 
+    }
+  }
+  
+  .row {
+    height: 20px;
+    overflow: hidden;
+  }
+}
+
+// Word Tree SVG holder
+// 
+.wt-graph {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+// Word Tree Graph
+svg.wordtree__graph {
+
+  overflow: hidden;
+
+  &:not(.hover) text:hover, 
+  &.hover tspan:hover {
+    fill: #3875d7;
+  }
+  
+  path { 
+    fill: none; 
+    stroke: #666; 
+    stroke-width: .5px; 
+  }
+
+  text {
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+  }
+
+  // Word Heatmap
+  // 
+  rect {
+    fill: none;
+    stroke: #ddd;
+  }
+  rect.page {
+    fill: lightblue;
+    stroke: $blue-dark;
+    fill-opacity: .7;
+    cursor: move;
+  }
+  line {
+    stroke: $bg-blue;
+  }
+
+}
+
+#wt_help {
+  font-size: 10px;
+  font-style: italic;
+  padding: 0;
+  position: absolute;
+  bottom: -10px;
+  left: 0;
 }
 
 .wttags {

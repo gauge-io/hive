@@ -1107,6 +1107,83 @@ body[data-loading] #wordtree .wordtree__body {
   flex-grow: 1;
   padding: 0.5rem;
   box-sizing: border-box;
+  position: relative;
+}
+
+.wt-textviewer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  overflow-y: auto;
+  font-family: "Andale Mono", "Courier New", "Courier", monospace;
+  text-align: justify;
+}
+.wt-textviewer a {
+  text-decoration: none;
+  color: #333;
+}
+.wt-textviewer a.highlight {
+  background: #c6e4ed;
+}
+.wt-textviewer a:hover {
+  text-decoration: underline;
+}
+.wt-textviewer .row {
+  height: 20px;
+  overflow: hidden;
+}
+
+.wt-graph {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+svg.wordtree__graph {
+  overflow: hidden;
+}
+svg.wordtree__graph:not(.hover) text:hover, svg.wordtree__graph.hover tspan:hover {
+  fill: #3875d7;
+}
+svg.wordtree__graph path {
+  fill: none;
+  stroke: #666;
+  stroke-width: 0.5px;
+}
+svg.wordtree__graph text {
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+svg.wordtree__graph rect {
+  fill: none;
+  stroke: #ddd;
+}
+svg.wordtree__graph rect.page {
+  fill: lightblue;
+  stroke: #3f5163;
+  fill-opacity: 0.7;
+  cursor: move;
+}
+svg.wordtree__graph line {
+  stroke: #546b81;
+}
+
+#wt_help {
+  font-size: 10px;
+  font-style: italic;
+  padding: 0;
+  position: absolute;
+  bottom: -10px;
+  left: 0;
 }
 
 .wttags {
