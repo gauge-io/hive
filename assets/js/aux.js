@@ -1349,9 +1349,8 @@
 
         // 3. Get centroid of GeoJSON features
         // 
-        var aFeatureCentroids = getGeoCentroid(aFeatureGeo);
-        //var aFeatureCentroids = getRandomPointInGeo(aFeatureGeo);
-
+        var aFeatureCentroids = getActiveView('quantitative') ? getRandomPointInGeo(aFeatureGeo) : getGeoCentroid(aFeatureGeo);
+        
         //console.log('Centroid Geo Features', aFeatureCentroids);
 
         // 4. Build a Map of properties.GEOID to feature
@@ -1687,7 +1686,7 @@
               "visibility": bVisible ? 'visible' : 'none'
             },
             "paint": {
-                // Size circle radius by earthquake magnitude and zoom level
+                // Size circle radius by opinion and zoom level
                 "circle-radius": [
                     "interpolate",
                     ["linear"],
@@ -1707,7 +1706,7 @@
                         10, 50
                     ]
                 ],
-                // Color circle by earthquake magnitude
+                // Color circle by opinion
                 "circle-color": [
                     "interpolate",
                     ["linear"],
@@ -1720,7 +1719,7 @@
                     10, "red" //"rgb(178,24,43)"
                 ],
                 "circle-stroke-color": "white",
-                "circle-stroke-width": 1,
+                "circle-stroke-width": 0,
                 // Transition from heatmap to circle layer by zoom level
                 "circle-opacity": [
                     "interpolate",
@@ -1734,6 +1733,32 @@
 
         // Event Binding
         // 
+
+        map.on('mouseenter', 'profiles-quant-heat', function () {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+        map.on('mouseleave', 'profiles-quant-heat', function () {
+            map.getCanvas().style.cursor = '';
+        });
+        map.on('mouseenter', 'profiles-quant-point', function () {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+        map.on('mouseleave', 'profiles-quant-point', function () {
+            map.getCanvas().style.cursor = '';
+        });
+
+        // When heat layer is clicked
+        // 
+        map.on('mouseenter', 'profiles-quant-point', function (e) {
+          // set bbox as 5px reactangle area around clicked point
+          //var bbox = [[e.point.x - 5, e.point.y - 5], [e.point.x + 5, e.point.y + 5]];
+          
+          var coordinates = e.features[0].geometry.coordinates.slice(), //[e.lngLat.lng, e.lngLat.lat],
+          aFeatures = map.queryRenderedFeatures(e.point, { layers: ['profiles-quant-point'] });
+
+          showPopupOnMap(coordinates, Popup.miniPopup(aFeatures.map(function(d){ return d.properties; })), true);
+
+        });
 
         // When new data update is available, update the datasource
         // 
