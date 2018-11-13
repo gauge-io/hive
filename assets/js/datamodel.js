@@ -99,9 +99,9 @@ function DataModel(sUrl) {
         // add Media files
         obj.aMedia = obj.aMedia || [];
         obj.aMedia.push({
-          url: d['Media URL'],
-          //https://drive.google.com/file/d/0B5KDlmkoE-LVUWd4RHQ1cTdVRlE/view?usp=sharing
+          url: d['Media URL Shared'],
           type: d['Type'],
+          id: getFileID(d['Media URL Shared']),
           isImage: d['Type'] == 'photo',
           isVideo: d['Type'] == 'video'
         });

@@ -1256,6 +1256,7 @@
         // 3. Get centroid of GeoJSON features
         // 
         var aFeatureCentroids = getGeoCentroid(aFeatureGeo);
+        //var aFeatureCentroids = getRandomPointInGeo(aFeatureGeo);
 
         //console.log('Centroid Geo Features', aFeatureCentroids);
 
@@ -1499,6 +1500,19 @@
               addProfileMarkersToMap(aProfilesGeoJSON);
             }
 
+          });
+
+          // Handle switch view
+          // 
+          dispatch.on('switchView.cluster-layer', function(sView){
+
+            // Toggle Cluster layers Participants
+            // 
+            var bVisible = !getActiveView('participants');
+            ['clusters', 'cluster-count', 'unclustered-point'].forEach(function(sLayer){
+              map.setLayoutProperty(sLayer, 'visibility', bVisible ? 'visible' : 'none');
+            });
+                        
           });
 
       }

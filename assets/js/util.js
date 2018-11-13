@@ -194,6 +194,35 @@ function getGeoCentroid(aFeatures) {
   }).filter(function(c) {
     return !!c;
   });
+
+}
+
+
+/**
+ * Get a random point inside a GeoJSON feature
+ * @param  {array} aFeatures
+ * @return {array} aFeature with type Point
+ */
+function getRandomPointInGeo(aFeatures) {
+  
+  return aFeatures.map(function(feature) {
+
+    var bbox = turf.bbox({
+      type: 'FeatureCollection',
+      features: [feature]
+    });
+    
+    var rp;
+    try {
+      rp = turf.randomPoint(1, { bbox: bbox });
+      rp.features[0].properties = feature.properties;
+    }catch(e){}
+
+    return rp.features[0];
+
+  }).filter(function(c) {
+    return !!c;
+  });
 }
 
 /**
@@ -563,4 +592,17 @@ function getActiveView(sThisView) {
     .attr('data-view') || 'recruitment';
 
   return !!sThisView ? sActive == sThisView : sActive;
+}
+
+// Get file ID from a Google Drive file URL
+function getFileID(sUrl) {
+  // sUrl is of the format
+  // https://drive.google.com/open?id=1-DacCNbLVZmdgBmEQkgFpFgjMAIXI4tu
+  // extract the id from it
+  var id;
+  try{
+    id = _.trim(sUrl.split('id=')[1]);
+  }catch(e){}
+
+  return id;
 }
