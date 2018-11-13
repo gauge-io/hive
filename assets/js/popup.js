@@ -176,8 +176,15 @@ var Popup = (function _popup() {
 
     // Listen init media carousel event
     //
+    var iMCTimer;
     oDispatch.on('profilePopupShown.carousel', function(elDom){
-      initMediaCarousel(elDom);
+      
+      clearTimeout(iMCTimer);
+
+      iMCTimer = setTimeout(function(){
+        initMediaCarousel(elDom);
+      }, 100);
+      
     });
 
 

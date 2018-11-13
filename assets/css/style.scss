@@ -73,8 +73,7 @@ body {
     }
 
     // show Word Tree
-    #wordtree,
-    .md-tabs--qa {
+    #wordtree {
       display: block;
     }
 
@@ -92,7 +91,7 @@ body {
       display: block;
     }
     .md-tabs--qn {
-      display: block;
+      //display: block;
     }
 
     // hide Word Tree
@@ -142,7 +141,7 @@ body {
       display: block;
     }
     .md-tabs--pc {
-      display: block;
+      //display: block;
     }
 
     // hide Word Tree
@@ -408,6 +407,20 @@ body {
           }
         }
       }
+    }
+
+    &--qa,
+    &--qn,
+    &--pc {
+
+      li {
+        &.active {
+          a {
+            border-bottom-width: 0;
+          }
+        }
+      }
+
     }
   }
 
@@ -1376,8 +1389,18 @@ body {
       width: 100%;
       max-height: 100%;
     }
+    div.img {
+      height: 100%;
+      width: 100%;
+      display: block;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-color: #222;
+    }
     iframe {
       border: 0;
+      background: #222;
     }
   }
   .swiper-pagination-fraction {
