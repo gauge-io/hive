@@ -597,7 +597,7 @@ function getActiveView(sThisView) {
 // Get file ID from a Google Drive file URL
 function getFileID(sUrl) {
   // sUrl is of the format
-  // https://drive.google.com/open?id=1-DacCNbLVZmdgBmEQkgFpFgjMAIXI4tu
+  // https://drive.google.com/open?id=1-DacCNbLVZmdg98756542AIXI4tu
   // extract the id from it
   var id;
   try{
@@ -606,3 +606,21 @@ function getFileID(sUrl) {
 
   return id;
 }
+
+function initPasswordPrompt() {
+  document
+    .getElementsByClassName("js-unmask")[0]
+    .addEventListener("click", function() {
+      var field = this.parentNode.querySelector(".js-inputField");
+      field.type = field.type == "password" ? "text" : "password";
+    });
+
+  d3.select('#password_prompt .js-inputField')
+    .on('change', function(d){
+      if (this.value == 'dorothy') {
+        d3.select('#password_prompt')
+          .classed('done', true);
+      }
+    });
+}
+initPasswordPrompt();
