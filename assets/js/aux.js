@@ -687,7 +687,7 @@
             }else if(oF.type == 'range-slider'){
 
 
-              var aExtent = d3.extent(oF._values),
+              var aExtent = d3.extent(oF._values || []),
               // only max to 10 when value is large
               step = aExtent[1] < 100 ? 1 : Math.round(Math.max(aExtent[1]/10, 1));
 
@@ -740,7 +740,7 @@
 
             if(oF.type == 'range-slider'){
 
-              var aExtent = d3.extent(oF._values),
+              var aExtent = d3.extent(oF._values || []),
               // only max to 10 when value is large
               step = aExtent[1] < 100 ? 1 : Math.round(Math.max(aExtent[1]/10, 1));
 
@@ -1647,7 +1647,7 @@
                     ["linear"],
                     ["heatmap-density"],
                     0, "rgba(33,102,172,0)",
-                    0.2, "yellow",
+                    0.1, "yellow",
                     1, "red"
                     /*
                     0, "rgba(33,102,172,0)",
