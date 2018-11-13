@@ -284,6 +284,18 @@ function DataModel(sUrl) {
       console.log('[ERROR]', e.message);
     }
 
+    // Protection opinion
+    // 
+    try{
+      
+      var metric = 'Protection opinion';
+
+      d[metric] = parseInt(d[metric]);
+
+    }catch(e){
+      console.log('[ERROR]', e.message);
+    }
+
     // Children in Home
     // 
     try{

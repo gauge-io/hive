@@ -71,6 +71,23 @@
                 }]
             },
 
+            // Dimensions
+            // 
+            // Protection Opinion
+            // 
+            {
+                id: '#filter_protection_opinion',
+                label: '',
+                type: 'dropdown',
+                metric: 'Protection opinion',
+                values: [{
+                    label: "Protection Opinion",
+                    value: "All",
+                    selected: true
+                  }
+                ]
+            },
+
             // Tasks
             // 
             {
@@ -496,6 +513,7 @@
           'Ethnicity',
           'Segment',
           '_isParticipant',
+          'Protection opinion',
           '# of Devices with Protection Plans'
         ],
 
@@ -855,7 +873,11 @@
           // 
           if (obj && obj.recordCount != undefined) {
 
+            // Update Record Count
             d3.select('#record-count')
+              .html(obj.recordCount);
+
+            d3.select('#record-count-qn')
               .html(obj.recordCount);
 
             // Update Participant Count
@@ -878,6 +900,73 @@
           d3.select('#bookmark-count')
             .html(DataManager.getBookmarkCount());
           
+        }
+
+        // Update Box plot for Dimension Protection opinion
+        // 
+        function initBoxplot(aData) {
+
+          function getData() {
+            return aData.map(function(d){
+              return d['Protection opinion'] || 0;
+            });
+          }
+
+            var dataArr = getData();
+
+            var chartRange = d3.extent(dataArr);
+
+            var totalWidth = 280,
+                totalHeight = 55,
+                margin = {
+                    top: 10,
+                    right: 0,
+                    bottom: 30,
+                    left: 0
+                },
+                width = totalWidth - margin.left - margin.right,
+                height = totalHeight - margin.top - margin.bottom;
+
+            var chart = d3v3.box()
+                .value(function(d) {
+                    return d;
+                })
+                .width(width)
+                .height(height)
+                .domain([chartRange[0], chartRange[1]]);
+
+            var xScale = d3v3.scale.linear()
+                // this is the data x values
+                .domain([chartRange[0], chartRange[1]])
+                // this is the svg width
+                .range([0, width]);
+
+            d3v3.select('#filter_protection_opinion_bp').html('');
+
+            var svg = d3v3.select('#filter_protection_opinion_bp').selectAll('svg')
+                .data([dataArr])
+                .enter().append('svg')
+                    .attr('width', totalWidth)
+                    .attr('height', totalHeight)
+                    .append('g')
+                        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+                        .call(chart);
+
+            //svg.call(chart);
+
+            if (!svg.select('g.x.axis').node()) {
+              // axis
+              var xAxis = d3v3.svg.axis()
+                  .scale(xScale)
+                  .orient('bottom')
+                  .ticks(10);
+
+              // add axis
+              svg.append('g')
+                  .attr('class', 'x axis')
+                  .attr('transform', 'translate(0,' + (height + 10) + ')')
+                  .call(xAxis);
+            }
         }
 
         // Initialize the Word Tree
@@ -924,12 +1013,6 @@
         // Switch the UI View
         function switchView(sView) {
           
-          // set active view value as an attribute
-          // on body.
-          // 
-          d3.select('body')
-            .attr('data-view', sView);
-
           switch(sView){
 
             case 'qualitative':
@@ -952,14 +1035,15 @@
 
           if (sView == 'recruitment') {
 
-            aExcludeFromActiveFilters = [
-              '_aTaskID',
-              '_isParticipant'
-            ];
+            aExcludeFromActiveFilters = ['_aTaskID', '_isParticipant', 'Protection opinion'];
 
           }else if (sView == 'qualitative') {
 
-            aExcludeFromActiveFilters = ['_isParticipant', '_isBookmarked'];
+            aExcludeFromActiveFilters = ['_isParticipant', '_isBookmarked', 'Protection opinion'];
+
+          }else if (sView == 'quantitative') {
+
+            aExcludeFromActiveFilters = ['_isParticipant', '_isBookmarked', '_aTaskID'];
 
           }else if (sView == 'participants') {
 
@@ -1018,6 +1102,10 @@
           updateFilterPanel({
             recordCount: aData.length
           });
+
+          // Update Boxplot filter
+          // 
+          initBoxplot(aData);
 
         });
 
@@ -1162,6 +1250,12 @@
         // 
         var uiSwitch = jQuery('.filter-panel-switch select').chosen();
         uiSwitch.change(function(e){
+
+          // set active view value as an attribute
+          // on body.
+          // 
+          d3.select('body')
+            .attr('data-view', this.value);
 
           dispatch.call('switchView', null, this.value);
 
@@ -1332,6 +1426,10 @@
         // 
         setupCountyLayer(oCountiesGeoJSON);
 
+        // 7. Add layers for Opinion heatmap - Quantitative analysis
+        // 
+        setupQuantitativeLayer(aGeoJSON);
+
         // Setup metrics which depend on Feature-Profile Join Data
         // 
         dispatch.apply('profile-features-joined', null, [aGeoJSON]);
@@ -1496,24 +1594,158 @@
 
 
             // only add when active view is Participants
-            if (getActiveView() == 'participants') {
+            if (getActiveView('participants')) {
               addProfileMarkersToMap(aProfilesGeoJSON);
             }
 
           });
 
-          // Handle switch view
-          // 
-          dispatch.on('switchView.cluster-layer', function(sView){
+      }
 
-            // Toggle Cluster layers Participants
-            // 
-            var bVisible = !getActiveView('participants');
-            ['clusters', 'cluster-count', 'unclustered-point'].forEach(function(sLayer){
-              map.setLayoutProperty(sLayer, 'visibility', bVisible ? 'visible' : 'none');
-            });
-                        
-          });
+      // Setup heatmap layers for Quantitative analysis
+      // 
+      function setupQuantitativeLayer(aGeoJSON) {
+
+        var bVisible = getActiveView('quantitative');
+
+        // Add a new source from our GeoJSON data and set the
+        map.addSource("profiles-quant", {
+            type: "geojson",
+            data: aGeoJSON || []
+        });
+
+        map.addLayer({
+            "id": "profiles-quant-heat",
+            "type": "heatmap",
+            "source": "profiles-quant",
+            "maxzoom": 9,
+            "layout": {
+              "visibility": bVisible ? 'visible' : 'none'
+            },
+            "paint": {
+                // Increase the heatmap weight based on frequency and property magnitude
+                "heatmap-weight": [
+                    "interpolate",
+                    ["linear"],
+                    ["get", "Protection opinion"],
+                    0, 0,
+                    10, 1
+                ],
+                // Increase the heatmap color weight weight by zoom level
+                // heatmap-intensity is a multiplier on top of heatmap-weight
+                "heatmap-intensity": [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    0, 1,
+                    9, 3
+                ],
+                // Color ramp for heatmap.  Domain is 0 (low) to 1 (high).
+                // Begin color ramp at 0-stop with a 0-transparancy color
+                // to create a blur-like effect.
+                "heatmap-color": [
+                    "interpolate",
+                    ["linear"],
+                    ["heatmap-density"],
+                    0, "rgba(33,102,172,0)",
+                    0.2, "yellow",
+                    1, "red"
+                    /*
+                    0, "rgba(33,102,172,0)",
+                    0.2, "rgb(103,169,207)",
+                    0.4, "rgb(209,229,240)",
+                    0.6, "rgb(253,219,199)",
+                    0.8, "rgb(239,138,98)",
+                    1, "rgb(178,24,43)"
+                    */
+                ],
+                // Adjust the heatmap radius by zoom level
+                "heatmap-radius": [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    0, 2,
+                    9, 20
+                ],
+                // Transition from heatmap to circle layer by zoom level
+                "heatmap-opacity": [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    7, 1,
+                    9, 0
+                ],
+            }
+        }, 'waterway-label');
+
+        map.addLayer({
+            "id": "profiles-quant-point",
+            "type": "circle",
+            "source": "profiles-quant",
+            "minzoom": 7,
+            "layout": {
+              "visibility": bVisible ? 'visible' : 'none'
+            },
+            "paint": {
+                // Size circle radius by earthquake magnitude and zoom level
+                "circle-radius": [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    7, [
+                        "interpolate",
+                        ["linear"],
+                        ["get", "Protection opinion"],
+                        1, 1,
+                        10, 4
+                    ],
+                    16, [
+                        "interpolate",
+                        ["linear"],
+                        ["get", "Protection opinion"],
+                        1, 5,
+                        10, 50
+                    ]
+                ],
+                // Color circle by earthquake magnitude
+                "circle-color": [
+                    "interpolate",
+                    ["linear"],
+                    ["get", "Protection opinion"],
+                    1, "yellow",  //"rgba(33,102,172,0)",
+                    //2, "rgb(103,169,207)",
+                    //3, "rgb(209,229,240)",
+                    //4, "rgb(253,219,199)",
+                    //5, "rgb(239,138,98)",
+                    10, "red" //"rgb(178,24,43)"
+                ],
+                "circle-stroke-color": "white",
+                "circle-stroke-width": 1,
+                // Transition from heatmap to circle layer by zoom level
+                "circle-opacity": [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    7, 0,
+                    8, 1
+                ]
+            }
+        }, 'waterway-label');
+
+        // Event Binding
+        // 
+
+        // When new data update is available, update the datasource
+        // 
+        dispatch.on('updateProfileGeoJSON.heatmap-layer', function(aProfilesGeoJSON){
+
+          // only add when active view is Quantitative
+          if (getActiveView('quantitative')) {
+            map.getSource("profiles-quant")
+              .setData(aProfilesGeoJSON);
+          }
+
+        });
 
       }
 
@@ -1640,51 +1872,6 @@
           }
         }, 'waterway-label');
 
-        /*
-
-        map.addLayer({
-          'id': 'county-highlighted',
-          'source': 'counties',
-          //'source-layer': 'state_county_population_2014_cen',
-          'minzoom': iCountyZoomThreshold,
-          'type': 'fill',
-          //'filter': ['==', 'isCounty', true],
-          'paint': {
-              'fill-color': [
-                  'interpolate',
-                  ['linear'],
-                  ['get', 'unemp'],
-                  2, '#eff3ff',
-                  4, '#c6dbef',
-                  6, '#9ecae1',
-                  8, '#6baed6',
-                  10, '#4292c6',
-                  12, '#2171b5',
-                  14, '#084594'
-              ],
-              'fill-opacity': 0.75
-          }
-        });
-
-        map.on('click', 'county-metric' function(e) {
-          // set bbox as 5px reactangle area around clicked point
-          var bbox = [[e.point.x - 5, e.point.y - 5], [e.point.x + 5, e.point.y + 5]];
-          var features = map.queryRenderedFeatures(bbox, { layers: ['county-metric'] });
-
-          // Run through the selected features and set a filter
-          // to match features with unique FIPS codes to activate
-          // the `counties-highlighted` layer.
-          var filter = features.reduce(function(memo, feature) {
-              memo.push(feature.properties.GEOID);
-              return memo;
-          }, ['in', 'GEOID']);
-
-          map.setFilter("county-highlighted", filter);
-        });
-
-        */
-
-
         // Event Binding
         // 
 
@@ -1800,18 +1987,31 @@
         }
 
         if (sView != 'qualitative') {
-            // trigger resize to allow map to attain its size
-            // 
-            setTimeout(function(){
-                try {
-                    window.dispatchEvent(new Event('resize'));
-                }catch(e){
-                    var resizeEvent = window.document.createEvent('UIEvents'); 
-                    resizeEvent.initUIEvent('resize', true, false, window, 0); 
-                    window.dispatchEvent(resizeEvent);
-                }
-            }, 1);
+          // trigger resize to allow map to attain its size
+          // 
+          setTimeout(function(){
+            try {
+              window.dispatchEvent(new Event('resize'));
+            }catch(e){
+              var resizeEvent = window.document.createEvent('UIEvents'); 
+              resizeEvent.initUIEvent('resize', true, false, window, 0); 
+              window.dispatchEvent(resizeEvent);
+            }
+          }, 1);
         }
+
+        // Toggle Map layers
+        // 
+        var bQuant = sView == 'quantitative',
+        bParticipants = sView == 'participants';
+
+        ['clusters', 'cluster-count', 'unclustered-point', 'county-metric'].forEach(function(sLayer){
+          map.setLayoutProperty(sLayer, 'visibility', (bQuant || bParticipants) ? 'none' : 'visible');
+        });
+
+        ['profiles-quant-heat', 'profiles-quant-point'].forEach(function(sLayer){
+           map.setLayoutProperty(sLayer, 'visibility', bQuant ? 'visible' : 'none');
+        });
 
       });
 

@@ -107,6 +107,7 @@
                 <select class="chosen">
                     <option value="recruitment" selected>Recruitment</option>
                     <option value="qualitative">Qualitative Analysis</option>
+                    <option value="quantitative">Quantitative Analysis</option>
                     <option value="participants">Participants</option>
                 </select>
             </div>
@@ -124,6 +125,11 @@
             <!-- Qualitative Analysis -->
             <ul class="md-tabs md-tabs--qa">
                 <li class="active"><a data-target="#filters" href="#">Word Count<b id="word-count"></b></a></li>
+            </ul>
+
+            <!-- Quantitative Analysis -->
+            <ul class="md-tabs md-tabs--qn">
+                <li class="active"><a data-target="#filters" href="#">Records<b id="record-count-qn"></b></a></li>
             </ul>
 
             <!-- Participants View -->
@@ -154,6 +160,20 @@
 
                 <ul class="accordion">
 
+                    <!-- Dimensions -->
+                    <li class="accordion__item" data-view-context="qn">
+                        <input type="checkbox">
+                        <i></i>
+                        <div class="aitem__head ahbar">
+                            <h2 class="ahbar__left">Dimension</h2>
+                        </div>
+                        <div class="aitem__body">
+                            <!-- Opinion Protection -->
+                            <div id="filter_protection_opinion"></div>
+                            <div id="filter_protection_opinion_bp"></div>
+                        </div>
+                    </li>
+
                     <!-- Tasks -->
                     <li class="accordion__item" data-view-context="qa pc">
                         <input type="checkbox">
@@ -171,7 +191,7 @@
                     </li>
 
                     <!-- Segments -->
-                    <li class="accordion__item" data-view-context="rc qa pc">
+                    <li class="accordion__item" data-view-context="rc qa pc qn">
                         <input type="checkbox">
                         <i></i>
                         <div class="aitem__head ahbar">
@@ -184,7 +204,7 @@
                     </li>
                     
                     <!-- Scales -->
-                    <li class="accordion__item" data-view-context="rc qa">
+                    <li class="accordion__item" data-view-context="rc qa qn">
                         <input type="checkbox">
                         <i></i>
                         <div class="aitem__head ahbar">
@@ -203,7 +223,7 @@
                     </li>
 
                     <!-- Demographics -->
-                    <li class="accordion__item" data-view-context="rc qa">
+                    <li class="accordion__item" data-view-context="rc qa qn">
                         <input type="checkbox">
                         <i></i>
                         <div class="aitem__head ahbar">
@@ -522,6 +542,7 @@
     <script src="assets/js/filter.js"></script>
     <script src="assets/js/popup.js"></script>
     <script src="assets/js/wordtree.js"></script>
+    <script src="assets/js/lib/horizontalboxplot.js"></script>
     <script src="assets/js/aux.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.4.2/js/swiper.min.js"></script>
 

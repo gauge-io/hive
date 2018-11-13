@@ -25,7 +25,8 @@ body.loading .logo--main {
 }
 body[data-view=qualitative] #map,
 body[data-view=qualitative] .md-tabs--rc,
-body[data-view=qualitative] .md-tabs--pc {
+body[data-view=qualitative] .md-tabs--pc,
+body[data-view=qualitative] .md-tabs--qn {
   display: none;
 }
 body[data-view=qualitative] #wordtree,
@@ -33,6 +34,21 @@ body[data-view=qualitative] .md-tabs--qa {
   display: block;
 }
 body[data-view=qualitative] [data-view-context]:not([data-view-context~=qa]) {
+  display: none;
+}
+body[data-view=quantitative] #map {
+  display: block;
+}
+body[data-view=quantitative] .md-tabs--qn {
+  display: block;
+}
+body[data-view=quantitative] #wordtree,
+body[data-view=quantitative] .md-tabs--qa,
+body[data-view=quantitative] .md-tabs--pc,
+body[data-view=quantitative] .md-tabs--rc {
+  display: none;
+}
+body[data-view=quantitative] [data-view-context]:not([data-view-context~=qn]) {
   display: none;
 }
 body[data-view=recruitment] #map {
@@ -43,7 +59,8 @@ body[data-view=recruitment] .md-tabs--rc {
 }
 body[data-view=recruitment] #wordtree,
 body[data-view=recruitment] .md-tabs--qa,
-body[data-view=recruitment] .md-tabs--pc {
+body[data-view=recruitment] .md-tabs--pc,
+body[data-view=recruitment] .md-tabs--qn {
   display: none;
 }
 body[data-view=recruitment] [data-view-context]:not([data-view-context~=rc]) {
@@ -57,7 +74,8 @@ body[data-view=participants] .md-tabs--pc {
 }
 body[data-view=participants] #wordtree,
 body[data-view=participants] .md-tabs--qa,
-body[data-view=participants] .md-tabs--rc {
+body[data-view=participants] .md-tabs--rc,
+body[data-view=participants] .md-tabs--qn {
   display: none;
 }
 body[data-view=participants] [data-view-context]:not([data-view-context~=pc]) {
@@ -1203,5 +1221,78 @@ svg.wordtree__graph line {
   border: solid 1px lightblue;
   background-color: #ffffff;
 }
+
+/*================================
+=            Box Plot            =
+================================*/
+.boxplot {
+  font-size: 10px;
+  text-align: center;
+  /* boxplot shapes */
+  /* boxplot outliers */
+  /* boxplot labels */
+  /* axis */
+}
+.boxplot line {
+  stroke: #1d3549;
+  stroke-width: 1px;
+  shape-rendering: crispedges;
+}
+.boxplot g.whisker circle,
+.boxplot .whole-box {
+  stroke: #1d3549;
+  stroke-width: 1;
+  fill: white;
+  shape-rendering: crispedges;
+  fill-opacity: 1;
+}
+.boxplot g.whisker circle {
+  opacity: 0;
+}
+.boxplot .half-box {
+  fill: none;
+  stroke: none;
+  /* fill-opacity: 0.1; */
+}
+.boxplot .center-line {
+  stroke-dasharray: 3, 3;
+}
+.boxplot g.whisker:hover line,
+.boxplot g.whisker:hover circle {
+  stroke-width: 2px;
+}
+.boxplot g.outlier circle {
+  fill: #fff;
+  stroke: #aaa;
+  fill-opacity: 0.2;
+}
+.boxplot g.highlight circle {
+  fill: yellow;
+  stroke: #999;
+  fill-opacity: 1;
+}
+.boxplot .label {
+  fill: #999;
+  text-anchor: middle;
+  opacity: 0;
+}
+.boxplot g:hover > .label,
+.boxplot g.highlight > .label {
+  opacity: 1;
+}
+.boxplot .axis path, .boxplot .axis line {
+  fill: none;
+  stroke: none;
+  stroke-width: 0;
+  shape-rendering: crispEdges;
+}
+.boxplot .x.axis g.tick:first-child text {
+  text-anchor: start !important;
+}
+.boxplot .x.axis g.tick:nth-last-of-type(1) text {
+  text-anchor: end !important;
+}
+
+/*=====  End of Box Plot  ======*/
 
 /*# sourceMappingURL=style.css.map */
