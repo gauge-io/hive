@@ -81,7 +81,7 @@
                 type: 'dropdown',
                 metric: 'Protection opinion',
                 values: [{
-                    label: "Protection Opinion",
+                    label: "Product Opinion",
                     value: "All",
                     selected: true
                   }
@@ -344,7 +344,7 @@
                 }
             }, {
                 id: '#filter_purchased_protection',
-                label: 'Purchased Protection',
+                label: 'Purchased Product',
                 type: 'dropdown',
                 metric: 'Purchased Protection',
                 values: [{
@@ -362,7 +362,7 @@
                 ]
             },{
                 id: '#filter_num_device_protection',
-                label: 'Devices with Protection Plans',
+                label: 'Devices with Product Plans',
                 type: 'range-slider',
                 metric: '# of Devices with Protection Plans',
                 isDataDriven: true,
@@ -373,7 +373,7 @@
                 }
             }, {
                 id: '#filter_perception_protection',
-                label: 'Perception of Protection',
+                label: 'Perception of Product',
                 type: 'multi-dropdown',
                 metric: 'Perception of Protection',
                 values: [{
@@ -467,12 +467,17 @@
                 label: 'Segments',
                 type: 'multi-dropdown',
                 metric: 'Segment',
-                isDataDriven: true,
+                isDataDriven: false,
                 values: [{
                   label: "All",
                   value: "All",
                   selected: true
-                }]
+                }, {label: "Segment A", value: "All"},
+                  {label: "Segment B", value: "Tech Challenged"},
+                  {label: "Segment C", value: "Own But Don't Operate"},
+                  {label: "Segment D", value: "Young Operators"},
+                  {label: "Segment E", value: "Own &amp; Operate"}
+                ]
             }
 
         ],

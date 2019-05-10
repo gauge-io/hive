@@ -623,4 +623,4 @@ function initPasswordPrompt() {
       }
     });
 }
-initPasswordPrompt();
+//initPasswordPrompt();
