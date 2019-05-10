@@ -26,7 +26,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
-    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <!--<script src="https://www.gstatic.com/charts/loader.js"></script>-->
 
     <!-- Custom Scripts -->
     <script src="assets/js/lib/mustache.min.js"></script>
@@ -41,7 +41,7 @@
 
 </head>
 <!-- Default view is recruitment -->
-<body class="loading-na" data-view="recruitment">
+<body class="loading-na" data-view="segmentation">
 
     <!-- App loader -->
     <div class="loader">
@@ -96,6 +96,9 @@
 
     </div>
 
+    <!-- Scatterplot Matrix -->
+    <div id="scatterplotmatrix" class="fullsize-component"></div>
+
     <!-- Filter Panel -->
     <div id="filter_panel" class="filter-panel open">
 
@@ -105,7 +108,8 @@
             <label>View</label>
             <div class="dropdown">
                 <select class="chosen">
-                    <option value="recruitment" selected>Recruitment</option>
+                    <option value="segmentation" selected>Segmentation</option>
+                    <option value="recruitment">Recruitment</option>
                     <option value="qualitative">Qualitative Analysis</option>
                     <option value="quantitative">Quantitative Analysis</option>
                     <option value="participants">Participants</option>
@@ -152,7 +156,15 @@
             <div class="filters filters--adhoc">
 
                 <!-- Display -->
-                <div id="filter_bookmarked" data-view-context="rc"></div>
+                <div id="filter_bookmarked" data-view-context="rc se"></div>
+
+                <!-- Display -->
+                <div data-view-context="se">
+                    <label>Hexbin Radius</label>
+                    <div class="range-slider" id="filter_scatterplot_hexbinradius">
+                        
+                    </div>
+                </div>
                 
             </div>
 
@@ -191,7 +203,7 @@
                     </li>
 
                     <!-- Segments -->
-                    <li class="accordion__item" data-view-context="rc qa pc qn">
+                    <li class="accordion__item" data-view-context="rc qa pc qn se">
                         <input type="checkbox">
                         <i></i>
                         <div class="aitem__head ahbar">
@@ -204,7 +216,7 @@
                     </li>
                     
                     <!-- Scales -->
-                    <li class="accordion__item" data-view-context="rc qa qn">
+                    <li class="accordion__item" data-view-context="rc qa qn se">
                         <input type="checkbox">
                         <i></i>
                         <div class="aitem__head ahbar">
@@ -223,7 +235,7 @@
                     </li>
 
                     <!-- Demographics -->
-                    <li class="accordion__item" data-view-context="rc qa qn">
+                    <li class="accordion__item" data-view-context="rc qa qn se">
                         <input type="checkbox">
                         <i></i>
                         <div class="aitem__head ahbar">
@@ -257,7 +269,7 @@
                     </li>
 
                     <!-- Support & Protection -->
-                    <li class="accordion__item" data-view-context="rc qa">
+                    <li class="accordion__item" data-view-context="rc qa se">
                         <input type="checkbox">
                         <i></i>
                         <div class="aitem__head ahbar">
@@ -549,6 +561,28 @@
         </div>
 
     </script>
+
+
+    <script type="module">
+      // Load the Observable runtime and inspector.
+      import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
+
+
+      // Or, your notebook, downloaded locally.
+      //import notebook from "./assets/js/observable_scattermatrix.js";
+      
+      import notebook from "https://api.observablehq.com/d/94749c2763adbd00.js?v=3";
+
+      // Load the notebook, observing its cells with a default Inspector
+      // that simply renders the value of each cell into the provided DOM node.
+      window.observable = {};
+      window.observable.Runtime = Runtime;
+
+      window.observable.Inspector = Inspector;
+      window.observable.notebook = notebook;
+    </script>
+
+
 
     <script src="assets/js/lib/wordtree/longscroll.js"></script>
     <script src="assets/js/lib/wordtree/wordtree.js"></script>

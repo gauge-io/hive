@@ -1007,6 +1007,47 @@
 
         }
 
+        // Initialize the Scatterplot Matrix
+        // 
+        function initScatterPlotMatrix() {
+          
+          var renders = {
+            "viewof d3radius": "#filter_scatterplot_hexbinradius",
+            "graph": "#scatterplotmatrix",
+          };
+          for (let i in renders){
+            renders[i] = document.querySelector(renders[i]);
+          }
+
+
+          // Load the notebook, observing its cells with a default Inspector
+          // that simply renders the value of each cell into the provided DOM node.
+          var runtime = new window.observable.Runtime();
+
+          var notebookModule = runtime.module(window.observable.notebook, (variable) => {
+            if (renders[variable]){
+              return new window.observable.Inspector(renders[variable]);
+            }
+            if (variable === "width") {
+              
+            }
+            
+            console.log('variable', variable);
+            // Force evaluation of all the other cells in the notebook.
+            //return true;
+          });
+
+          notebookModule.redefine("width", [], Math.min($("#scatterplotmatrix").height(), $("#scatterplotmatrix").width()));
+
+          dispatch.on('datasetRefreshed.scatterplotmatrix', function(aData){
+
+            notebookModule.redefine("data", [], aData);
+
+          });
+
+
+        }
+
         // Update the text of the Word Tree
         // 
         function updateWordTree(sText) {
@@ -1024,7 +1065,13 @@
               
               initWordTree();
 
-            break;
+              break;
+
+            case 'segmentation':
+
+              initScatterPlotMatrix();
+
+              break;
 
           }
 
@@ -1137,6 +1184,7 @@
 
         });
 
+        var firstTime = true;
         dispatch.on('dataLoaded.ui', function(){
           
           // Update Count
@@ -1152,6 +1200,11 @@
           // Show currently bookmarked profiles
           // 
           showBookmarkList( DataManager.getBookmarks() );
+
+          if(firstTime){
+            firstTime = false;
+            switchView(getActiveView());
+          }
 
         });
 
@@ -1265,6 +1318,7 @@
           dispatch.call('switchView', null, this.value);
 
         });
+
 
     }
 

@@ -1,11 +1,11 @@
 // URL: https://observablehq.com/d/94749c2763adbd00
 // Title: Scatterplot Matrix with Brushing as a Function
 // Author: Ashish Singh (@git-ashish)
-// Version: 507
+// Version: 510
 // Runtime version: 1
 
 const m0 = {
-  id: "94749c2763adbd00@507",
+  id: "94749c2763adbd00@510",
   variables: [
     {
       inputs: ["md"],
@@ -16,6 +16,7 @@ Hex Mode - When you brush, it will use the selected area to filter the number of
 )})
     },
     {
+      name: "graph",
       inputs: ["mode","scatterplotMatrix","data","columns","colorBy","width","height","padding","hexbinMatrix","d3radius"],
       value: (function(mode,scatterplotMatrix,data,columns,colorBy,width,height,padding,hexbinMatrix,d3radius){return(
 mode == "normal" ? scatterplotMatrix(data, columns, colorBy, width, height, padding, true) : hexbinMatrix(data, columns, width, height, padding, true, d3radius)
@@ -31,7 +32,7 @@ radio({
     { label: 'Normal', value: 'normal' },
     { label: 'Hexbin', value: 'hex' }
   ],
-  value: 'normal'
+  value: 'hex'
 })
 )})
     },
@@ -636,7 +637,7 @@ require("d3-format@1")
 };
 
 const notebook = {
-  id: "94749c2763adbd00@507",
+  id: "94749c2763adbd00@510",
   modules: [m0,m1]
 };
 
