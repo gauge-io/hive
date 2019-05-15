@@ -1193,5 +1193,14 @@ svg.wordtree__graph {
       border-radius: 1.5em 1.5em 0 0; }
 
 /*=====  End of Password prompt  ======*/
+output,
+#ptooltip {
+  display: none; }
+
+#ptooltip {
+  left: 25px; }
+
+.brushing path.hex {
+  pointer-events: none; }
 
 /*# sourceMappingURL=style.css.map */

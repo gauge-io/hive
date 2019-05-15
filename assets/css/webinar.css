@@ -1,0 +1,11 @@
+output,
+#ptooltip {
+  display: none; }
+
+#ptooltip {
+  left: 25px; }
+
+.brushing path.hex {
+  pointer-events: none; }
+
+/*# sourceMappingURL=webinar.css.map */

@@ -1039,6 +1039,28 @@
 
           notebookModule.redefine("width", [], Math.min($("#scatterplotmatrix").height(), $("#scatterplotmatrix").width()));
 
+          notebookModule.redefine("onHover", [], function(){
+            return (
+              function onHover(d){
+
+                // do we have data?
+                // 
+                if(d){
+
+                  delete d.x;
+                  delete d.y;
+                  var el = Popup.profilePopup({
+                    profiles: d
+                  });
+                  $('#ptooltip .content').html(el);
+                  $('#ptooltip').show();
+                }else{
+                  $('#ptooltip').hide();
+                }
+              }
+            )
+          });
+
           dispatch.on('datasetRefreshed.scatterplotmatrix', function(aData){
 
             notebookModule.redefine("data", [], aData);
@@ -2275,6 +2297,12 @@
 
         jQuery('#filter_panel').toggleClass('open');
 
+      });
+
+      // Close #ptooltip
+      // 
+      jQuery('#ptooltip .mapboxgl-popup-close-button').on('click', function(){
+        jQuery('#ptooltip').hide();  
       });
 
 
