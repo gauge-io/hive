@@ -51,6 +51,67 @@
                 }]
             },
 
+            // Scatterplot Matrix - Column Selection
+            // 
+            {
+              id: '#filter_scatterplot_columns',
+              label: 'Attributes to Corelate',
+              type: 'multi-dropdown',
+              metric: '_scatterplot_columns',
+              isAdhoc: true,
+              values: [/*{
+                   label: 'Age', 
+                   value: '_age',
+              },
+              {
+                   label: 'Annual HHI', 
+                   value: '_hhi',
+              },
+              {
+                   label: 'Gender', 
+                   value: 'Gender',
+              },
+              {
+                   label: 'Own or Rent', 
+                   value: 'Own-Rent',
+              },
+              {
+                   label: 'Employment Status', 
+                   value: 'Employment Status',
+              },
+              {
+                   label: 'Annual Support Requests',
+                   value: 'Annual Support Requests'
+              },
+              {
+                   label: 'Purchased Protection',
+                   value: 'Purchased Protection'
+              },
+              {
+                   label: 'Ethnicity',
+                   value: 'Ethnicity'
+              },*/
+              {
+                   label: 'Hardware Score', 
+                   value: 'Hardware Score',
+                   selected: true
+              },
+              {
+                   label: 'Software Score',
+                   value: 'Software Score',
+                   selected: true
+              },
+              {
+                   label: 'Savviness Index', 
+                   value: 'Savviness Index',
+                   selected: true
+              },
+              {
+                   label: '# of Devices with Protection Plans',
+                   value: '# of Devices with Protection Plans'
+              }]
+            },
+
             // Is a Participant
             // 
             {
@@ -519,7 +580,8 @@
           'Segment',
           '_isParticipant',
           'Protection opinion',
-          '# of Devices with Protection Plans'
+          '# of Devices with Protection Plans',
+          '_scatterplot_columns'
         ],
 
         aDataDrivenFilters = aFilters.filter(function(oF){
@@ -1037,8 +1099,12 @@
             //return true;
           });
 
+          // Dimension of the chart
+          // 
           notebookModule.redefine("width", [], Math.min($("#scatterplotmatrix").height(), $("#scatterplotmatrix").width()));
 
+          // Profile popover
+          // 
           notebookModule.redefine("onHover", [], function(){
             return (
               function onHover(d){
@@ -1052,19 +1118,29 @@
                   var el = Popup.profilePopup({
                     profiles: d
                   });
-                  $('#ptooltip .content').html(el);
-                  $('#ptooltip').show();
+                  //$('#ptooltip .content').html(el);
+                  //$('#ptooltip').show();
                 }else{
-                  $('#ptooltip').hide();
+                  //$('#ptooltip').hide();
                 }
               }
             )
           });
 
+          // Update chart when dataset gets filtered
+          // 
           dispatch.on('datasetRefreshed.scatterplotmatrix', function(aData){
 
             notebookModule.redefine("data", [], aData);
+            console.log(aData);
 
+          });
+
+
+          // Update variables to corelate
+          // 
+          dispatch.on('adhocMetricUpdate.scatterplotmatrix', function(oPayload){
+            notebookModule.redefine("matrixcolumns", [], oPayload.value);
           });
 
 
@@ -1347,6 +1423,8 @@
     // Initialise Mapping
     // 
     function initMap() {
+
+      var aAdhocMapMetrics = ['den', 'unemp'];
 
       // Create Map
       // 
@@ -1985,6 +2063,12 @@
         // 
         var iLayerFilterUpdateTimer;
         dispatch.on('adhocMetricUpdate.county-layer', function(oPayload){
+
+          // check if metric is applicable to maps
+          // 
+          if(aAdhocMapMetrics.indexOf(oPayload.metric) == -1){
+            return false;
+          }
 
           clearTimeout(iLayerFilterUpdateTimer);
 
