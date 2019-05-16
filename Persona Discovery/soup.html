@@ -1,0 +1,273 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- saved from url=(0880)https://mail-attachment.googleusercontent.com/attachment/u/1/?ui=2&ik=d1e68fae1b&attid=0.1&permmsgid=msg-f:1633609174662551031&th=16abbee39d9495f7&view=att&disp=inline&realattid=f_jvox1k0u0&saddbat=ANGjdJ_Aa8GBOJmH7jYX33zy3tZqR58fnyZrFmCq0g3uADVcVxdZm6Qn0kjKzhT9uQFQPlyB5SkIqESYLV0787_fLKrQ8hf5yWbShXZh2i3zW7Hwbdui6NphExdvWYyI44j1vrVOpJ5Obgs8f9GvweT2GXHq1hQn-1NIyFZ3flGjlkvMv_7-O52VJOW42lIkzr3gm2dxpmCLI0eF_NxpmNzNiiQO2zVy51GlUGSnKSgctm78UDv5KL0mWLPxnSIe4MrHqfnW4T85V4doTNwhg48fntRn-5M7fqD5IYpYyluK8q63cAttLHGO8oZkaE8LGiN4lreE4wT8ijRYaNogLIf8s7iiyVeA_M8ap0yLTTMpByVte8HDBiiT3KAQypsE6omunf09YVPf0JIcof_KfE7Sfnc4GfCFBwnqrytj_YhFJ85VjrWDvrkVTT-vY2GPPAgPzdr3rNjdnw_SUfwkJuyf1pyZvANfcQh0GtYsO3L1lSSYGJjHdr-H7tH3hlEfU0AAd8uy-WFP56J8HDysyq9n83VUtvOhxT1OXqdZWtvCq3q4QGyB6gyyI5tdMM6zeSvqz7vewcGnS7mXDuDyCXkk5y2XJPKtt34vBIpGyx0Bpu7LNlSTWY7i-39YEeOgkCTjrKdrhjdjqccHM5_moZrJjsJ0hBFjFjf5V8yMeQ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div>
+
+
+
+
+
+<div>
+
+
+
+
+
+
+
+
+
+
+
+<div>
+
+
+
+<h1>Persona Discovery</h1>
+<h4><em>Michael OâDell</em></h4>
+<h4><em>5/14/2019</em></h4>
+
+</div>
+
+
+<div>
+<h2>Overview</h2>
+<p>This document outlines a persona discovery process and provides an example. While few in number, each step in the process can be somewhat complex depending on the type and number of variables in the data set.</p>
+<ol style="list-style-type:decimal">
+<li>Visualize and clean the data</li>
+<li>Pre-process the data</li>
+<li>Find the âoptimalâ number of clusters</li>
+<li>Identify the variables that most contribute to each cluster</li>
+<li>Summarize clusters characteristics from variables and define personas for each cluster</li>
+</ol>
+</div>
+<div>
+<h2>Visualize and clean the data</h2>
+<p>The data for this example (included in the <a href="https://cran.r-project.org/web/packages/ordinal/index.html" target="_blank">ordinal R package</a>) is from a comparison of test soups against a reference soup and consists of 1,847 observations of 12 categorical (both nominal and ordinal) variables.</p>
+<div>
+<h3>Variable reduction</h3>
+<p>Eight of the variables are specific to the study, but four of them are suitable for characterization of the participants and will be used to demonstrate the persona discovery steps outlined above. Such judgement calls can be the first pass at variable reduction (which can save time later when identifying which variables contribute to each cluster)</p>
+<p>Additionally, highly correlated variables can be reduced by choosing a ârepresentativeâ variable. However, since the number of variables in this example is small and because techniques for determining correlation (quantitiate variables) or correspondence (categorical) are more involved none will be used here.</p>
+</div>
+<div>
+<h3>Visualize the variables</h3>
+<pre><code># subset data for use in the example
+soup_vars &lt;- soup %&gt;%
+  select(
+    SOUPTYPE,
+    SOUPFREQ,
+    GENDER,
+    AGEGROUP
+  )
+
+
+# visualize the data
+soup_vars %&gt;%
+  gather(
+    var,
+    value
+  ) %&gt;%
+  ggplot(
+    aes(value, fill = var)
+  ) +
+  geom_histogram(stat = "count") +
+  facet_wrap( var ~ ., scales = "free_x")</code></pre>
+<p><img width="672"></p>
+</div>
+<div>
+<h3>Data cleaning</h3>
+<p>Many clustering algorithms are sensitive to outliers. This can be a problem when trying to identify personas tha accurately represent the participants generating the data. Looking at the data distributions, relatively few participants consume soup less than once a month which might suggest removing those outliners for cleaner clusters, but leaving them in will likely not affect the results much in this case.</p>
+</div>
+</div>
+<div>
+<h2>Pre-process the data and compute distance matrix</h2>
+<p>Clustering is based on minimizing an objective function and, as such, needs some quantitative relationship between each pair of observations. While this is fairly intuitive for quantitative variables (e.g.Â&nbsp;the âdistanceâ between 2 and 5 is 3), the relationship between qualitative variables is less obvious.</p>
+<p>Without getting into detail, it is simplest to find a package that computes distance, or dissimilarity, matrices for categorical variables. In R, the <code>daisy</code> function from the <a href="https://cran.r-project.org/web/packages/cluster/index.html" target="_blank">cluster package</a> computes such a matrix using the âgowerâ metric.</p>
+<p>Since all of the example variables are categorical, no other pre-processing is necessary. As a note, quantitative variables should be scaled and centered before computing the distance or dissimilarity matrix.</p>
+<pre><code># create dissimilarity matrix (compute the "distance" between observations: 
+# for n observations, this will be a n x n matrix--the lower triangle).
+# for ordinal data (categorical), the distance 
+
+# # find column medians and mads (or means and standard deviations) for quantitative variables
+# medians &lt;- apply(quant_vars, 2, median)
+# mads &lt;- apply(quant_vars, 2, mad)
+# 
+# # scale and center quantitative variables bofore computing distance matrix
+# quant_vars_scaled &lt;- scale(quant_vars, center = medians, scale = mads)
+
+soup_dist &lt;- daisy(soup_vars)</code></pre>
+</div>
+<div>
+<h2>Find the optimal number of clusters</h2>
+<p>When the number of clusters is not obvious or given (as in this example), visualizing a dentogram can be useful to see the relationships between the observations. This approach is exploratory and is less useful as the number of observations increase.</p>
+<pre><code># hclust to see dentogram
+soup_hclust &lt;- hclust(soup_dist)
+plot(soup_hclust, labels = FALSE, main = "Default hclust")</code></pre>
+<p><img width="672"></p>
+<pre><code># cut at the "top" of the tree
+group_3 &lt;- cutree(soup_hclust, 3)
+table(group_3)</code></pre>
+<pre><code>## group_3
+##    1    2    3 
+## 1198  589   60</code></pre>
+<p>Using the <code>cutree</code> function allows inspection of the size of the different clusters at different cluster counts. In this case, choosing three clusters results in a very large cluster and two significantly smaller clusters suggesting that three is likely not the best cluster count.</p>
+<p>A more methodical way of determining the cluster count is by using the âElbowâ method. This approach computes the total within-cluster-sum-of-squared-<wbr>distance (WSS) for several cluster counts. Plotting them shows the relative reduction in WSS as the number of cluster increases. The user must then judge the optimal cluster count where additional cluster donât significantly reduce the WSS.</p>
+<pre><code># function to compute total within-cluster sum of square 
+wss &lt;- function(k) {
+  kmeans(soup_dist, k, nstart = 10 )$tot.withinss
+}
+
+# Compute and plot wss for k = 1 to k = 15
+k_values &lt;- 1:15
+
+# compute wss for 1-15 clusters. This can take some time.
+wss_values &lt;- map_dbl(k_values, wss)
+
+plot(k_values, wss_values,
+     type="b", pch = 19, frame = FALSE, 
+     xlab="Number of clusters K",
+     ylab="Total within-clusters sum of squares")</code></pre>
+<p><img width="672"></p>
+<p>In this case, the âelbowâ looks to be at five, perhaps six, clusters. Both can be explored, but for brevity only five will be.</p>
+<div>
+<h3>Compute clusters</h3>
+<p>There are multiple algorithms to compute clusters. K-means and Partitioning Around Mediods (PAM - a more robust version of K-means) are among the most popular.</p>
+<pre><code># from elbow evaluation choose cluster size (centers)
+k5 &lt;- kmeans(soup_dist, centers = 5, nstart = 25)
+
+# view cluster distribution
+table(k5$cluster)</code></pre>
+<pre><code>## 
+##   1   2   3   4   5 
+## 359 500 250 408 330</code></pre>
+<pre><code># add the cluster classifications to the data observations.
+soup$cluster &lt;- factor(k5$cluster)</code></pre>
+<p>Five clusters produce reasonably balanced cluster sizes.</p>
+</div>
+</div>
+<div>
+<h2>Identify variables contributing to clusters</h2>
+<p>Particularly for data sets with many variables, it can be dedious and time consuming to visually inspect all combinations of pairs of variables to see what variables and what values of variables contribute to each cluster.</p>
+<p>Another useful approach is to model the cluster as a function of the variables used to determine the clusters and look at the significance of each variable in the model. For categorical outcome variables (clusers are just categories), appropriate modeling approaches include <a href="https://stats.idre.ucla.edu/r/dae/multinomial-logistic-regression/" target="_blank">multinomial logistic regression</a> and <a href="https://cran.r-project.org/web/packages/ordinal/vignettes/clm_article.pdf" target="_blank">cumulative link models</a>. CLM is used for this example.</p>
+<pre><code># build model
+fm_soup &lt;- clm(cluster ~ SOUPTYPE + GENDER + SOUPFREQ + AGEGROUP, data = soup)
+# examine significance of variables
+summary(fm_soup)</code></pre>
+<pre><code>## formula: cluster ~ SOUPTYPE + GENDER + SOUPFREQ + AGEGROUP
+## data:    soup
+## 
+##  link  threshold nobs logLik  AIC     niter max.grad cond.H 
+##  logit flexible  1847 -598.66 1221.32 9(0)  2.64e-13 1.1e+03
+## 
+## Coefficients:
+##                   Estimate Std. Error z value Pr(&gt;|z|)    
+## SOUPTYPECanned      3.9220     0.2334  16.802   &lt;2e-16 ***
+## SOUPTYPEDry-mix     2.1193     0.2223   9.534   &lt;2e-16 ***
+## GENDERFemale       10.7063     0.4591  23.320   &lt;2e-16 ***
+## SOUPFREQ1-4/month  16.9972     0.6708  25.340   &lt;2e-16 ***
+## SOUPFREQ&lt;1/month    6.8944     0.4759  14.486   &lt;2e-16 ***
+## AGEGROUP31-40       0.4438     0.2330   1.905   0.0568 .  
+## AGEGROUP41-50      -0.5963     0.2514  -2.372   0.0177 *  
+## AGEGROUP51-65      -0.3737     0.2137  -1.749   0.0804 .  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Threshold coefficients:
+##     Estimate Std. Error z value
+## 1|2   7.6087     0.4747   16.03
+## 2|3  16.4116     0.6662   24.63
+## 3|4  22.4532     0.8686   25.85
+## 4|5  29.2760     1.1354   25.79</code></pre>
+<p>Reading model summaries takes some experience, but the bottom line here is that two of the four age groups (one categorical value of each variable is not shown in the summary), has no significance (no stars). This suggests that AGEGROUP may not contribute significantly to the clusters.</p>
+<p>Finally, review the pairwise plots and build a table of the category characteristics.</p>
+<pre><code>soup %&gt;% 
+  ggplot(
+    aes(SOUPFREQ, GENDER, color = cluster)
+  ) +
+  geom_jitter()</code></pre>
+<p><img width="672"></p>
+<pre><code>soup %&gt;% 
+  ggplot(
+    aes(SOUPTYPE, GENDER, color = cluster)
+  ) +
+  geom_jitter()</code></pre>
+<p><img width="672"></p>
+<pre><code>soup %&gt;% 
+  ggplot(
+    aes(SOUPTYPE, SOUPFREQ, color = cluster)
+  ) +
+  geom_jitter()</code></pre>
+<p><img width="672"></p>
+<pre><code>soup %&gt;% 
+  ggplot(
+    aes(AGEGROUP, SOUPFREQ, color = cluster)
+  ) +
+  geom_jitter()</code></pre>
+<p><img width="672"></p>
+<p>Examining soup consumption frequency by gender immediately shows that clusters 1, and 3 are male and clusters 2, 4, and 5 are female. Additionally, as we noted above relatively few participants consumed soup less than once per month. Ignoring those shows that clusters 1 and 2 are frequent soup consumers and clusters 3, 4, and 5 are infrequent soup consumers.</p>
+<p>Soup type by gender is not as clear-cut but does show that cluster 4 predominantly consumes self-made soup and cluster 5 mostly canned soup.</p>
+<p>Soup type by soup consumption frequency does not show anything new.</p>
+<p>Finally, as suggested by the regression model, age group does not contribute much to the categories other than that category 3 does not have any 41-50 year olds.</p>
+</div>
+<div>
+<h2>Summarize characteristics and define personas</h2>
+<pre><code>## # A tibble: 5 x 5
+##   cluster gender soup_consumption soup_type age_group
+##   &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;            &lt;chr&gt;     &lt;chr&gt;    
+## 1 1       male   Frequent         All       All      
+## 2 2       female Frequent         All       All      
+## 3 3       male   Infrequent       All       Not-41-50
+## 4 4       female Infrequent       self-made All      
+## 5 5       female Infrequent       canned    All</code></pre>
+<p>Summarizing the cluster characteristics in a table aids persona definition. Crafting memorable persona descriptions is left as an exercise for readers with a marketing flair.</p>
+</div>
+
+
+
+
+</div>
+
+
+
+
+
+
+</div>
+
+</body></html>

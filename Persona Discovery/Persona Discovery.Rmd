@@ -1,0 +1,228 @@
+---
+title: "Persona Discovery"
+author: "Ashish Singh (ashish@iashishsingh.com)"
+date: "5/16/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Setup
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(readr)
+library(ordinal)
+library(cluster)
+
+survey <- read_csv("~/Code/asurion/data/viz/processed-dataset.csv")
+```
+
+
+## Visualize the variables
+## subset data for use in the example
+
+```{r}
+survey_vars <- survey %>%
+  select(
+    `Employment Status`,
+    Gender,
+    Age,
+    Education,
+    HHI,
+    `Own-Rent`,
+    `Perception of Protection`
+  )
+```
+
+
+## visualize the data
+```{r}
+survey_vars %>%
+  gather(
+    var,
+    value
+  ) %>%
+  ggplot(
+    aes(value, fill = var)
+  ) +
+  geom_histogram(stat = "count") +
+  facet_wrap( var ~ ., scales = "free_x")
+```
+
+
+## Covert categorical fields to a factor datatype
+```{r}
+survey_vars$`Employment Status` <- as.factor(survey_vars$`Employment Status`)
+survey_vars$Gender <- as.factor(survey_vars$Gender)
+survey_vars$Age <- as.factor(survey_vars$Age)
+survey_vars$Education <- as.factor(survey_vars$Education)
+survey_vars$HHI <- as.factor(survey_vars$HHI)
+survey_vars$`Own-Rent` <- as.factor(survey_vars$`Own-Rent`)
+survey_vars$`Perception of Protection` <- as.factor(survey_vars$`Perception of Protection`)
+```
+
+
+## Pre-process the data and compute distance matrix
+
+```{r}
+survey_dist <- daisy(survey_vars)
+```
+
+## Find the optimal number of clusters
+
+### hclust to see dentogram
+```{r}
+survey_hclust <- hclust(survey_dist)
+plot(survey_hclust, labels = FALSE, main = "Default hclust")
+```
+
+### cut at the "top" of the tree
+
+```{r}
+group_3 <- cutree(survey_hclust, 3)
+table(group_3)
+```
+
+
+### Using Elbow method to find no. of clusters
+
+```{r}
+# function to compute total within-cluster sum of square 
+wss <- function(k) {
+  kmeans(survey_dist, k, nstart = 10 )$tot.withinss
+}
+
+# Compute and plot wss for k = 1 to k = 15
+k_values <- 1:15
+
+# compute wss for 1-15 clusters. This can take some time.
+wss_values <- map_dbl(k_values, wss)
+
+plot(k_values, wss_values,
+     type="b", pch = 19, frame = FALSE, 
+     xlab="Number of clusters K",
+     ylab="Total within-clusters sum of squares")
+```
+
+
+## Compute Clusters
+
+```{r}
+# from elbow evaluation choose cluster size (centers)
+k5 <- kmeans(survey_dist, centers = 5, nstart = 25)
+
+# view cluster distribution
+table(k5$cluster)
+## 
+##   1   2   3   4   5 
+## 179 192 219 195 103
+# add the cluster classifications to the data observations.
+survey$cluster <- factor(k5$cluster)
+
+```
+
+Five clusters produce reasonably balanced cluster sizes.
+
+## Identify variables contributing to clusters
+
+CLM is used for this example.
+
+```{r}
+# build model
+fm_survey <- clm(cluster ~ `Employment Status` + Gender + Age + Education + HHI + `Own-Rent` + `Perception of Protection`, data = survey)
+# examine significance of variables
+summary(fm_survey)
+```
+
+## Review Pairwise Plots
+
+```{r}
+survey %>% 
+  ggplot(
+    aes(Age, Gender, color = cluster)
+  ) +
+  geom_jitter()
+```
+
+```{r}
+survey %>% 
+  ggplot(
+    aes(`Employment Status`, Gender, color = cluster)
+  ) +
+  geom_jitter()
+```
+
+```{r}
+survey %>% 
+  ggplot(
+    aes(`Employment Status`, Age, color = cluster)
+  ) +
+  geom_jitter()
+```
+
+```{r}
+survey %>% 
+  ggplot(
+    aes(Education, `Perception of Protection`, color = cluster)
+  ) +
+  geom_jitter()
+```
+
+```{r}
+survey %>% 
+  ggplot(
+    aes(`Employment Status`, `Perception of Protection`, color = cluster)
+  ) +
+  geom_jitter()
+```
+
+```{r}
+survey %>% 
+  ggplot(
+    aes(Gender, `Perception of Protection`, color = cluster)
+  ) +
+  geom_jitter()
+```
+
+```{r}
+survey %>% 
+  ggplot(
+    aes(Age, `Perception of Protection`, color = cluster)
+  ) +
+  geom_jitter()
+```
+
+```{r}
+survey %>% 
+  ggplot(
+    aes(`Own-Rent`, `Perception of Protection`, color = cluster)
+  ) +
+  geom_jitter()
+```
+
+```{r, fig.width=800}
+survey %>% 
+  ggplot(
+    aes(HHI, `Perception of Protection`, color = cluster)
+  ) +
+  geom_jitter()
+```
+
+## Summarize characteristics and define personas
+
+```{r}
+tribble(
+  ~cluster, ~gender, ~perception_of_product, ~age_group, ~own_or_rent,
+  #-------|--------|-----------------------|-----------
+  "1", "male", "Makes sense for expensive", "25-55", "own",
+  "2", "female", "Makes sense for expensive & Smart thing", "25-69", "rent",
+  "3", "female", "All", "All", "own",
+  "4", "male", "All", "18-54", "rent",
+  "5", "female", "Makes sense for expensive", "25-59", "own"
+)
+```
+
