@@ -352,7 +352,7 @@ function WordTree(elSelectorTree, oConfig) {
       .on("keydown.hover", hoverKey)
       .on("keyup.hover", hoverKey)
       .on("resize", function(d){
-        if (getActiveView('qualitative')) {
+        if (getActiveView('qualitative-tree')) {
           resize();
         }
       })

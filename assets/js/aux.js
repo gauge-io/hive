@@ -1149,9 +1149,23 @@
         // Update the text of the Word Tree
         // 
         function updateWordTree(sText) {
-          if (oWordTree && getActiveView() == 'qualitative') {
+          if (oWordTree && getActiveView() == 'qualitative-tree') {
             oWordTree.update(sText);
           }
+        }
+
+        // Init UI for Qualitative Text
+        // 
+        function initQualText() {
+
+          var elContainer = d3.select('#qualtext'),
+          iframe = elContainer.select('iframe');
+
+          // reload the iframe
+          // currently used for making the vis render
+          // based on actual window size
+          iframe.attr('src', iframe.attr('src'));
+          
         }
 
         // Switch the UI View
@@ -1159,15 +1173,21 @@
           
           switch(sView){
 
-            case 'qualitative':
+            case 'qualitative-tree':
               
               initWordTree();
 
               break;
 
-            case 'segmentation':
+            case 'quantitative-corelation':
 
               initScatterPlotMatrix();
+
+              break;
+
+            case 'qualitative-text':
+
+              initQualText();
 
               break;
 
@@ -1187,7 +1207,7 @@
 
             aExcludeFromActiveFilters = ['_aTaskID', '_isParticipant', 'Protection opinion'];
 
-          }else if (sView == 'qualitative') {
+          }else if (sView == 'qualitative-tree') {
 
             aExcludeFromActiveFilters = ['_isParticipant', '_isBookmarked', 'Protection opinion'];
 
@@ -2176,7 +2196,7 @@
           removeProfileMarkers();
         }
 
-        if (sView != 'qualitative') {
+        if (sView != 'qualitative-tree') {
           // trigger resize to allow map to attain its size
           // 
           setTimeout(function(){

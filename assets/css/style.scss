@@ -62,7 +62,7 @@ body {
 
   }
 
-  &[data-view="qualitative"] {
+  &[data-view="qualitative-tree"] {
 
     // hide map view
     #map,
@@ -163,31 +163,49 @@ body {
 
   }
 
-  &[data-view="segmentation"] {
+  &[data-view="quantitative-corelation"] {
 
     // hide map view
     #map,
     .md-tabs--rc,
     .md-tabs--pc,
-    .md-tabs--qa {
-      display: none;
-    }
-
-    // hide Word Tree
-    #wordtree {
-      display: none;
-    }
-
-    // hide Word Tree
-    #scatterplotmatrix {
-      display: block;
-    }
-
+    .md-tabs--qa,
+    #wordtree,
     // Disable Filters
     [data-view-context]:not([data-view-context~="se"]) {
       display: none;
     }
 
+    // Show Matrix
+    #scatterplotmatrix {
+      display: block;
+    }
+
+    // Disable Filters
+
+  }
+
+  &[data-view="qualitative-text"] {
+
+    // hide map view
+    #map,
+    #scatterplotmatrix,
+    #wordtree,
+    .md-tabs--rc,
+    .md-tabs--pc,
+    .md-tabs--qn,
+    // Disable Filters
+    //[data-view-context]:not([data-view-context~="qatext"]),
+    [data-view-context]:not([data-view-context~="qa"]) {
+      display: none;
+    }
+
+    // show Text container
+    #qualtext {
+      display: block;
+    }
+    
+    
   }
 
 

@@ -8,4 +8,7 @@ output,
 .brushing path.hex {
   pointer-events: none; }
 
+#qualtext iframe {
+  border-width: 0; }
+
 /*# sourceMappingURL=webinar.css.map */
