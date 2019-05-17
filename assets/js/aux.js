@@ -533,11 +533,11 @@
                   label: "All",
                   value: "All",
                   selected: true
-                }, {label: "Segment A", value: "All"},
-                  {label: "Segment B", value: "Tech Challenged"},
-                  {label: "Segment C", value: "Own But Don't Operate"},
-                  {label: "Segment D", value: "Young Operators"},
-                  {label: "Segment E", value: "Own &amp; Operate"}
+                }, {label: "All", value: "All"},
+                  {label: "Segment A", value: "Tech Challenged"},
+                  {label: "Segment B", value: "Own But Don't Operate"},
+                  {label: "Segment C", value: "Young Operators"},
+                  {label: "Segment D", value: "Own & Operate"}
                 ]
             }
 
@@ -1115,17 +1115,29 @@
 
                   delete d.x;
                   delete d.y;
-                  var el = Popup.profilePopup({
-                    profiles: d
-                  });
-                  //$('#ptooltip .content').html(el);
-                  //$('#ptooltip').show();
+                  if(d.length){
+                    var el = Popup.miniPopup(d);
+                    $('#ptooltip .content').html(el);
+                    $('#ptooltip').show();
+                  }
                 }else{
-                  //$('#ptooltip').hide();
+                  $('#ptooltip').hide();
                 }
               }
             )
           });
+
+          dispatch.on('profilePopupShown.scatterplotmatrix', function(el){
+
+            if(getActiveView() === 'quantitative-corelation'){
+              $('#ptooltip .content').html(el);
+              $('#ptooltip').show();
+            }else{
+              $('#ptooltip').hide();
+            }
+
+          });
+
 
           // Update chart when dataset gets filtered
           // 

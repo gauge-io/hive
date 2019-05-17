@@ -1,0 +1,678 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Persona Discovery},
+            pdfauthor={Ashish Singh (ashish@iashishsingh.com)},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{{#1}}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{{#1}}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\ImportTok}[1]{{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{{#1}}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{{#1}}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{{#1}}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{{#1}}}}
+\newcommand{\BuiltInTok}[1]{{#1}}
+\newcommand{\ExtensionTok}[1]{{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{{#1}}}
+\newcommand{\RegionMarkerTok}[1]{{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{{#1}}}}
+\newcommand{\NormalTok}[1]{{#1}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Persona Discovery}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Ashish Singh
+(\href{mailto:ashish@iashishsingh.com}{\nolinkurl{ashish@iashishsingh.com}})}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{5/16/2019}
+
+
+\begin{document}
+\maketitle
+
+\subsection{Setup}\label{setup}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## -- Attaching packages ---------------------------------- tidyverse 1.2.1 --
+\end{verbatim}
+
+\begin{verbatim}
+## v ggplot2 3.1.0       v purrr   0.3.2  
+## v tibble  2.1.1       v dplyr   0.8.0.1
+## v tidyr   0.8.3       v stringr 1.4.0  
+## v readr   1.3.1       v forcats 0.4.0
+\end{verbatim}
+
+\begin{verbatim}
+## -- Conflicts ------------------------------------- tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(lubridate)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'lubridate'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:base':
+## 
+##     date
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(readr)}
+\KeywordTok{library}\NormalTok{(ordinal)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'ordinal'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:dplyr':
+## 
+##     slice
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(cluster)}
+
+\NormalTok{survey <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"~/Code/asurion/data/viz/processed-dataset.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Parsed with column specification:
+## cols(
+##   .default = col_character(),
+##   ID = col_double(),
+##   `Children in Home` = col_double(),
+##   `Purchased Protection` = col_double(),
+##   `# of Devices with Protection Plans` = col_double(),
+##   TVs = col_double(),
+##   DVRs = col_double(),
+##   `Game Console` = col_double(),
+##   Desktops = col_double(),
+##   Laptops = col_double(),
+##   Tablets = col_double(),
+##   `Network Router` = col_double(),
+##   Printer = col_double(),
+##   Wearables = col_double(),
+##   Smartphones = col_double(),
+##   Handhelds = col_double(),
+##   `Home Automation` = col_double(),
+##   `Home Hub` = col_double(),
+##   `Home Appliances` = col_double(),
+##   `Hardware Score` = col_double(),
+##   `Software Score` = col_double()
+##   # ... with 6 more columns
+## )
+\end{verbatim}
+
+\begin{verbatim}
+## See spec(...) for full column specifications.
+\end{verbatim}
+
+\subsection{Visualize the variables}\label{visualize-the-variables}
+
+\subsection{subset data for use in the
+example}\label{subset-data-for-use-in-the-example}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{survey_vars <-}\StringTok{ }\NormalTok{survey %>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(}
+    \StringTok{`}\DataTypeTok{Employment Status}\StringTok{`}\NormalTok{,}
+    \NormalTok{Gender,}
+    \NormalTok{Age,}
+    \NormalTok{Education,}
+    \NormalTok{HHI,}
+    \StringTok{`}\DataTypeTok{Own-Rent}\StringTok{`}\NormalTok{,}
+    \StringTok{`}\DataTypeTok{Perception of Protection}\StringTok{`}
+  \NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{visualize the data}\label{visualize-the-data}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{survey_vars %>%}
+\StringTok{  }\KeywordTok{gather}\NormalTok{(}
+    \NormalTok{var,}
+    \NormalTok{value}
+  \NormalTok{) %>%}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}
+    \KeywordTok{aes}\NormalTok{(value, }\DataTypeTok{fill =} \NormalTok{var)}
+  \NormalTok{) +}
+\StringTok{  }\KeywordTok{geom_histogram}\NormalTok{(}\DataTypeTok{stat =} \StringTok{"count"}\NormalTok{) +}
+\StringTok{  }\KeywordTok{facet_wrap}\NormalTok{( var ~}\StringTok{ }\NormalTok{., }\DataTypeTok{scales =} \StringTok{"free_x"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Ignoring unknown parameters: binwidth, bins, pad
+\end{verbatim}
+
+\includegraphics{Persona_Discovery_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+\subsection{Covert categorical fields to a factor
+datatype}\label{covert-categorical-fields-to-a-factor-datatype}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{survey_vars$}\StringTok{`}\DataTypeTok{Employment Status}\StringTok{`} \NormalTok{<-}\StringTok{ }\KeywordTok{as.factor}\NormalTok{(survey_vars$}\StringTok{`}\DataTypeTok{Employment Status}\StringTok{`}\NormalTok{)}
+\NormalTok{survey_vars$Gender <-}\StringTok{ }\KeywordTok{as.factor}\NormalTok{(survey_vars$Gender)}
+\NormalTok{survey_vars$Age <-}\StringTok{ }\KeywordTok{as.factor}\NormalTok{(survey_vars$Age)}
+\NormalTok{survey_vars$Education <-}\StringTok{ }\KeywordTok{as.factor}\NormalTok{(survey_vars$Education)}
+\NormalTok{survey_vars$HHI <-}\StringTok{ }\KeywordTok{as.factor}\NormalTok{(survey_vars$HHI)}
+\NormalTok{survey_vars$}\StringTok{`}\DataTypeTok{Own-Rent}\StringTok{`} \NormalTok{<-}\StringTok{ }\KeywordTok{as.factor}\NormalTok{(survey_vars$}\StringTok{`}\DataTypeTok{Own-Rent}\StringTok{`}\NormalTok{)}
+\NormalTok{survey_vars$}\StringTok{`}\DataTypeTok{Perception of Protection}\StringTok{`} \NormalTok{<-}\StringTok{ }\KeywordTok{as.factor}\NormalTok{(survey_vars$}\StringTok{`}\DataTypeTok{Perception of Protection}\StringTok{`}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Pre-process the data and compute distance
+matrix}\label{pre-process-the-data-and-compute-distance-matrix}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{survey_dist <-}\StringTok{ }\KeywordTok{daisy}\NormalTok{(survey_vars)}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Find the optimal number of
+clusters}\label{find-the-optimal-number-of-clusters}
+
+\subsubsection{hclust to see dentogram}\label{hclust-to-see-dentogram}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{survey_hclust <-}\StringTok{ }\KeywordTok{hclust}\NormalTok{(survey_dist)}
+\KeywordTok{plot}\NormalTok{(survey_hclust, }\DataTypeTok{labels =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{main =} \StringTok{"Default hclust"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Persona_Discovery_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+\subsubsection{\texorpdfstring{cut at the ``top'' of the
+tree}{cut at the top of the tree}}\label{cut-at-the-top-of-the-tree}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{group_3 <-}\StringTok{ }\KeywordTok{cutree}\NormalTok{(survey_hclust, }\DecValTok{3}\NormalTok{)}
+\KeywordTok{table}\NormalTok{(group_3)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## group_3
+##   1   2   3 
+## 853  28   7
+\end{verbatim}
+
+\subsubsection{Using Elbow method to find no. of
+clusters}\label{using-elbow-method-to-find-no.-of-clusters}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# function to compute total within-cluster sum of square }
+\NormalTok{wss <-}\StringTok{ }\NormalTok{function(k) \{}
+  \KeywordTok{kmeans}\NormalTok{(survey_dist, k, }\DataTypeTok{nstart =} \DecValTok{10} \NormalTok{)$tot.withinss}
+\NormalTok{\}}
+
+\CommentTok{# Compute and plot wss for k = 1 to k = 15}
+\NormalTok{k_values <-}\StringTok{ }\DecValTok{1}\NormalTok{:}\DecValTok{15}
+
+\CommentTok{# compute wss for 1-15 clusters. This can take some time.}
+\NormalTok{wss_values <-}\StringTok{ }\KeywordTok{map_dbl}\NormalTok{(k_values, wss)}
+
+\KeywordTok{plot}\NormalTok{(k_values, wss_values,}
+     \DataTypeTok{type=}\StringTok{"b"}\NormalTok{, }\DataTypeTok{pch =} \DecValTok{19}\NormalTok{, }\DataTypeTok{frame =} \OtherTok{FALSE}\NormalTok{, }
+     \DataTypeTok{xlab=}\StringTok{"Number of clusters K"}\NormalTok{,}
+     \DataTypeTok{ylab=}\StringTok{"Total within-clusters sum of squares"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Persona_Discovery_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+\subsection{Compute Clusters}\label{compute-clusters}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# from elbow evaluation choose cluster size (centers)}
+\NormalTok{k5 <-}\StringTok{ }\KeywordTok{kmeans}\NormalTok{(survey_dist, }\DataTypeTok{centers =} \DecValTok{5}\NormalTok{, }\DataTypeTok{nstart =} \DecValTok{25}\NormalTok{)}
+
+\CommentTok{# view cluster distribution}
+\KeywordTok{table}\NormalTok{(k5$cluster)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##   1   2   3   4   5 
+## 192 175 103 179 239
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{## }
+\NormalTok{##   1   2   3   4   5 }
+\NormalTok{## 179 192 219 195 103}
+\CommentTok{# add the cluster classifications to the data observations.}
+\NormalTok{survey$cluster <-}\StringTok{ }\KeywordTok{factor}\NormalTok{(k5$cluster)}
+\end{Highlighting}
+\end{Shaded}
+
+Five clusters produce reasonably balanced cluster sizes.
+
+\subsection{Identify variables contributing to
+clusters}\label{identify-variables-contributing-to-clusters}
+
+CLM is used for this example.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# build model}
+\NormalTok{fm_survey <-}\StringTok{ }\KeywordTok{clm}\NormalTok{(cluster ~}\StringTok{ `}\DataTypeTok{Employment Status}\StringTok{`} \NormalTok{+}\StringTok{ }\NormalTok{Gender +}\StringTok{ }\NormalTok{Age +}\StringTok{ }\NormalTok{Education +}\StringTok{ }\NormalTok{HHI +}\StringTok{ `}\DataTypeTok{Own-Rent}\StringTok{`} \NormalTok{+}\StringTok{ `}\DataTypeTok{Perception of Protection}\StringTok{`}\NormalTok{, }\DataTypeTok{data =} \NormalTok{survey)}
+\CommentTok{# examine significance of variables}
+\KeywordTok{summary}\NormalTok{(fm_survey)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## formula: 
+## cluster ~ `Employment Status` + Gender + Age + Education + HHI + `Own-Rent` + `Perception of Protection`
+## data:    survey
+## 
+##  link  threshold nobs logLik  AIC     niter max.grad cond.H 
+##  logit flexible  880  -928.84 1923.68 5(0)  9.11e-08 1.6e+03
+## 
+## Coefficients:
+##                                                             Estimate
+## `Employment Status`Homemaker                                 1.19351
+## `Employment Status`Retired                                   0.73025
+## `Employment Status`Self-Employed                             0.94635
+## `Employment Status`Unemployed/Looking for work               0.39184
+## `Employment Status`Working F/T                              -1.77010
+## `Employment Status`Working P/T                               0.94096
+## GenderMale                                                  -3.99308
+## Age25-34                                                    -0.33940
+## Age35-44                                                    -0.32810
+## Age45-54                                                    -0.03646
+## Age55-59                                                     0.14579
+## Age60-64                                                     0.13651
+## Age65-69                                                     1.37810
+## Age70-74                                                    -0.13014
+## Age75+                                                       0.58225
+## EducationCollege graduate                                   -0.73919
+## EducationHigh school graduate                               -1.00461
+## EducationPost graduate work or degree                       -1.14083
+## EducationSome college                                       -0.70879
+## EducationTechnical/trade school                             -0.29960
+## HHI$200k+                                                    0.03599
+## HHI$30k-$49.9k                                               0.42746
+## HHI$50k-$74.9k                                               0.23209
+## HHI$75k-$99.9k                                               0.35029
+## HHIUnder $30k                                               -0.74169
+## `Own-Rent`Rent                                               1.57703
+## `Perception of Protection`Makes sense for expensive         -1.58132
+## `Perception of Protection`Smart and responsible thing to do -0.22828
+## `Perception of Protection`Waste of money                     0.33225
+##                                                             Std. Error
+## `Employment Status`Homemaker                                   0.55997
+## `Employment Status`Retired                                     0.76575
+## `Employment Status`Self-Employed                               0.50982
+## `Employment Status`Unemployed/Looking for work                 0.76294
+## `Employment Status`Working F/T                                 0.47421
+## `Employment Status`Working P/T                                 0.51987
+## GenderMale                                                     0.20340
+## Age25-34                                                       0.44908
+## Age35-44                                                       0.45710
+## Age45-54                                                       0.46198
+## Age55-59                                                       0.51702
+## Age60-64                                                       0.59430
+## Age65-69                                                       0.82297
+## Age70-74                                                       1.55427
+## Age75+                                                         1.52368
+## EducationCollege graduate                                      0.26890
+## EducationHigh school graduate                                  0.44423
+## EducationPost graduate work or degree                          0.27468
+## EducationSome college                                          0.29085
+## EducationTechnical/trade school                                0.47456
+## HHI$200k+                                                      0.31052
+## HHI$30k-$49.9k                                                 0.26113
+## HHI$50k-$74.9k                                                 0.20048
+## HHI$75k-$99.9k                                                 0.20911
+## HHIUnder $30k                                                  0.34083
+## `Own-Rent`Rent                                                 0.18618
+## `Perception of Protection`Makes sense for expensive            0.22829
+## `Perception of Protection`Smart and responsible thing to do    0.30317
+## `Perception of Protection`Waste of money                       0.35775
+##                                                             z value
+## `Employment Status`Homemaker                                  2.131
+## `Employment Status`Retired                                    0.954
+## `Employment Status`Self-Employed                              1.856
+## `Employment Status`Unemployed/Looking for work                0.514
+## `Employment Status`Working F/T                               -3.733
+## `Employment Status`Working P/T                                1.810
+## GenderMale                                                  -19.631
+## Age25-34                                                     -0.756
+## Age35-44                                                     -0.718
+## Age45-54                                                     -0.079
+## Age55-59                                                      0.282
+## Age60-64                                                      0.230
+## Age65-69                                                      1.675
+## Age70-74                                                     -0.084
+## Age75+                                                        0.382
+## EducationCollege graduate                                    -2.749
+## EducationHigh school graduate                                -2.261
+## EducationPost graduate work or degree                        -4.153
+## EducationSome college                                        -2.437
+## EducationTechnical/trade school                              -0.631
+## HHI$200k+                                                     0.116
+## HHI$30k-$49.9k                                                1.637
+## HHI$50k-$74.9k                                                1.158
+## HHI$75k-$99.9k                                                1.675
+## HHIUnder $30k                                                -2.176
+## `Own-Rent`Rent                                                8.470
+## `Perception of Protection`Makes sense for expensive          -6.927
+## `Perception of Protection`Smart and responsible thing to do  -0.753
+## `Perception of Protection`Waste of money                      0.929
+##                                                             Pr(>|z|)    
+## `Employment Status`Homemaker                                0.033057 *  
+## `Employment Status`Retired                                  0.340268    
+## `Employment Status`Self-Employed                            0.063421 .  
+## `Employment Status`Unemployed/Looking for work              0.607537    
+## `Employment Status`Working F/T                              0.000189 ***
+## `Employment Status`Working P/T                              0.070293 .  
+## GenderMale                                                   < 2e-16 ***
+## Age25-34                                                    0.449791    
+## Age35-44                                                    0.472898    
+## Age45-54                                                    0.937088    
+## Age55-59                                                    0.777953    
+## Age60-64                                                    0.818333    
+## Age65-69                                                    0.094024 .  
+## Age70-74                                                    0.933272    
+## Age75+                                                      0.702361    
+## EducationCollege graduate                                   0.005980 ** 
+## EducationHigh school graduate                               0.023730 *  
+## EducationPost graduate work or degree                       3.28e-05 ***
+## EducationSome college                                       0.014810 *  
+## EducationTechnical/trade school                             0.527834    
+## HHI$200k+                                                   0.907736    
+## HHI$30k-$49.9k                                              0.101636    
+## HHI$50k-$74.9k                                              0.246998    
+## HHI$75k-$99.9k                                              0.093904 .  
+## HHIUnder $30k                                               0.029547 *  
+## `Own-Rent`Rent                                               < 2e-16 ***
+## `Perception of Protection`Makes sense for expensive         4.31e-12 ***
+## `Perception of Protection`Smart and responsible thing to do 0.451463    
+## `Perception of Protection`Waste of money                    0.353033    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Threshold coefficients:
+##     Estimate Std. Error z value
+## 1|2  -6.0891     0.6721  -9.060
+## 2|3  -4.2296     0.6597  -6.411
+## 3|4  -3.1469     0.6555  -4.800
+## 4|5  -1.2407     0.6406  -1.937
+## (8 observations deleted due to missingness)
+\end{verbatim}
+
+\subsection{Review Pairwise Plots}\label{review-pairwise-plots}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{survey %>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}
+    \KeywordTok{aes}\NormalTok{(Age, Gender, }\DataTypeTok{color =} \NormalTok{cluster)}
+  \NormalTok{) +}
+\StringTok{  }\KeywordTok{geom_jitter}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Persona_Discovery_files/figure-latex/unnamed-chunk-11-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{survey %>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}
+    \KeywordTok{aes}\NormalTok{(}\StringTok{`}\DataTypeTok{Employment Status}\StringTok{`}\NormalTok{, Gender, }\DataTypeTok{color =} \NormalTok{cluster)}
+  \NormalTok{) +}
+\StringTok{  }\KeywordTok{geom_jitter}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Persona_Discovery_files/figure-latex/unnamed-chunk-12-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{survey %>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}
+    \KeywordTok{aes}\NormalTok{(}\StringTok{`}\DataTypeTok{Employment Status}\StringTok{`}\NormalTok{, Age, }\DataTypeTok{color =} \NormalTok{cluster)}
+  \NormalTok{) +}
+\StringTok{  }\KeywordTok{geom_jitter}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Persona_Discovery_files/figure-latex/unnamed-chunk-13-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{survey %>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}
+    \KeywordTok{aes}\NormalTok{(Education, }\StringTok{`}\DataTypeTok{Perception of Protection}\StringTok{`}\NormalTok{, }\DataTypeTok{color =} \NormalTok{cluster)}
+  \NormalTok{) +}
+\StringTok{  }\KeywordTok{geom_jitter}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Persona_Discovery_files/figure-latex/unnamed-chunk-14-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{survey %>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}
+    \KeywordTok{aes}\NormalTok{(}\StringTok{`}\DataTypeTok{Employment Status}\StringTok{`}\NormalTok{, }\StringTok{`}\DataTypeTok{Perception of Protection}\StringTok{`}\NormalTok{, }\DataTypeTok{color =} \NormalTok{cluster)}
+  \NormalTok{) +}
+\StringTok{  }\KeywordTok{geom_jitter}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Persona_Discovery_files/figure-latex/unnamed-chunk-15-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{survey %>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}
+    \KeywordTok{aes}\NormalTok{(Gender, }\StringTok{`}\DataTypeTok{Perception of Protection}\StringTok{`}\NormalTok{, }\DataTypeTok{color =} \NormalTok{cluster)}
+  \NormalTok{) +}
+\StringTok{  }\KeywordTok{geom_jitter}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Persona_Discovery_files/figure-latex/unnamed-chunk-16-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{survey %>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}
+    \KeywordTok{aes}\NormalTok{(Age, }\StringTok{`}\DataTypeTok{Perception of Protection}\StringTok{`}\NormalTok{, }\DataTypeTok{color =} \NormalTok{cluster)}
+  \NormalTok{) +}
+\StringTok{  }\KeywordTok{geom_jitter}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Persona_Discovery_files/figure-latex/unnamed-chunk-17-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{survey %>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}
+    \KeywordTok{aes}\NormalTok{(}\StringTok{`}\DataTypeTok{Own-Rent}\StringTok{`}\NormalTok{, }\StringTok{`}\DataTypeTok{Perception of Protection}\StringTok{`}\NormalTok{, }\DataTypeTok{color =} \NormalTok{cluster)}
+  \NormalTok{) +}
+\StringTok{  }\KeywordTok{geom_jitter}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Persona_Discovery_files/figure-latex/unnamed-chunk-18-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{survey %>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}
+    \KeywordTok{aes}\NormalTok{(HHI, }\StringTok{`}\DataTypeTok{Perception of Protection}\StringTok{`}\NormalTok{, }\DataTypeTok{color =} \NormalTok{cluster)}
+  \NormalTok{) +}
+\StringTok{  }\KeywordTok{geom_jitter}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Persona_Discovery_files/figure-latex/unnamed-chunk-19-1.pdf}
+
+\subsection{Summarize characteristics and define
+personas}\label{summarize-characteristics-and-define-personas}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{tribble}\NormalTok{(}
+  \NormalTok{~cluster, ~gender, ~perception_of_product, ~age_group, ~own_or_rent,}
+  \CommentTok{#-------|--------|-----------------------|-----------}
+  \StringTok{"1"}\NormalTok{, }\StringTok{"male"}\NormalTok{, }\StringTok{"Makes sense for expensive"}\NormalTok{, }\StringTok{"25-55"}\NormalTok{, }\StringTok{"own"}\NormalTok{,}
+  \StringTok{"2"}\NormalTok{, }\StringTok{"female"}\NormalTok{, }\StringTok{"Makes sense for expensive, Smart thing to do"}\NormalTok{, }\StringTok{"25-69"}\NormalTok{, }\StringTok{"rent"}\NormalTok{,}
+  \StringTok{"3"}\NormalTok{, }\StringTok{"female"}\NormalTok{, }\StringTok{"All"}\NormalTok{, }\StringTok{"All"}\NormalTok{, }\StringTok{"own"}\NormalTok{,}
+  \StringTok{"4"}\NormalTok{, }\StringTok{"male"}\NormalTok{, }\StringTok{"All"}\NormalTok{, }\StringTok{"18-54"}\NormalTok{, }\StringTok{"rent"}\NormalTok{,}
+  \StringTok{"5"}\NormalTok{, }\StringTok{"female"}\NormalTok{, }\StringTok{"Makes sense for expensive"}\NormalTok{, }\StringTok{"25-59"}\NormalTok{, }\StringTok{"own"}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 5 x 5
+##   cluster gender perception_of_product                age_group own_or_rent
+##   <chr>   <chr>  <chr>                                <chr>     <chr>      
+## 1 1       male   Makes sense for expensive            25-55     own        
+## 2 2       female Makes sense for expensive, Smart th~ 25-69     rent       
+## 3 3       female All                                  All       own        
+## 4 4       male   All                                  18-54     rent       
+## 5 5       female Makes sense for expensive            25-59     own
+\end{verbatim}
+
+
+\end{document}

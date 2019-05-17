@@ -1,8 +1,9 @@
 ---
 title: "Persona Discovery"
-author: "Ashish Singh (ashish@iashishsingh.com)"
+#author: "Ashish Singh (ashish@iashishsingh.com)"
 date: "5/16/2019"
-output: html_document
+output:
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -204,7 +205,7 @@ survey %>%
   geom_jitter()
 ```
 
-```{r, fig.width=800}
+```{r}
 survey %>% 
   ggplot(
     aes(HHI, `Perception of Protection`, color = cluster)
@@ -219,7 +220,7 @@ tribble(
   ~cluster, ~gender, ~perception_of_product, ~age_group, ~own_or_rent,
   #-------|--------|-----------------------|-----------
   "1", "male", "Makes sense for expensive", "25-55", "own",
-  "2", "female", "Makes sense for expensive & Smart thing", "25-69", "rent",
+  "2", "female", "Makes sense for expensive, Smart thing to do", "25-69", "rent",
   "3", "female", "All", "All", "own",
   "4", "male", "All", "18-54", "rent",
   "5", "female", "Makes sense for expensive", "25-59", "own"

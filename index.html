@@ -31,6 +31,16 @@
     <!-- Custom Scripts -->
     <script src="assets/js/lib/mustache.min.js"></script>
 
+    <script src="assets/js/lib/wordtree/longscroll.js"></script>
+    <script src="assets/js/lib/wordtree/wordtree.js"></script>
+    
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/datamodel.js"></script>
+    <script src="assets/js/filter.js"></script>
+    <script src="assets/js/wordtree.js"></script>
+    <script src="assets/js/lib/horizontalboxplot.js"></script>
+    
+
     <script>
 
         // Mapbox access token
@@ -39,30 +49,9 @@
 
     </script>
 
-
-    <script type="module">
-      // Load the Observable runtime and inspector.
-      import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
-      //import {Runtime, Inspector} from "./assets/js/lib/runtime.js";
-
-
-      // Or, your notebook, downloaded locally.
-      //import notebook from "./assets/js/lib/94749c2763adbd00.js?v=3";
-      
-      import notebook from "https://api.observablehq.com/d/94749c2763adbd00.js?v=3";
-
-      // Load the notebook, observing its cells with a default Inspector
-      // that simply renders the value of each cell into the provided DOM node.
-      window.observable = {};
-      window.observable.Runtime = Runtime;
-
-      window.observable.Inspector = Inspector;
-      window.observable.notebook = notebook;
-    </script>
-
 </head>
 <!-- Default view is recruitment -->
-<body class="loading-na" data-view="quantitative-corelation">
+<body class="loading-na" data-view="recruitment">
 
     <!-- App loader -->
     <div class="loader">
@@ -134,11 +123,11 @@
             <label>View</label>
             <div class="dropdown">
                 <select class="chosen">
-                    <option value="quantitative-corelation" selected>Quant Analysis: Corelation</option>
-                    <option value="quantitative">Quant Analysis: Regional Subjectivity</option>
-                    <option value="qualitative-tree">Qual Analysis: Wordtree</option>
-                    <option value="qualitative-text">Qual Analysis: Text</option>
-                    <option value="recruitment">Recruitment</option>
+                    <option value="recruitment" selected>Recruitment</option>
+                    <option value="quantitative-corelation">Quant: Corelation Matrix</option>
+                    <option value="quantitative">Quant: Regional Subjectivity</option>
+                    <option value="qualitative-tree">Qual: Wordtree</option>
+                    <option value="qualitative-text">Qual: ScatterText</option>                
                     <option value="participants">Participants</option>
                 </select>
             </div>
@@ -601,6 +590,7 @@
         </div>
     </div>
 
+    <!--
     <script src="assets/js/lib/wordtree/longscroll.js"></script>
     <script src="assets/js/lib/wordtree/wordtree.js"></script>
     
@@ -612,6 +602,30 @@
     <script src="assets/js/lib/horizontalboxplot.js"></script>
     <script src="assets/js/aux.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.4.2/js/swiper.min.js"></script>
+    -->
+    <script src="assets/js/popup.js"></script>
+    <script src="assets/js/aux.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.4.2/js/swiper.min.js"></script>
+
+    <script type="module">
+      // Load the Observable runtime and inspector.
+      //import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
+      import {Runtime, Inspector} from "./assets/js/lib/runtime.js";
+
+
+      // Or, your notebook, downloaded locally.
+      //import notebook from "./assets/js/lib/94749c2763adbd00.js?v=3";
+      
+      import notebook from "https://api.observablehq.com/d/94749c2763adbd00.js?v=3";
+
+      // Load the notebook, observing its cells with a default Inspector
+      // that simply renders the value of each cell into the provided DOM node.
+      window.observable = {};
+      window.observable.Runtime = Runtime;
+
+      window.observable.Inspector = Inspector;
+      window.observable.notebook = notebook;
+    </script>
 
 
 </body>

@@ -491,7 +491,7 @@ function DataModel(sUrl) {
     },
 
     getMainSet: function(){
-      return _.cloneDeep(oMasterDataset.values());
+      return _.cloneDeep(oMasterDataset.values ? oMasterDataset.values() : []);
     },
 
     getZIP2ZCTA: function(sZip){
