@@ -272,6 +272,11 @@ input:focus {
   </div>
 </div>
 <script charset="utf-8">
+
+if(console.log){
+  console.log = function(){};
+}
+
     // Created using Cozy: github.com/uwplse/cozy
 function Rectangle(ax1, ay1, ax2, ay2) {
     this.ax1 = ax1;
@@ -5495,9 +5500,9 @@ RectangleHolder.prototype.findMatchingRectangles = function (bx1, by1, bx2, by2,
                 .append("circle")
                 .attr("r", function (d) {
                     if (pValueColors && d.p) {
-                        return (d.p >= 1 - minPVal || d.p <= minPVal) ? 5 : 1.75;
+                        return (d.p >= 1 - minPVal || d.p <= minPVal) ? 4 : 1.75;
                     }
-                    return 5;
+                    return 4;
                 })
                 .attr("cx", function (d) {
                     return x(d.x);

@@ -1094,7 +1094,6 @@
               
             }
             
-            console.log('variable', variable);
             // Force evaluation of all the other cells in the notebook.
             //return true;
           });
@@ -1144,7 +1143,6 @@
           dispatch.on('datasetRefreshed.scatterplotmatrix', function(aData){
 
             notebookModule.redefine("data", [], aData);
-            console.log(aData);
 
           });
 
