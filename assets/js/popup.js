@@ -16,7 +16,7 @@ var Popup = (function _popup() {
   Mustache.parse(profileHTML);
   Mustache.parse(profileScoreHTML);
 
-  function miniPopup(aData) {
+  function miniPopup(aData, bShowOnlyCount) {
 
     var popup = d3.select(document.createElement('div')),
     list = d3.select(document.createElement('div')),
@@ -29,7 +29,15 @@ var Popup = (function _popup() {
     var firstFeature = aData[0],
     header = d3.select(document.createElement('h4')),
     sRecord = aData.length > 1 ? 'records' : 'record',
-    headerText = [aData.length, sRecord, 'in', _.startCase(firstFeature.City) + ',', firstFeature.State].join(' ');
+    headerText = '';
+
+    if (bShowOnlyCount) {
+      headerText = [aData.length, sRecord];
+    }else{
+      headerText = [aData.length, sRecord].concat(['in', _.startCase(firstFeature.City) + ',', firstFeature.State]);
+    }
+
+    headerText = headerText.join(' ');
 
     header.text(headerText);
 

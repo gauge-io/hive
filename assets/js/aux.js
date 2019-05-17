@@ -1115,7 +1115,7 @@
                   delete d.x;
                   delete d.y;
                   if(d.length){
-                    var el = Popup.miniPopup(d);
+                    var el = Popup.miniPopup(d, true);
                     $('#ptooltip .content').html(el);
                     $('#ptooltip').show();
                   }
