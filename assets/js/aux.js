@@ -533,7 +533,7 @@
                   label: "All",
                   value: "All",
                   selected: true
-                }, {label: "All", value: "All"},
+                },
                   {label: "Segment A", value: "Tech Challenged"},
                   {label: "Segment B", value: "Own But Don't Operate"},
                   {label: "Segment C", value: "Young Operators"},
