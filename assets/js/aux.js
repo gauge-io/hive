@@ -2259,6 +2259,8 @@
       DataManager.then(function(aQueryDataset){
 
         //console.log('Aux - data loaded', aQueryDataset);
+        
+        //initMap();
 
       });
 

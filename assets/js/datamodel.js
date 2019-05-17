@@ -455,15 +455,14 @@ function DataModel(sUrl) {
     // 
     aQueryDataset = _.cloneDeep(aData);
 
-    if (typeof postLoadHook === 'function') {
+    if (typeof postLoadHook === 'function' && !!aQueryDataset.length) {
+      bIsLoaded = true;
       postLoadHook.apply(DataModel, [aQueryDataset]);
     }
 
   }
 
   function postLoad(callback) {
-
-    bIsLoaded = true;
 
     postLoadHook = callback || function(){};
 
