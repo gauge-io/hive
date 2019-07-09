@@ -220,8 +220,14 @@ Filter.prototype.createHTML = function() {
       // 
       var aVal = jQuery(this).val();
       if (aVal.length > 1 && aVal.indexOf('All') > -1) {
-        jQuery(this).find('[value="All"]')
-          .removeAttr("selected");
+        // if 'All' is chosen, clear rest
+        // checking if first selected element is not All
+        if(this.nextElementSibling.querySelector('.search-choice span').textContent != 'All'){
+          
+        }else{
+          jQuery(this).find('[value="All"]')
+            .prop("selected", false);
+        }
 
         chosen.trigger('chosen:updated');
       }
