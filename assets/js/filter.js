@@ -359,6 +359,91 @@ Filter.prototype.createHTML = function() {
     
   }
 
+  // Slider
+  //
+  function _slider() {
+
+    _this.setDefaultValue(config.range);
+
+    var html = '\
+      <label></label>\
+      <div>\
+        <input data-min readonly type="text" value="0"/>\
+        <input data-max readonly type="text" value="0"/>\
+        <input data-slider readonly type="text" value="0">\
+        <input value="" min="" max="" step="" type="range"/>\
+        <svg width="100%" height="24">\
+          <line x1="4" y1="0" x2="300" y2="0" stroke="#444" stroke-width="12" stroke-dasharray="1 28"></line>\
+        </svg>\
+      </div>';
+
+    var rs = d3.select(document.createElement('div'));
+
+    rs.classed('filter filter--'+config.type, true)
+      .html(html);
+
+    rs.select('div')
+      .classed('range-slider range-slider--single', true);
+
+    // Does it have any legend?
+    // 
+    if (config.hasLegend) {
+      jQuery(rs.node())
+        .append(d3.select(config.hasLegend).node());
+    }
+
+    // Set Min and Max values
+    // 
+    var step = config.step || config.range.step || (config.range.max/config.range.min);
+
+    // init default values
+    config.value = config.value || config.range.min || 0;
+
+    rs.selectAll('[data-min]')
+      .attr("value", config.range.min);
+
+    rs.selectAll('[data-max]')
+      .attr("value", config.range.max);
+
+    rs.selectAll('[type="range"]')
+      .attr("value", config.value)
+      .attr("min", config.range.min)
+      .attr("max", config.range.max)
+      .attr("step", step);
+
+    rs.select('[data-slider]')
+      .attr("value", config.value);
+
+    // Add Label
+    // 
+    rs.select('label')
+      .classed('scale-desc', !!config.description)
+      .html(config.label);
+
+
+    // Bind Event
+    // 
+
+    var rangeS = rs.node().querySelector("input[type=range]");
+
+    // trigger onchange
+    // 
+    rangeS.oninput = function(){
+      
+      rs.select('[data-slider]')
+        .attr("value", this.value);
+
+      _this.onchange(_this.config.value = this.value);
+    }
+
+    // Insert DOM
+    // 
+    d3.select(config.id)
+      .html('')
+      .node()
+      .appendChild(rs.node());
+    
+  }
 
   switch(sType){
 
@@ -367,6 +452,12 @@ Filter.prototype.createHTML = function() {
       _node = _rangeslider();
 
       break;
+
+    case "slider":
+
+        _node = _slider();
+
+        break;
 
     case "dropdown":
 
@@ -417,6 +508,18 @@ Filter.prototype.reset = function() {
 
       break;
 
+    case 'slider':
+
+        var rSlider = $node.find("input[data-range]");
+  
+        rSlider.val(value);
+  
+        // Update value
+        // 
+        _this.config.value = value;
+  
+        break;
+
     case 'dropdown':
     case 'multi-dropdown':
       // For dropdowns, it is as good as re-building the chosen
@@ -427,7 +530,7 @@ Filter.prototype.reset = function() {
         return _v.selected;
       });
 
-      _this.config.value = aVal.length ? aVal[0].value : 'All';
+      _this.config.value = aVal.length ? aVal[0].value : (value.length ? value[0].value : 'All');
 
       break;
 

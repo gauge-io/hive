@@ -76,7 +76,7 @@ body {
   body[data-view="qualitative-text"] .md-tabs--rc,
   body[data-view="qualitative-text"] .md-tabs--pc,
   body[data-view="qualitative-text"] .md-tabs--qn,
-  body[data-view="qualitative-text"] [data-view-context]:not([data-view-context~="qa"]) {
+  body[data-view="qualitative-text"] [data-view-context]:not([data-view-context~="qa--st"]) {
     display: none; }
   body[data-view="qualitative-text"] #qualtext {
     display: block; }

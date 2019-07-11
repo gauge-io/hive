@@ -24,7 +24,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js"></script>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js"></script>-->
+    <script
+    src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+    crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
     <!--<script src="https://www.gstatic.com/charts/loader.js"></script>-->
 
@@ -39,6 +43,7 @@
     <script src="assets/js/filter.js"></script>
     <script src="assets/js/wordtree.js"></script>
     <script src="assets/js/lib/horizontalboxplot.js"></script>
+    <script src="assets/js/qualtext.js"></script>
     
 
     <script>
@@ -127,7 +132,7 @@
                     <option value="quantitative-corelation">Quant: Corelation Matrix</option>
                     <option value="quantitative">Quant: Regional Subjectivity</option>
                     <option value="qualitative-tree">Qual: Wordtree</option>
-                    <option value="qualitative-text">Qual: ScatterText</option>                
+                    <option value="qualitative-text">Qual: Scattertext</option>                
                     <option value="participants">Participants</option>
                 </select>
             </div>
@@ -138,18 +143,19 @@
 
             <!-- Recruitment -->
             <ul class="md-tabs md-tabs--rc">
-                <li class="active"><a data-target="#filters" href="#">Records<b id="record-count"></b></a></li>
+                <li class="active"><a data-target="#filters" href="#">Records<b data-id="record-count"></b></a></li>
                 <li><a data-target="#bookmarked_items" href="#">Bookmarks<b id="bookmark-count"></b></a></li>
             </ul>
 
             <!-- Qualitative Analysis -->
             <ul class="md-tabs md-tabs--qa">
+                <li class="active"><a data-target="#filters" href="#">Records<b data-id="record-count"></b></a></li>
                 <li class="active"><a data-target="#filters" href="#">Word Count<b id="word-count"></b></a></li>
             </ul>
 
             <!-- Quantitative Analysis -->
             <ul class="md-tabs md-tabs--qn">
-                <li class="active"><a data-target="#filters" href="#">Records<b id="record-count-qn"></b></a></li>
+                <li class="active"><a data-target="#filters" href="#">Records<b data-id="record-count"></b></a></li>
             </ul>
 
             <!-- Participants View -->
@@ -205,8 +211,33 @@
                         </div>
                     </li>
 
+                    <!-- Scattertext filters -->
+                    <li class="accordion__item" data-view-context="qa--st">
+                        <input type="checkbox">
+                        <i></i>
+                        <div class="aitem__head ahbar">
+                            <h2 class="ahbar__left">Settings</h2>
+                        </div>
+                        <div class="aitem__body">
+                            <!-- Mode -->
+                            <div id="filter_st_mode"></div>
+                            
+                            <!-- Category Column -->
+                            <div id="filter_st_category_col"></div>
+
+                            <!-- Category Value -->
+                            <div id="filter_st_category"></div>
+
+                            <!-- Not Category Value -->
+                            <div id="filter_st_not_category"></div>
+
+                            <!-- Min term frequency -->
+                            <div id="filter_st_min_term_frequency"></div>
+                        </div>
+                    </li>
+
                     <!-- Tasks -->
-                    <li class="accordion__item" data-view-context="qa pc">
+                    <li class="accordion__item" data-view-context="qa qa--st pc">
                         <input type="checkbox">
                         <i></i>
                         <div class="aitem__head ahbar">
@@ -222,7 +253,7 @@
                     </li>
 
                     <!-- Segments -->
-                    <li class="accordion__item" data-view-context="rc qa pc qn se">
+                    <li class="accordion__item" data-view-context="rc qa qa--st pc qn se">
                         <input type="checkbox">
                         <i></i>
                         <div class="aitem__head ahbar">
@@ -235,7 +266,7 @@
                     </li>
                     
                     <!-- Scales -->
-                    <li class="accordion__item" data-view-context="rc qa qn se">
+                    <li class="accordion__item" data-view-context="rc qa qa--st qn se">
                         <input type="checkbox">
                         <i></i>
                         <div class="aitem__head ahbar">
@@ -254,7 +285,7 @@
                     </li>
 
                     <!-- Demographics -->
-                    <li class="accordion__item" data-view-context="rc qa qn se">
+                    <li class="accordion__item" data-view-context="rc qa qa--st qn se">
                         <input type="checkbox">
                         <i></i>
                         <div class="aitem__head ahbar">
@@ -288,7 +319,7 @@
                     </li>
 
                     <!-- Support & Protection -->
-                    <li class="accordion__item" data-view-context="rc qa se">
+                    <li class="accordion__item" data-view-context="rc qa qa--st se">
                         <input type="checkbox">
                         <i></i>
                         <div class="aitem__head ahbar">
@@ -315,7 +346,7 @@
                     </li>
 
                     <!-- Zip Code Association -->
-                    <li class="accordion__item" data-view-context="rc qa">
+                    <li class="accordion__item" data-view-context="rc qa qa--st">
                         <input type="checkbox">
                         <i></i>
                         <div class="aitem__head ahbar">

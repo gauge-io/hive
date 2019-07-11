@@ -27,6 +27,9 @@
         var oWordTree,
         elWordTree = document.getElementById('wordtree_graph');
 
+        // Qual Text
+        var Scattertext = QualText();
+
         // Define UI Filters
         // 
 
@@ -131,6 +134,88 @@
                     value: 'false'
                 }]
             },
+
+            // Scattertext filters
+            //
+            
+            // Mode
+            // 
+            {
+              id: '#filter_st_mode',
+              label: 'Mode',
+              type: 'dropdown',
+              metric: 'st_mode',
+              isAdhoc: true,
+              values: [{
+                  label: 'Frequency',
+                  value: 'frequency',
+                  selected: true
+              }, {
+                  label: 'Empath',
+                  value: 'empath'
+              }]
+            },
+            // Category Column
+            // 
+            {
+              id: '#filter_st_category_col',
+              label: 'Category Column',
+              type: 'dropdown',
+              metric: 'categoryCol',
+              isAdhoc: true,
+              values: [{
+                label: 'Segment',
+                value: 'Segment',
+                selected: true
+              }, {
+                label: 'Gender',
+                value: 'Gender'
+              }, {
+                label: 'Ethnicity',
+                value: 'Ethnicity'
+              }, {
+                label: 'Employment Status',
+                value: 'Employment Status'
+              }, {
+                label: 'Purchased Protection',
+                value: 'Purchased Protection'
+              }, {
+                label: 'Own-Rent',
+                value: 'Own-Rent'
+              }, {
+                label: 'Perception of Protection',
+                value: 'Perception of Protection'
+              }]
+            },
+
+            // Category value
+            // 
+            {
+              id: '#filter_st_category',
+              label: 'Category',
+              type: 'dropdown',
+              metric: 'category',
+              isAdhoc: true,
+              values: []
+            },
+            
+            // Category value
+            // 
+            {
+              id: '#filter_st_min_term_frequency',
+              label: 'Minimum Term Frequency',
+              type: 'slider',
+              metric: 'minTermFrequency',
+              isAdhoc: true,
+              value: 5,
+              range: {
+                  min: 3,
+                  max: 20,
+                  step: 1
+              }
+            },
+
+            // ./ End Scattertext filters
 
             // Dimensions
             // 
@@ -581,7 +666,12 @@
           '_isParticipant',
           'Protection opinion',
           '# of Devices with Protection Plans',
-          '_scatterplot_columns'
+          '_scatterplot_columns',
+          // Scattertext filters
+          'st_mode',
+          'categoryCol',
+          'category',
+          'minTermFrequency'
         ],
 
         aDataDrivenFilters = aFilters.filter(function(oF){
@@ -641,7 +731,8 @@
                     metric: oF.metric,
                     isAdhoc: true,
                     type: oF.type,
-                    value: values
+                    value: values,
+                    el: this
                   }])
 
                 }else{
@@ -667,7 +758,8 @@
                     metric: oF.metric,
                     isAdhoc: true,
                     type: oF.type,
-                    value: values
+                    value: values,
+                    el: this
                   }])
 
                 }
@@ -941,10 +1033,7 @@
           if (obj && obj.recordCount != undefined) {
 
             // Update Record Count
-            d3.select('#record-count')
-              .html(obj.recordCount);
-
-            d3.select('#record-count-qn')
+            d3.selectAll('[data-id="record-count"]')
               .html(obj.recordCount);
 
             // Update Participant Count
@@ -1040,9 +1129,11 @@
         // 
         function initWordTree() {
 
-          var oText = buildProfileTranscriptText(DataManager.getQuerySet());
+          var aData = DataManager.getQuerySet(),
+          oText = buildProfileTranscriptText(aData);
 
           updateFilterPanel({
+            recordCount: aData.length,
             wordCount: oText.wordCount
           });
 
@@ -1169,12 +1260,126 @@
         function initQualText() {
 
           var elContainer = d3.select('#qualtext'),
-          iframe = elContainer.select('iframe');
+          iframe = elContainer.select('iframe'),
+          serverURL = 'http://localhost:8282/html/';
 
-          // reload the iframe
-          // currently used for making the vis render
-          // based on actual window size
-          iframe.attr('src', iframe.attr('src'));
+          // Get a list of data driven filters by metric
+          var oDataFilterByMetricMap = d3.map(oFiltersMap.values(), function(d){ return d.metric; }),
+          oFilterInstanceByMetricMap = d3.map(aActiveFilters, function(oF){ return oF.config.metric; }),
+          _aFilters = ['st_mode', 'categoryCol', 'category', 'minTermFrequency'],
+          isCategorySet = !!oFilterInstanceByMetricMap.get('category').config.value;
+
+          // Listen for messages
+          Scattertext.onmessage(function (result) {
+            
+            console.log('Message from server ', result);
+        
+            if(result.type == 'uuid'){
+              // Change focus to the output tab
+        
+              // reload the iframe
+              // currently used for making the vis render
+              // based on actual window size
+              iframe.attr("src", serverURL+result.msg+".html");
+        
+              //$("#loader").addClass("hidden");
+            }
+          });
+        
+          Scattertext.onerror(function (event) {
+            console.log('Scattertext Server Error:', event);
+          });
+
+          Scattertext.onclose(function (event) {
+            alert('Connection to Scattertext server closed! Please refresh.');
+          });
+
+          // Update chart when dataset gets filtered
+          // 
+          dispatch.on('datasetRefreshed.qualtext', null);
+          dispatch.on('datasetRefreshed.qualtext', function(aData){
+
+            if(getActiveView() != 'qualitative-text'){
+              return;
+            }
+
+            if(!aData.length){
+              alert('No data records match current filter settings.');
+              return;
+            }
+            
+            // Get scattertext
+            triggerST(aData, generateConfig());
+
+          });
+
+          dispatch.on('adhocMetricUpdate.qualtext', function(oPayload){
+            
+            // if a filter for scattertext is changed
+            var filterMetric = oPayload.metric;
+
+            if(_aFilters.indexOf(filterMetric) == -1){
+              return;
+            }
+
+            // If Category Column is changed, update the Category filter
+            if(filterMetric == 'categoryCol' && oDataFilterByMetricMap.has(oPayload.value)){
+              var oCF = oFilterInstanceByMetricMap.get('category'),
+              aValues = oDataFilterByMetricMap.get(oPayload.value).values;
+              if(oCF && aValues && aValues.length){
+                aValues = aValues.filter(function(d){
+                  return d.value != 'All';
+                }).map(function(d){
+                  delete d.selected;
+                  return d;
+                });
+                aValues[0].selected = true;
+                
+                oCF.config.values = aValues;
+                oCF.setDefaultValue(aValues).reset();
+
+                isCategorySet = true;
+              }
+            }
+
+            // Get scattertext
+            triggerST(DataManager.getQuerySet(), generateConfig());
+
+          });
+
+          function generateConfig(){
+            var oConfig = {};
+            _aFilters.forEach(function(sMetric){
+              oConfig[sMetric] = oFilterInstanceByMetricMap.get(sMetric).config.value;
+            });
+
+            return oConfig;
+          }
+
+          var sTimeout;
+          function triggerST(aData, oConfig){
+
+            if(!isCategorySet){
+              jQuery('#filter_st_category_col select').chosen().trigger("change");
+              return;
+            }
+            
+            clearTimeout(sTimeout);
+            sTimeout = setTimeout(function(){
+              console.log(oConfig);
+              Scattertext.sendRequest(aData.filter(function(d){ return d._transcript; }), {
+                textCol: oConfig.textCol || '_transcript',
+                categoryCol: oConfig.categoryCol,
+                category: oConfig.category,
+                isEmpath: oConfig.st_mode == 'empath',
+                removeStopwords: true,
+                categoryName: oConfig.category,
+                notCategoryName: 'Not ' + oConfig.category,
+                minTermFrequency: +oConfig.minTermFrequency
+              });
+            }, 500);
+
+          }
           
         }
 
@@ -1297,6 +1502,7 @@
           var oText = buildProfileTranscriptText(aData);
 
           updateFilterPanel({
+            recordCount: aData.length,
             wordCount: oText.wordCount
           });
 

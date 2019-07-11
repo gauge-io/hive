@@ -196,7 +196,7 @@ body {
     .md-tabs--qn,
     // Disable Filters
     //[data-view-context]:not([data-view-context~="qatext"]),
-    [data-view-context]:not([data-view-context~="qa"]) {
+    [data-view-context]:not([data-view-context~="qa--st"]) {
       display: none;
     }
 
