@@ -9,7 +9,7 @@
 (function Aux() {
 
     var dispatch = d3.dispatch('filterUpdate', 'applyFiltersOnData', 'datasetRefreshed', 'mapLoaded', 'dataLoaded', 'updateProfileGeoJSON', 'adhocMetricUpdate', 'adhocUpdateDone', 'profile-features-joined', 'toggleBookmark', 'showProfileOnMap', 'resetFilters', 'switchView', 'wordtreeBeginUpdate', 'wordtreeLoaded', 'profilePopupShown'),
-    sUrlProfile = 'data/viz/profile-data.csv',
+    sUrlProfile = 'data/viz/profile_with_comments.csv', //'data/viz/profile-data.csv',
 
     DataManager,
 
@@ -151,7 +151,7 @@
                   value: 'frequency',
                   selected: true
               }, {
-                  label: 'Empath',
+                  label: 'Topics',
                   value: 'empath'
               }]
             },
@@ -176,10 +176,10 @@
               }, {
                 label: 'Employment Status',
                 value: 'Employment Status'
-              }, {
+              }/*, {
                 label: 'Purchased Protection',
                 value: 'Purchased Protection'
-              }, {
+              }*/, {
                 label: 'Own-Rent',
                 value: 'Own-Rent'
               }, {
@@ -209,7 +209,7 @@
               isAdhoc: true,
               value: 5,
               range: {
-                  min: 3,
+                  min: 1,
                   max: 20,
                   step: 1
               }
@@ -1367,8 +1367,8 @@
             clearTimeout(sTimeout);
             sTimeout = setTimeout(function(){
               console.log(oConfig);
-              Scattertext.sendRequest(aData.filter(function(d){ return d._transcript; }), {
-                textCol: oConfig.textCol || '_transcript',
+              Scattertext.sendRequest(aData.filter(function(d){ return d._st_text; }), {
+                textCol: oConfig.textCol || '_st_text',
                 categoryCol: oConfig.categoryCol,
                 category: oConfig.category,
                 isEmpath: oConfig.st_mode == 'empath',

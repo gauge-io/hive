@@ -1213,5 +1213,7 @@ output,
 
 #qualtext iframe {
   border-width: 0; }
+  #qualtext iframe div#d3-div-1-corpus-stats {
+    display: none; }
 
 /*# sourceMappingURL=style.css.map */

@@ -16,5 +16,9 @@ output,
 #qualtext {
 	iframe {
 		border-width: 0;
+
+		div#d3-div-1-corpus-stats {
+			display: none;
+		}
 	}
 }

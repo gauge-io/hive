@@ -401,7 +401,11 @@ function DataModel(sUrl) {
       var oProfileObj = oProfileTranscripts[d.ID];
       
       if (oProfileObj) {
-        d._transcript = oProfileObj.aTranscript.join('. ');
+        // using data from profile-data.csv for Scattertext
+        d._st_text = oProfileObj.aTranscript.join('. ');
+        
+        // using data from file profile_with_comments.csv for WordTree
+        d._transcript = d.body;
 
         // Tasks
         d._aTaskID = _.uniq(oProfileObj.aTaskIDs);
