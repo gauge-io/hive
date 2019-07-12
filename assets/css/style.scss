@@ -701,6 +701,9 @@ body {
 .filter {
 
   padding: 0.5em 0; // Range slider
+  &--hidden {
+    display: none;
+  }
   &--range-slider {
     width: auto;
     position: relative;

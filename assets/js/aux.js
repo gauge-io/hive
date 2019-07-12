@@ -147,12 +147,15 @@
               metric: 'st_mode',
               isAdhoc: true,
               values: [{
-                  label: 'Frequency',
-                  value: 'frequency',
-                  selected: true
+                label: 'Frequency',
+                value: 'frequency',
+                selected: true
               }, {
-                  label: 'Topics',
-                  value: 'empath'
+                label: 'Topics',
+                value: 'empath'
+              }, {
+                label: 'Semiotic Square',
+                value: 'semiotic'
               }]
             },
             // Category Column
@@ -195,6 +198,39 @@
               label: 'Category',
               type: 'dropdown',
               metric: 'category',
+              isAdhoc: true,
+              values: []
+            },
+
+            // Category A value
+            // 
+            {
+              id: '#filter_st_category_a',
+              label: 'Category A',
+              type: 'dropdown',
+              metric: 'categoryA',
+              isAdhoc: true,
+              values: []
+            },
+
+            // Category B value
+            // 
+            {
+              id: '#filter_st_category_b',
+              label: 'Category B',
+              type: 'dropdown',
+              metric: 'categoryB',
+              isAdhoc: true,
+              values: []
+            },
+
+            // Neutral Categories
+            // 
+            {
+              id: '#filter_st_neutral_categories',
+              label: 'Neutral Categories',
+              type: 'multi-dropdown',
+              metric: 'neutralCategories',
               isAdhoc: true,
               values: []
             },
@@ -671,6 +707,9 @@
           'st_mode',
           'categoryCol',
           'category',
+          'categoryA',
+          'categoryB',
+          'neutralCategories',
           'minTermFrequency'
         ],
 
@@ -1266,7 +1305,7 @@
           // Get a list of data driven filters by metric
           var oDataFilterByMetricMap = d3.map(oFiltersMap.values(), function(d){ return d.metric; }),
           oFilterInstanceByMetricMap = d3.map(aActiveFilters, function(oF){ return oF.config.metric; }),
-          _aFilters = ['st_mode', 'categoryCol', 'category', 'minTermFrequency'],
+          _aFilters = ['st_mode', 'categoryCol', 'category', 'categoryA', 'categoryB', 'neutralCategories', 'minTermFrequency'],
           isCategorySet = !!oFilterInstanceByMetricMap.get('category').config.value;
 
           // Listen for messages
@@ -1322,11 +1361,19 @@
               return;
             }
 
+            setupFilters(oFilterInstanceByMetricMap.get('st_mode').config.value);
+
             // If Category Column is changed, update the Category filter
             if(filterMetric == 'categoryCol' && oDataFilterByMetricMap.has(oPayload.value)){
               var oCF = oFilterInstanceByMetricMap.get('category'),
+              oCAF = oFilterInstanceByMetricMap.get('categoryA'),
+              oCBF = oFilterInstanceByMetricMap.get('categoryB'),
+              oCNF = oFilterInstanceByMetricMap.get('neutralCategories'),
+
               aValues = oDataFilterByMetricMap.get(oPayload.value).values;
+
               if(oCF && aValues && aValues.length){
+
                 aValues = aValues.filter(function(d){
                   return d.value != 'All';
                 }).map(function(d){
@@ -1338,6 +1385,24 @@
                 oCF.config.values = aValues;
                 oCF.setDefaultValue(aValues).reset();
 
+                // For Semiotic filters
+                oCAF.config.values = aValues;
+                oCAF.setDefaultValue(aValues).reset();
+                
+                var bSelected=false;
+                oCBF.config.values = aValues.map(function(d){
+                  d.selected = bSelected ? false : (bSelected = d.value != oCAF.config.value);
+                  return d;
+                });
+                oCBF.setDefaultValue(aValues).reset();
+                
+                oCNF.config.values = aValues.map(function(d){
+                  d.selected = [oCAF.config.value, oCBF.config.value].indexOf(d.value) == -1;
+                  return d;
+                });
+                oCNF.config.value = getSelectedValues(oCNF.config.values);
+                oCNF.setDefaultValue(aValues).reset();
+
                 isCategorySet = true;
               }
             }
@@ -1347,13 +1412,33 @@
 
           });
 
+          function getSelectedValues(aF){
+            return aF.filter(function(d){ return d.selected; }).map(function(d){ return d.value; });
+          }
+
           function generateConfig(){
             var oConfig = {};
             _aFilters.forEach(function(sMetric){
-              oConfig[sMetric] = oFilterInstanceByMetricMap.get(sMetric).config.value;
+              var oFM = oFilterInstanceByMetricMap.get(sMetric).config;
+              if(oFM.type != 'multi-dropdown'){
+                oConfig[sMetric] = oFM.value;
+              }else{
+                if(Array.isArray(oFM.value)){
+                  oConfig[sMetric] = oFM.value;
+                }else{
+                  oConfig[sMetric] = getSelectedValues(oFM.values);
+                }
+              }
             });
 
             return oConfig;
+          }
+
+          function setupFilters(st_mode){
+
+            $('[filter-st-mode]:not([filter-st-'+st_mode+'])').addClass('filter--hidden');
+            $('[filter-st-mode][filter-st-'+st_mode+']').removeClass('filter--hidden');
+
           }
 
           var sTimeout;
@@ -1370,17 +1455,22 @@
             clearTimeout(sTimeout);
             sTimeout = setTimeout(function(){
               console.log(oConfig);
+              var isSemiotic = oConfig.st_mode == 'semiotic';
               Scattertext.sendRequest(aData.filter(function(d){ return d._st_text; }), {
                 textCol: oConfig.textCol || '_st_text',
                 categoryCol: oConfig.categoryCol,
                 category: oConfig.category,
                 isEmpath: oConfig.st_mode == 'empath',
+                isSemiotic: isSemiotic,
+                categoryA: oConfig.categoryA,
+                categoryB: oConfig.categoryB,
+                neutralCategories: oConfig.neutralCategories,
                 removeStopwords: true,
                 categoryName: oConfig.category,
                 notCategoryName: 'Not ' + oConfig.category,
                 minTermFrequency: +oConfig.minTermFrequency,
-                width: size.width - padding,
-                height: size.height - padding
+                width: size.width - padding*(isSemiotic ? 15 : 1),
+                height: size.height - padding*(isSemiotic ? 4 : 1)
               });
             }, 500);
 
