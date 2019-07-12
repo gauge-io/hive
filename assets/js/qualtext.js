@@ -1,7 +1,7 @@
 function QualText(){
 
   var wsport = 8282,
-  host = '34.94.121.136',
+  host = '34.94.239.124',
   ST_API = 'http://'+host+':'+ wsport +'/scattertext/',
   // file uuid
   UUID;

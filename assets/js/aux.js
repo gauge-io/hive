@@ -1300,7 +1300,7 @@
 
           var elContainer = d3.select('#qualtext'),
           iframe = elContainer.select('iframe'),
-          host = '34.94.121.136',
+          host = '34.94.239.124',
           serverURL = 'http://'+host+':8282/html/';
 
           // Get a list of data driven filters by metric
