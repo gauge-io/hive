@@ -1,12 +1,13 @@
 function QualText(){
 
   var wsport = 8282,
-  ST_API = 'http://localhost:'+ wsport +'/scattertext/',
+  host = '34.94.121.136',
+  ST_API = 'http://'+host+':'+ wsport +'/scattertext/',
   // file uuid
   UUID;
 
   // Create WebSocket connection.
-  const socket = new WebSocket('ws://localhost:'+wsport);
+  const socket = new WebSocket('ws://'+host+':'+wsport);
 
   // Connection opened
   socket.onopen = function (event) {
