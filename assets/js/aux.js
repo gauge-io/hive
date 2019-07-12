@@ -1363,6 +1363,9 @@
               jQuery('#filter_st_category_col select').chosen().trigger("change");
               return;
             }
+
+            var size = elContainer.node().getBoundingClientRect(),
+            padding = 30;
             
             clearTimeout(sTimeout);
             sTimeout = setTimeout(function(){
@@ -1375,7 +1378,9 @@
                 removeStopwords: true,
                 categoryName: oConfig.category,
                 notCategoryName: 'Not ' + oConfig.category,
-                minTermFrequency: +oConfig.minTermFrequency
+                minTermFrequency: +oConfig.minTermFrequency,
+                width: size.width - padding,
+                height: size.height - padding
               });
             }, 500);
 
