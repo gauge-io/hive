@@ -1423,6 +1423,14 @@
               var oFM = oFilterInstanceByMetricMap.get(sMetric).config;
               if(oFM.type != 'multi-dropdown'){
                 oConfig[sMetric] = oFM.value;
+                // for category, get label instead of value
+                if(oFM.metric == 'category'){
+                  //oConfig[sMetric] = oFM.value;
+                  var lbl = oFM.values.filter(function(d){
+                    return d.value == oFM.value;
+                  });
+                  oConfig['categoryLabel'] = lbl.length ? lbl[0].label : oFM.value;
+                }
               }else{
                 if(Array.isArray(oFM.value)){
                   oConfig[sMetric] = oFM.value;
@@ -1467,8 +1475,8 @@
                 categoryB: oConfig.categoryB,
                 neutralCategories: oConfig.neutralCategories,
                 removeStopwords: true,
-                categoryName: oConfig.category,
-                notCategoryName: 'Not ' + oConfig.category,
+                categoryName: oConfig.categoryLabel,
+                notCategoryName: 'Not ' + oConfig.categoryLabel,
                 minTermFrequency: +oConfig.minTermFrequency,
                 width: size.width - padding*(isSemiotic ? 15 : 1),
                 height: size.height - padding*(isSemiotic ? 4 : 1)
