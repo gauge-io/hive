@@ -19,7 +19,7 @@ library(readr)
 library(ordinal)
 library(cluster)
 
-survey <- read_csv("~/Code/asurion/data/viz/processed-dataset.csv")
+survey <- read_csv("~/Code/gaugedesign/data/viz/processed-dataset.csv")
 ```
 
 

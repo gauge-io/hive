@@ -9,7 +9,7 @@
 (function Aux() {
 
     var dispatch = d3.dispatch('filterUpdate', 'applyFiltersOnData', 'datasetRefreshed', 'mapLoaded', 'dataLoaded', 'updateProfileGeoJSON', 'adhocMetricUpdate', 'adhocUpdateDone', 'profile-features-joined', 'toggleBookmark', 'showProfileOnMap', 'resetFilters', 'switchView', 'wordtreeBeginUpdate', 'wordtreeLoaded', 'profilePopupShown'),
-    sUrlProfile = 'data/viz/profile-data.csv',
+    sUrlProfile = 'data/viz/analysed-dataset-full.csv', //'data/viz/profile-data.csv',
 
     DataManager,
 
@@ -208,6 +208,94 @@
                 label: "In-Home Visit",
                 value: "12"
               }]
+            },
+
+            // Sentiments
+            //
+            {
+              id: '#filter_fear',
+              label: 'Fear',
+              type: 'range-slider',
+              metric: 'Fear',
+              isDataDriven: false,
+              range: {
+                  min: 0,
+                  max: 1,
+                  step: 0.1
+              }
+            },
+            
+            {
+              id: '#filter_anger',
+              label: 'Anger',
+              type: 'range-slider',
+              metric: 'Anger',
+              isDataDriven: false,
+              range: {
+                  min: 0,
+                  max: 1,
+                  step: 0.1
+              }
+            },
+            {
+              id: '#filter_confident',
+              label: 'Confident',
+              type: 'range-slider',
+              metric: 'Confident',
+              isDataDriven: false,
+              range: {
+                  min: 0,
+                  max: 1,
+                  step: 0.1
+              }
+            },
+            {
+              id: '#filter_joy',
+              label: 'Joy',
+              type: 'range-slider',
+              metric: 'Joy',
+              isDataDriven: false,
+              range: {
+                  min: 0,
+                  max: 1,
+                  step: 0.1
+              }
+            },
+            {
+              id: '#filter_sadness',
+              label: 'Sadness',
+              type: 'range-slider',
+              metric: 'Sadness',
+              isDataDriven: false,
+              range: {
+                  min: 0,
+                  max: 1,
+                  step: 0.1
+              }
+            },
+            {
+              id: '#filter_analytical',
+              label: 'Analytical',
+              type: 'range-slider',
+              metric: 'Analytical',
+              isDataDriven: false,
+              range: {
+                  min: 0,
+                  max: 1,
+                  step: 0.1
+              }
+            },
+            {
+              id: '#filter_tentative',
+              label: 'Tentative',
+              type: 'range-slider',
+              metric: 'Tentative',
+              isDataDriven: false,
+              range: {
+                  min: 0,
+                  max: 1,
+                  step: 0.1
+              }
             },
             
             // Adoption Score
@@ -581,7 +669,8 @@
           '_isParticipant',
           'Protection opinion',
           '# of Devices with Protection Plans',
-          '_scatterplot_columns'
+          '_scatterplot_columns',
+          'Fear', 'Anger', 'Confident', 'Joy', 'Sadness', 'Analytical', 'Tentative'
         ],
 
         aDataDrivenFilters = aFilters.filter(function(oF){
